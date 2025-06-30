@@ -1,3 +1,9 @@
+# Picture output
+*.ppm
+
+# Logs
+*.md
+
 # Prerequisites
 *.d
 

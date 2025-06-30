@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 11:01:49 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/05/27 11:15:26 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/06/30 16:22:14 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,19 +17,17 @@
 
 typedef struct s_sphere
 {
-	float	radius;
-	float	area;
-	t_vec3f	pos;
+	t_vec3f center;
 	t_vec4	color;
+	float	radius;
 } t_sphere;
 
 typedef struct s_cylinder
 {
-	float	radius;
-	float	area;
-	float	height;
-	t_vec3f	pos;
+	t_vec3f	center;
 	t_vec4	color;
+	float	radius;
+	float	height;
 } t_cylinder;
 
 typedef struct s_plane
@@ -38,13 +36,5 @@ typedef struct s_plane
 	t_vec3f	orientation;
 	t_vec4	color;
 } t_plane;
-
-typedef union u_shape
-{
-	t_sphere	sphere;
-	t_cylinder	cylinder;
-	t_plane		plane;
-} t_shape;
-
 
 #endif
