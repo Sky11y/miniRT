@@ -4,6 +4,8 @@
 # Logs
 *.md
 
+# Swap files
+*.swp
 # Prerequisites
 *.d
 

@@ -6,22 +6,22 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:29:17 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/06/30 16:30:07 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:02:19 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "scene_elements.h"
 
-t_camera init_camera(const t_image *img)
+t_camera	init_camera(const t_image *img)
 {
 	t_camera	cam;
 	t_vec3f		pixel_delta_sum;
 	t_vec3f		tmp1;
 	t_vec3f		tmp2;
 	t_vec3f		tmp3;
-	
-	cam.center = (t_vec3f){ 0, 0, 0 };
-	cam.orientation = (t_vec3f){ 0, 0, 0 };
+
+	cam.center = (t_vec3f){0, 0, 0};
+	cam.orientation = (t_vec3f){0, 0, 0};
 	cam.viewport_height = 2.0f;
 	cam.viewport_width = cam.viewport_height * img->aspect_ratio;
 	cam.samples_per_pixel = 10;
