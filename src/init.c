@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:29:17 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/06/30 17:02:19 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:27:44 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ t_camera	init_camera(const t_image *img)
 	// Calculate the vectors across the horizontal and down the vertical viewport edges
 	cam.viewport_u = (t_vec3f){cam.viewport_width, 0, 0};
 	cam.viewport_v = (t_vec3f){0, -cam.viewport_height, 0};
-	cam.focal_length = 1.0;
+	cam.focal_length = 1.0f;
 
 	// Calculate the horizontal and vertical delta vectors from pixel to pixel
 	cam.pixel_delta_u = vt_division(cam.viewport_u, img->image_width);

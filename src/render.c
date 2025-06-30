@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 17:03:00 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/06/30 17:06:07 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/06/30 17:24:49 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void render(const t_hittables *htbl, const t_camera cam, const t_image img)
 {
 	const uint16_t	img_height = img.image_height;
 	const uint16_t	img_width = img.image_width;
-	const float		pixel_samples_scale = 1.0 / cam.samples_per_pixel;
+	const float		pixel_samples_scale = 1.0f / cam.samples_per_pixel;
 	const uint8_t	samples = cam.samples_per_pixel;
 	t_vec3f			pixel_color;
 	t_ray			r;
