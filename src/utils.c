@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:32:56 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/06/30 16:33:15 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/07/01 11:07:08 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,21 +20,27 @@ float 	dot(const t_vec3f u, const t_vec3f v)
 
 t_vec3f	cross(const t_vec3f u, const t_vec3f v)
 {
-	return (t_vec3f){u.y * v.z - u.z * v.x,
+	return (t_vec3f){u.y * v.z - u.z * v.y,
 				u.z * v.x - u.x * v.z,
 				u.x * v.y - u.y * v.x};
 }
 
 t_vec3f	unit_vector(const t_vec3f v)
 {
-	return (t_vec3f){v.x / v_length(v), 
-			v.y / v_length(v),
-			 v.z / v_length(v)};
+	const float length = v_length(v);
+	if (length < 1e-8)
+		return (t_vec3f){0, 0, 0};
+	return (t_vec3f){v.x / length, v.y / length, v.z / length};
 }
 
 float v_length(const t_vec3f v)
 {
 	return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+}
+
+float v_length_squared(const t_vec3f v)
+{
+	return (v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
 t_vec3f vt_multiply(const t_vec3f v, float t)
@@ -44,6 +50,8 @@ t_vec3f vt_multiply(const t_vec3f v, float t)
 
 t_vec3f vt_division(const t_vec3f v, float t)
 {
+	if (fabs(t) < 1e-8)
+		return (t_vec3f){0, 0, 0};
 	return (t_vec3f){v.x / t, v.y / t, v.z / t};
 }
 
@@ -79,7 +87,11 @@ float random_range(float min, float max)
 
 float clamp(const float x)
 {
-	return (x > 1 ? 1.0 : x);
+	if (x < 0.0f)
+		return (0.0f);
+	if (x > 1.0f)
+		return (1.0f);
+	return (x);
 }
 
 t_vec3f random_vector(float min, float max)
@@ -97,7 +109,7 @@ t_vec3f random_unit_vector()
 	while (true)
 	{
 		p = random_vector(-1, 1);
-		lensq = v_length(p) * v_length(p);
+		lensq = v_length_squared(p);
 		if (lensq < 1.0)
 			return (vt_division(p, sqrt(lensq)));
 	}

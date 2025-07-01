@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:29:17 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/06/30 17:27:44 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/07/01 12:05:02 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,8 @@ t_camera	init_camera(const t_image *img)
 
 	cam.center = (t_vec3f){0, 0, 0};
 	cam.orientation = (t_vec3f){0, 0, 0};
-	cam.viewport_height = 2.0f;
+	cam.fov = 70;
+	cam.viewport_height = 2.0f * tan(70 / 2);
 	cam.viewport_width = cam.viewport_height * img->aspect_ratio;
 	cam.samples_per_pixel = 10;
 	// Calculate the vectors across the horizontal and down the vertical viewport edges

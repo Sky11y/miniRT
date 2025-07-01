@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 14:41:25 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/06/30 16:58:25 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/07/01 11:05:44 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ float	dot(const t_vec3f u, const t_vec3f v);
 t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
 float	v_length(const t_vec3f v);
+float	v_length_squared(const t_vec3f v);
 
 t_vec3f	vt_multiply(const t_vec3f v, float t);
 t_vec3f	vt_division(const t_vec3f v, float t);
