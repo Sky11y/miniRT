@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 17:03:00 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/07/01 11:24:07 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/07/02 13:09:43 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void render(const t_hittables *htbl, const t_camera cam, const t_image img)
 			for (int sample = 0; sample < samples; sample++)
 			{
 				r = get_ray(x, y, cam);
-				pixel_color = vv_add(pixel_color, ray_color(r, htbl));
+				pixel_color = vv_add(pixel_color, ray_color(r, htbl, cam.max_rays));
 			}
 			write_color(vt_multiply(pixel_color, pixel_samples_scale));
 		}

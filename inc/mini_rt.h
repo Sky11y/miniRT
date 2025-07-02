@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/19 14:41:25 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/07/01 11:05:44 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/07/02 13:14:55 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ float	inverse_sqrt(float nbr);
 float	dot(const t_vec3f u, const t_vec3f v);
 t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
+t_vec3f rotate_v(const t_vec3f v);
 float	v_length(const t_vec3f v);
 float	v_length_squared(const t_vec3f v);
 
@@ -61,10 +62,14 @@ t_vec3f	vv_add(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_sub(const t_vec3f u, const t_vec3f v);
 
 /* HELPERS */
-float	degreet_to_rad(float degrees);
+t_vec3f random_v();
+t_vec3f random_v_range(float min, float max);
+t_vec3f	random_unit_vector(void);
+t_vec3f random_on_hemisphere(const t_vec3f normal);
 float	random_float( void );
 float	random_range(float min, float max);
 float	clamp(const float x);
+float	degrees_to_rad(float degrees);
 
 /* RENDER */
 void	write_color(const t_vec3f pixel_color);

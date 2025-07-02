@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/30 16:29:17 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/07/01 12:05:02 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/07/02 13:08:23 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,15 @@ t_camera	init_camera(const t_image *img)
 
 	cam.center = (t_vec3f){0, 0, 0};
 	cam.orientation = (t_vec3f){0, 0, 0};
-	cam.fov = 70;
-	cam.viewport_height = 2.0f * tan(70 / 2);
-	cam.viewport_width = cam.viewport_height * img->aspect_ratio;
+	cam.fov = tan(70 / 2);
+	//my impelementation
+	//cam.viewport_height = 2.0f * cam.fov;
+	//cam.viewport_width = cam.viewport_height * img->aspect_ratio;
+	//RT in a weekend style
+	cam.viewport_height = 2.0f;
+	cam.viewport_width = cam.viewport_height * ((float)(img->image_width) / img->image_height);
 	cam.samples_per_pixel = 10;
+	cam.max_rays = 10;
 	// Calculate the vectors across the horizontal and down the vertical viewport edges
 	cam.viewport_u = (t_vec3f){cam.viewport_width, 0, 0};
 	cam.viewport_v = (t_vec3f){0, -cam.viewport_height, 0};

@@ -6,7 +6,7 @@
 /*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/27 11:03:02 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/06/30 16:57:05 by jpiensal         ###   ########.fr       */
+/*   Updated: 2025/07/02 13:12:55 by jpiensal         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ typedef struct s_camera
 	float	viewport_height;
 	float	viewport_width;
 	uint8_t	samples_per_pixel;
+	uint8_t	max_rays;
 }	t_camera;
 
 typedef struct s_image
@@ -70,7 +71,7 @@ typedef struct s_ray
 }	t_ray;
 
 t_vec3f		at(t_ray r, float t);
-t_vec3f		ray_color(const t_ray r, const t_hittables *htbl);
+t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth);
 void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
 float		hit_sphere(const t_sphere s, const t_ray r);
 t_camera	init_camera(const t_image *img);
