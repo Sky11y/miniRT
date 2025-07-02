@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: jpiensal <jpiensal@student.hive.fi>        +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/06/30 16:27:50 by jpiensal          #+#    #+#             */
-/*   Updated: 2025/07/02 13:14:21 by jpiensal         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "mini_rt.h"
 #include "scene_elements.h"
 #include "shapes.h"
@@ -19,10 +7,6 @@ FILE *infolog;
 float hit_sphere(const t_sphere s, const t_ray r)
 {
 	t_vec3f oc = vv_sub(s.center, r.origin);
-	//float a = dot(r.direction, r.direction);
-	//float b = -2.0 * dot(r.direction, oc);
-	//float c = dot(oc, oc) - s.radius * s.radius;
-	//float discriminant = b*b - 4*a*c;
 	float a = v_length_squared(r.direction);
 	float h = dot(r.direction, oc);
 	float c = v_length_squared(oc) - s.radius * s.radius;
@@ -30,7 +14,6 @@ float hit_sphere(const t_sphere s, const t_ray r)
 
 	if (discriminant < 0)
 		return -1.0f;
-	//return (-b - sqrt(discriminant) ) / (2.0 * a);
 	return (h - sqrt(discriminant) ) / a;
 }
 
