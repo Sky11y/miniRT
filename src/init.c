@@ -10,19 +10,17 @@ t_camera	init_camera(const t_image *img)
 
 	cam.center = (t_vec3f){0, 0, 0};
 	cam.orientation = (t_vec3f){0, 0, 0};
-	cam.fov = tan(70 / 2);
-	//my impelementation
-	//cam.viewport_height = 2.0f * cam.fov;
-	//cam.viewport_width = cam.viewport_height * img->aspect_ratio;
-	//RT in a weekend style
-	cam.viewport_height = 2.0f;
-	cam.viewport_width = cam.viewport_height * ((float)(img->image_width) / img->image_height);
+	// Viewport dimensions
+	cam.focal_length = 1.0f;
+	cam.fov = 70;
+	float half_w = tanf(degrees_to_rad(cam.fov) / 2);
+	cam.viewport_width = 2.0f * half_w * cam.focal_length;
+	cam.viewport_height = cam.viewport_width / img->aspect_ratio;
 	cam.samples_per_pixel = 10;
 	cam.max_rays = 10;
 	// Calculate the vectors across the horizontal and down the vertical viewport edges
 	cam.viewport_u = (t_vec3f){cam.viewport_width, 0, 0};
 	cam.viewport_v = (t_vec3f){0, -cam.viewport_height, 0};
-	cam.focal_length = 1.0f;
 
 	// Calculate the horizontal and vertical delta vectors from pixel to pixel
 	cam.pixel_delta_u = vt_division(cam.viewport_u, img->image_width);

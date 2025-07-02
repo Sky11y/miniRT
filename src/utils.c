@@ -26,7 +26,6 @@ t_vec3f	unit_vector(const t_vec3f v)
 	return (t_vec3f){v.x / length, v.y / length, v.z / length};
 }
 
-
 float v_length(const t_vec3f v)
 {
 	return sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
@@ -90,14 +89,14 @@ t_vec3f random_unit_vector()
 			return (vt_division(p, sqrt(lensq)));
 	}
 }
-
+/*This will most likely not be needed and can be removed
 t_vec3f random_on_hemisphere(const t_vec3f normal)
 {
 	t_vec3f on_unit_sphere = random_unit_vector();
 	if (dot(on_unit_sphere, normal) > 0.0)
 		return (on_unit_sphere);
 	return (rotate_v(on_unit_sphere));
-}
+}*/
 
 float random_float( void )
 {
@@ -109,17 +108,17 @@ float random_range(float min, float max)
 	return min + (max - min) * random_float();
 }
 
-float clamp(const float x)
+float clamp(const float x, const float min, const float max)
 {
-	if (x < 0.0f)
-		return (0.0f);
-	if (x > 1.0f)
-		return (1.0f);
+	if (x < min)
+		return (min);
+	if (x > max)
+		return (max);
 	return (x);
 }
 
 float degrees_to_rad(float degrees)
 {
-	return degrees * PI / 180.0;
+	return degrees * (M_PI / 180.0);
 }
 

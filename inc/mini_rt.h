@@ -7,11 +7,9 @@
 # include <string.h> 	//strerror
 # include <math.h> 		//all the math
 # include <stdint.h> 	//explicit int values
-# include <limits.h>	//INT_MAX
+# include <limits.h>	//INT_MAX -> math.h includes INFINITY so we migth not need this
 # include <stdbool.h>	//true and false
-# include <time.h>		//REMOVE THIS!!!! only used for randomness
-
-# define PI 3.1415926535
+# include <time.h>		//REMOVE THIS!!!! only used for randomnes
 
 typedef struct t_vec4
 {
@@ -56,7 +54,7 @@ t_vec3f	random_unit_vector(void);
 t_vec3f random_on_hemisphere(const t_vec3f normal);
 float	random_float( void );
 float	random_range(float min, float max);
-float	clamp(const float x);
+float	clamp(const float x, const float min, const float max);
 float	degrees_to_rad(float degrees);
 
 /* RENDER */

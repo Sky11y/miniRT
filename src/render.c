@@ -5,13 +5,25 @@ extern FILE	*infolog;
 
 void	write_color(const t_vec3f pixel_color)
 {
-	float	r = clamp(pixel_color.x);
-	float	g = clamp(pixel_color.y);
-	float	b = clamp(pixel_color.z);
+	float	r = pixel_color.x;
+	float	g = pixel_color.y;
+	float	b = pixel_color.z;
 
-	int	rbyte = (int)(255.999 * r);
-	int	gbyte = (int)(255.999 * g);
-	int	bbyte = (int)(255.999 * b);
+	if (r > 0)
+		r = sqrtf(r);
+	else
+		r = 0;
+	if (g > 0)
+		g = sqrtf(g);
+	else
+		g = 0;
+	if (b > 0)
+		b = sqrtf(b);
+	else
+		b = 0;
+	int	rbyte = (int)(256 * clamp(r, 0, 0.999));
+	int	gbyte = (int)(256 * clamp(g, 0, 0.999));
+	int	bbyte = (int)(256 * clamp(b, 0, 0.999));
 
 	printf("%d %d %d\n", rbyte, gbyte, bbyte);
 }

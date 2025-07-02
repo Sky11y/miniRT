@@ -13,13 +13,21 @@ float hit_sphere(const t_sphere s, const t_ray r)
 	float discriminant = h * h - a * c;
 
 	if (discriminant < 0)
-		return -1.0f;
-	return (h - sqrt(discriminant) ) / a;
+		return (-1.0f);
+	//The code below doesn't seem to affect too much on the image
+	/*float root = (h - sqrtf(discriminant)) / a;
+	if (root < 0.001)
+	{
+		root = (h + sqrtf(discriminant)) / a;
+		if (root < 0.001)
+			return (-1.0f);
+	}*/
+	return (h - sqrtf(discriminant) ) / a;
 }
 
 t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
 {
-	float closest_t = (float)INT_MAX;
+	float closest_t = INFINITY;
 	float current_t;
 	t_sphere final_s;
 	int	save = -1;
@@ -47,7 +55,7 @@ t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
 		t_vec3f hitpoint = at(r, closest_t);
 		t_vec3f normal = unit_vector(vv_sub(hitpoint, final_s.center));
 		//setting the normal face if direction is > 0
-		t_vec3f new_dir = random_on_hemisphere(normal);
+		t_vec3f new_dir = vv_add(normal, random_unit_vector());
 		//changing the values from -1...1 to 0...1 before returning
 		t_ray new_ray = {new_dir, hitpoint};
 		t_vec3f color = ray_color(new_ray, htbl, depth - 1);
@@ -68,7 +76,7 @@ int main()
 
 	srand(time(NULL));
 	img.aspect_ratio = 16.0 / 9.0;
-	img.image_width = 400;
+	img.image_width = 800;
 	img.image_height = (int)(img.image_width / img.aspect_ratio);
 	img.image_height = (img.image_height < 1) ? 1 : img.image_height;
 
@@ -107,8 +115,8 @@ int main()
 	//uint8_t		cylinder_count;
 	//RT IN A WEEKEND HITTABLES
 	hittables.sphere_count = 2;
-	t_sphere sphere1 = {{0,0,-1},{0,0,0,255},0.5};
-	t_sphere sphere2 = {{0,-100.5,-1},{0,0,0,255},100};
+	t_sphere sphere1 = {{0,0,-3},{0,0,0,255},0.5};
+	t_sphere sphere2 = {{0,-100.5,-3},{0,0,0,255},100};
 	t_sphere *spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
 	spheres[0] = sphere1;
 	spheres[1] = sphere2;
