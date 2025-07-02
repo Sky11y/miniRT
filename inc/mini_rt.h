@@ -65,4 +65,7 @@ bool	near_zero(const t_vec3f v);
 /* RENDER */
 void	write_color(const t_vec3f pixel_color);
 
+/* PARSING */
+int	parse_file(int argc, char *filename);
+
 #endif
