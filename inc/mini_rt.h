@@ -4,12 +4,13 @@
 # include <unistd.h>	//open, close, read, write, exit
 # include <stdlib.h>	//malloc, free
 # include <stdio.h>		//printf, perror
-# include <string.h> 	//strerror
-# include <math.h> 		//all the math
-# include <stdint.h> 	//explicit int values
-# include <limits.h>	//INT_MAX -> math.h includes INFINITY so we migth not need this
+# include <string.h>	//strerror
+# include <math.h>		//all the math
+# include <stdint.h>	//explicit int values
+# include <limits.h>	//INT_MAX
 # include <stdbool.h>	//true and false
-# include <time.h>		//REMOVE THIS!!!! only used for randomnes
+# include <time.h>		//REMOVE THIS!!!! only used for randomness
+# include <libft.h>		//libft
 
 typedef enum e_shape
 {
@@ -60,5 +61,8 @@ t_vec3f	vv_mul(const t_vec3f v, const t_vec3f u);
 float	clamp(const float x, const float min, const float max);
 float	degrees_to_rad(float degrees);
 bool	near_zero(const t_vec3f v);
+
+/* RENDER */
+void	write_color(const t_vec3f pixel_color);
 
 #endif
