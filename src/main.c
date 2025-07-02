@@ -4,15 +4,18 @@
 
 FILE *infolog;
 
+//arr[0] = a, arr[1] = h, arr[2] = c, arr[3] = discriminant
 float hit_sphere(const t_sphere s, const t_ray r)
 {
+	float arr[4];
 	t_vec3f oc = vv_sub(s.center, r.origin);
-	float a = v_length_squared(r.direction);
-	float h = dot(r.direction, oc);
-	float c = v_length_squared(oc) - s.radius * s.radius;
-	float discriminant = h * h - a * c;
 
-	if (discriminant < 0)
+	arr[0] = v_length_squared(r.direction);
+	arr[1] = dot(r.direction, oc);
+	arr[2] = v_length_squared(oc) - s.radius * s.radius;
+	arr[3] = arr[1] * arr[1] - arr[0] * arr[2];
+
+	if (arr[3] < 0)
 		return (-1.0f);
 	//The code below doesn't seem to affect too much on the image
 	/*float root = (h - sqrtf(discriminant)) / a;
@@ -22,37 +25,49 @@ float hit_sphere(const t_sphere s, const t_ray r)
 		if (root < 0.001)
 			return (-1.0f);
 	}*/
-	return (h - sqrtf(discriminant) ) / a;
+	return (arr[1] - sqrtf(arr[3]) ) / arr[0];
 }
 
-t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
+int	hit_all_spheres(const t_ray r, float *t, const t_sphere *s, const int count)
 {
-	float closest_t = INFINITY;
-	float current_t;
-	t_sphere final_s;
-	int	save = -1;
-	t_sphere *s = htbl->spheres;
-	const uint8_t count = htbl->sphere_count;
+	int i;
+	int save;
 
-	if (depth <= 0)
-		return (t_vec3f){0,0,0};
-	/*if (htbl->sphere_count)
-		hit_sphere(&save, &closest_t, htbl->spheres, htbl->sphere_count);
-	if (htbl->cylinder_count)
-		hit_cylinder(&save, &closest_t, htbl->cylinders, htbl->cylinder_count);*/
-	for (int i = 0; i < count; i++)
+	i = 0;
+	save = -1;
+	while (i < count)
 	{
-		current_t = hit_sphere(*(s + i), r);
-		if (current_t > 0 && current_t < closest_t)
+		t[1] = hit_sphere(*(s + i), r);
+		if (t[1] > 0 && t[1] < t[0])
 		{
-			closest_t = current_t;
+			t[0] = t[1];
 			save = i;
 		}
+		i++;
 	}
-	if (save > -1)
+	return (save);
+}
+
+//t[0] = closest_t, t[1] = current_t
+t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
+{
+	float t[2];
+	t_sphere final_s;
+	int	ret;
+
+	t[0] = INFINITY;
+	t[1] = t[0];
+	ret = -1;
+	if (depth <= 0)
+		return (t_vec3f){0,0,0};
+	if (htbl->sphere_count)
+		ret = hit_all_spheres(r, t, htbl->spheres, htbl->sphere_count);
+	/*if (htbl->cylinder_count)
+		hit_cylinder(&save, &closest_t, htbl->cylinders, htbl->cylinder_count);*/
+	if (ret > -1)
 	{
-		final_s = *(s + save);
-		t_vec3f hitpoint = at(r, closest_t);
+		final_s = *(htbl->spheres + ret);
+		t_vec3f hitpoint = at(r, t[0]);
 		t_vec3f normal = unit_vector(vv_sub(hitpoint, final_s.center));
 		//setting the normal face if direction is > 0
 		t_vec3f new_dir = vv_add(normal, random_unit_vector());
