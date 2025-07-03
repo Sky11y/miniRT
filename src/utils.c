@@ -143,3 +143,9 @@ t_vec3f	get_material(t_material mat)
 		return (t_vec3f){0.8, 0.8, 0.8};
 	return (t_vec3f){0, 0, 0};
 }
+
+bool	near_zero(const t_vec3f v)
+{
+	const float eps = 1e-8;
+	return (fabsf(v.x) < eps && fabsf(v.y) < eps && fabsf(v.z) < eps);
+}

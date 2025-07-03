@@ -17,7 +17,7 @@ t_camera	init_camera(const t_image *img)
 	cam.viewport_width = 2.0f * half_w * cam.focal_length;
 	cam.viewport_height = cam.viewport_width / img->aspect_ratio;
 	cam.samples_per_pixel = 10;
-	cam.max_rays = 50;
+	cam.max_rays = 3;
 	// Calculate the vectors across the horizontal and down the vertical viewport edges
 	cam.viewport_u = (t_vec3f){cam.viewport_width, 0, 0};
 	cam.viewport_v = (t_vec3f){0, -cam.viewport_height, 0};

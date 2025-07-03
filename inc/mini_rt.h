@@ -72,6 +72,7 @@ float	clamp(const float x, const float min, const float max);
 float	degrees_to_rad(float degrees);
 t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
 t_vec3f	get_material(t_material mat);
+bool	near_zero(const t_vec3f v);
 
 /* RENDER */
 void	write_color(const t_vec3f pixel_color);
