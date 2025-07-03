@@ -6,7 +6,7 @@
 typedef struct s_sphere
 {
 	t_vec3f		center;
-	t_vec4		color;
+	t_vec3f		color;
 	float		radius;
 	t_material	mat;
 	t_type		type;

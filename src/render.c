@@ -43,7 +43,6 @@ t_ray get_ray(const t_camera cam, int *idx)
 	t_vec3f	offset = {random_float() - 0.5, random_float() - 0.5, 0};
 	t_vec3f	y_offset = vt_multiply(pdv, offset.y + (float)idx[0]);
 	t_vec3f	x_offset = vt_multiply(pdu, offset.x + (float)idx[1]);
-	//fprintf(infolog, "\rx = %d(%f), y = %d(%f)\n", idx[1], (float)idx[1], idx[0], (float)idx[0]);
 	t_vec3f	total_offset = vv_add(x_offset, y_offset);
 	t_vec3f	pixel_sample = vv_add(p00_loc, total_offset);
 	r.origin = origin;

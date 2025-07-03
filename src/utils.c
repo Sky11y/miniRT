@@ -135,6 +135,7 @@ t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
 	return (vv_sub(v, tmp));
 }
 
+/*This function is not needed on the mandatory part
 t_vec3f	get_material(t_material mat)
 {
 	if (mat == diffuse)
@@ -142,7 +143,7 @@ t_vec3f	get_material(t_material mat)
 	else if (mat == metallic)
 		return (t_vec3f){0.8, 0.8, 0.8};
 	return (t_vec3f){0, 0, 0};
-}
+}*/
 
 bool	near_zero(const t_vec3f v)
 {
