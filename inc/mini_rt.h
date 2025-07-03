@@ -1,8 +1,8 @@
 #ifndef MINI_RT_H
 # define MINI_RT_H
 
-# include <unistd.h>		//open, close, read, write, exit
-# include <stdlib.h>		//malloc, free
+# include <unistd.h>	//open, close, read, write, exit
+# include <stdlib.h>	//malloc, free
 # include <stdio.h>		//printf, perror
 # include <string.h> 	//strerror
 # include <math.h> 		//all the math
@@ -32,6 +32,20 @@ typedef struct t_vec2
 	uint16_t	v;
 }	t_vec2;
 
+typedef enum e_material
+{
+	diffuse,
+	metallic,
+}	t_material;
+
+typedef enum e_type
+{
+	sphere,
+	cylinder,
+	plane,
+}	t_type;
+
+
 float	inverse_sqrt(float nbr);
 
 /* VECTOR CALCULATIONS */
@@ -56,6 +70,7 @@ float	random_float( void );
 float	random_range(float min, float max);
 float	clamp(const float x, const float min, const float max);
 float	degrees_to_rad(float degrees);
+t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
 
 /* RENDER */
 void	write_color(const t_vec3f pixel_color);

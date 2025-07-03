@@ -85,7 +85,7 @@ t_vec3f random_unit_vector()
 	{
 		p = random_v_range(-1, 1);
 		lensq = v_length_squared(p);
-		if (1e-8 < lensq && lensq <= 1.0)
+		if (lensq > 1e-8 && lensq <= 1.0)
 			return (vt_division(p, sqrt(lensq)));
 	}
 }
@@ -122,3 +122,10 @@ float degrees_to_rad(float degrees)
 	return degrees * (M_PI / 180.0);
 }
 
+t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
+{
+	t_vec3f tmp;
+
+	tmp = vt_multiply(n, 2 * dot(v, n));
+	return (vv_sub(v, tmp));
+}

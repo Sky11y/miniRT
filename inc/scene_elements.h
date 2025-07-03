@@ -58,6 +58,15 @@ typedef struct s_ray
 	t_vec3f	origin;
 }	t_ray;
 
+typedef struct s_hit_record
+{
+	t_vec3f		normal;
+	t_vec3f		hitpoint;
+	t_type		shape_type;
+	t_material	material;
+
+}	t_hit_record;
+
 t_vec3f		at(t_ray r, float t);
 t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth);
 void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
