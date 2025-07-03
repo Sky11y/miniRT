@@ -45,7 +45,6 @@ typedef enum e_type
 	plane,
 }	t_type;
 
-
 float	inverse_sqrt(float nbr);
 
 /* VECTOR CALCULATIONS */
@@ -60,6 +59,7 @@ t_vec3f	vt_multiply(const t_vec3f v, float t);
 t_vec3f	vt_division(const t_vec3f v, float t);
 t_vec3f	vv_add(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_sub(const t_vec3f u, const t_vec3f v);
+t_vec3f	vv_multiply(const t_vec3f v, const t_vec3f u);
 
 /* HELPERS */
 t_vec3f random_v();
@@ -71,6 +71,7 @@ float	random_range(float min, float max);
 float	clamp(const float x, const float min, const float max);
 float	degrees_to_rad(float degrees);
 t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
+t_vec3f	get_material(t_material mat);
 
 /* RENDER */
 void	write_color(const t_vec3f pixel_color);

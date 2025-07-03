@@ -62,9 +62,9 @@ typedef struct s_hit_record
 {
 	t_vec3f		normal;
 	t_vec3f		hitpoint;
+	t_vec3f		albedo;
 	t_type		shape_type;
-	t_material	material;
-
+	t_material	mat;
 }	t_hit_record;
 
 t_vec3f		at(t_ray r, float t);
