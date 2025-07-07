@@ -87,7 +87,7 @@ t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint16_t depth)
 		{
 			float fuzz = 0.0;
 			t_vec3f reflected = reflect(r.direction, hr.normal);
-			reflected = vv_add(reflected, vt_multiply(random_unit_vector(), fuzz));
+			reflected = vv_add(reflected, vt_mul(random_unit_vector(), fuzz));
 			new_ray.direction = unit_vector(reflected); 
 		}
 		else
@@ -98,12 +98,12 @@ t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint16_t depth)
 		}
 		new_ray.origin = hr.hitpoint;
 		t_vec3f color = ray_color(new_ray, htbl, depth - 1);
-		return (vv_multiply(color, hr.albedo));
+		return (vv_mul(color, hr.albedo));
 	}
 	float a = 0.5f * (r.direction.y + 1.0f);
 	t_vec3f gradient = {0.5, 0.7, 1.0 };
 	t_vec3f white = {0, 0, 0};
-	return vv_add(vt_multiply(white, (1.0 - a)), vt_multiply(gradient, a));
+	return vv_add(vt_mul(white, (1.0 - a)), vt_mul(gradient, a));
 }
 
 int main()
@@ -113,10 +113,6 @@ int main()
 	t_hittables hittables;
 
 	srand(time(NULL));
-	img.aspect_ratio = 16.0 / 9.0;
-	img.image_width = 800;
-	img.image_height = (int)(img.image_width / img.aspect_ratio);
-	img.image_height = (img.image_height < 1) ? 1 : img.image_height;
 
 	infolog = fopen("log.md", "w+");
 	if (infolog == NULL)
@@ -125,18 +121,21 @@ int main()
 		return (1);
 	}
 	
+	init_image(&img);
 	init_camera(&cam, &img);
 	printf("P3\n%d %d\n255\n", img.image_width, img.image_height);
-	fprintf(infolog, "\rwidth: %d, height: %d\n", img.image_width, img.image_height);
+	fprintf(infolog, "width: %d, height: %d\n", img.image_width, img.image_height);
 	
-	//hittable objects
+	
+	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
+
 	//TESTING FOR CAMERA
-	hittables.sphere_count = 5;
+	/*hittables.sphere_count = 5;
 	float left = -cam.viewport_width;
 	float right = cam.viewport_width;
 	float top = cam.viewport_height;
 	float bottom = -cam.viewport_height;
-	t_sphere sphere1 = {{0, 0, -2.1}, {1.0, 0, 0}, 0.5, diffuse, sphere};
+	t_sphere sphere1 = {{0, 0, -1.1}, {1.0, 0, 0}, 0.5, diffuse, sphere};
 	t_sphere sphere2 = {{left, top, -3.1}, {0, 1.0, 0}, 0.5, metallic, sphere};
 	t_sphere sphere3 = {{right, top, -3.1}, {0, 0, 1.0}, 0.5, metallic, sphere};
 	t_sphere sphere4 = {{left, bottom, -3.1}, {1.0, 1.0, 0}, 0.5, metallic, sphere};
@@ -146,21 +145,38 @@ int main()
 	spheres[1] = sphere2;
 	spheres[2] = sphere3;
 	spheres[3] = sphere4;
-	spheres[4] = sphere5;
-	//t_cylinder	*cylinders;
-	//uint8_t		cylinder_count;
+	spheres[4] = sphere5;*/
+	
+	//MORE TESTING FOR CAMERA
+	hittables.sphere_count = 2;
+	float R = cosf(M_PI/4);
+	t_sphere s1 = {{-R, 0, -1}, {0, 0, 1}, R, diffuse, sphere};
+	t_sphere s2 = {{R, 0, -1}, {1, 0, 0}, R, diffuse, sphere};
+	t_sphere *spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
+	spheres[0] = s1;
+	spheres[1] = s2;
+
 	//TESTING FOR MATERIALS
 	/*hittables.sphere_count = 4;
-	t_sphere sphere1 = {{0.0f, -100.5f, -3.0f}, {0, 0, 0, 255}, 100.0f, diffuse, sphere};
-	t_sphere sphere2 = {{0.0f, 0.0f, -3.2f}, {0, 0, 0, 255}, 0.5f, diffuse, sphere};
-	t_sphere sphere3 = {{-1.0f, 0.0f, -3.0f}, {0, 0, 0, 255}, 0.5f, metallic, sphere};
-	t_sphere sphere4 = {{1.0f, 0.0f, -3.0f}, {0, 0, 0, 255}, 0.5f, metallic, sphere};
+	t_sphere sphere1 = {{0.0f, -100.5f, -1.0f}, {0, 0, 0}, 100.0f, diffuse, sphere};
+	t_sphere sphere2 = {{0.0f, 0.0f, -1.2f}, {0, 0, 0}, 0.5f, diffuse, sphere};
+	t_sphere sphere3 = {{-1.0f, 0.0f, -1.0f}, {0, 0, 0}, 0.5f, metallic, sphere};
+	t_sphere sphere4 = {{1.0f, 0.0f, -1.0f}, {0, 0, 0}, 0.4f, metallic, sphere};
 	t_sphere *spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
 	spheres[0] = sphere1;
 	spheres[1] = sphere2;
 	spheres[2] = sphere3;
 	spheres[3] = sphere4;*/
 
+	//TESTING THE SCHOOL SUBJECT EXAMPLE
+	/*hittables.cylinder_count = 1;
+	t_cylinder c1 = {{50.0, 0.0, 20.6}, {0, 0, 1.0}, {10, 0, 255 }, 14.2, 21.42};
+	t_sphere s1 = {{0, 0, 20}, {255, 0, 0}, 20.0f, diffuse, sphere};
+	t_plane p1 = {{0, 0, 0}, {0, 1.0, 0}, {255, 0, 255}, diffuse, plane};
+	t_light = {{-40.0, 0, 30}, {255, 255, 255}, 0.7};
+	t_ambient = {{255,255,255}, 0.2};*/
+
+	/***** END OF TEST SETUP *****/
 	hittables.spheres = spheres;
 	render(&hittables, cam, img);
 	

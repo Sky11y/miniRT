@@ -55,11 +55,11 @@ t_vec3f rotate_v(const t_vec3f v);
 float	v_length(const t_vec3f v);
 float	v_length_squared(const t_vec3f v);
 
-t_vec3f	vt_multiply(const t_vec3f v, float t);
-t_vec3f	vt_division(const t_vec3f v, float t);
+t_vec3f	vt_mul(const t_vec3f v, float t);
+t_vec3f	vt_div(const t_vec3f v, float t);
 t_vec3f	vv_add(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_sub(const t_vec3f u, const t_vec3f v);
-t_vec3f	vv_multiply(const t_vec3f v, const t_vec3f u);
+t_vec3f	vv_mul(const t_vec3f v, const t_vec3f u);
 
 /* HELPERS */
 t_vec3f random_v();

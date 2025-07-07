@@ -8,12 +8,15 @@ typedef struct s_camera
 {
 	t_vec3f	center;
 	t_vec3f	orientation;
+	t_vec3f lookat;
+	t_vec3f vup;
+	t_vec3f	u, v, w;
 	t_vec3f	viewport_u;
 	t_vec3f	viewport_v;
 	t_vec3f	pixel_delta_u;
 	t_vec3f	pixel_delta_v;
-	t_vec3f	viewport_upper_left;
-	t_vec3f	pixel00_loc;
+	t_vec3f	pixel00;
+	t_vec3f	pixel00_center;
 	float	focal_length;
 	float	fov;
 	float	viewport_height;
@@ -54,8 +57,8 @@ typedef struct s_ambient
 
 typedef struct s_ray
 {
-	t_vec3f	direction;
 	t_vec3f	origin;
+	t_vec3f	direction;
 }	t_ray;
 
 typedef struct s_hit_record
@@ -72,5 +75,6 @@ t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint16_t depth);
 void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
 float		hit_sphere(const t_sphere s, const t_ray r);
 void		init_camera(t_camera *cam, const t_image *img);
+void		init_image(t_image *img);
 
 #endif

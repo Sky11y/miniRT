@@ -36,12 +36,12 @@ float v_length_squared(const t_vec3f v)
 	return (v.x * v.x + v.y * v.y + v.z * v.z);
 }
 
-t_vec3f vt_multiply(const t_vec3f v, float t)
+t_vec3f vt_mul(const t_vec3f v, float t)
 {
 	return (t_vec3f){v.x * t, v.y * t, v.z * t};
 }
 
-t_vec3f vt_division(const t_vec3f v, float t)
+t_vec3f vt_div(const t_vec3f v, float t)
 {
 	if (fabs(t) < 1e-8)
 		return (t_vec3f){0, 0, 0};
@@ -58,14 +58,14 @@ t_vec3f vv_sub(const t_vec3f u, const t_vec3f v)
 	return (t_vec3f){u.x - v.x, u.y - v.y, u.z - v.z};
 }
 
-t_vec3f	vv_multiply(const t_vec3f v, const t_vec3f u)
+t_vec3f	vv_mul(const t_vec3f v, const t_vec3f u)
 {
 	return (t_vec3f){v.x * u.x, v.y * u.y, v.z * u.z};
 }
 
 t_vec3f at(t_ray r, float t)
 {
-	return (t_vec3f)vv_add(r.origin, vt_multiply(r.direction, t));
+	return (t_vec3f)vv_add(r.origin, vt_mul(r.direction, t));
 }
 
 t_vec3f random_v()
@@ -91,7 +91,7 @@ t_vec3f random_unit_vector()
 		p = random_v_range(-1, 1);
 		lensq = v_length_squared(p);
 		if (lensq > 1e-8 && lensq <= 1.0)
-			return (vt_division(p, sqrt(lensq)));
+			return (vt_div(p, sqrt(lensq)));
 	}
 }
 /*This will most likely not be needed and can be removed
@@ -131,7 +131,7 @@ t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
 {
 	t_vec3f tmp;
 
-	tmp = vt_multiply(n, 2 * dot(v, n));
+	tmp = vt_mul(n, 2 * dot(v, n));
 	return (vv_sub(v, tmp));
 }
 

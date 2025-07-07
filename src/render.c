@@ -21,33 +21,36 @@ void	write_color(const t_vec3f pixel_color)
 		b = sqrtf(b);
 	else
 		b = 0;
-	//fprintf(infolog, "\rfinal color before [%f %f %f]\n", r, g, b);
+	//fprintf(infolog, "final color before [%f %f %f]\n", r, g, b);
 	int	rbyte = (int)(256 * clamp(r, 0, 0.999));
 	int	gbyte = (int)(256 * clamp(g, 0, 0.999));
 	int	bbyte = (int)(256 * clamp(b, 0, 0.999));
 
-	//fprintf(infolog, "\rfinal color after [%d %d %d]\n", rbyte, gbyte, bbyte);
+	//fprintf(infolog, "final color after [%d %d %d]\n", rbyte, gbyte, bbyte);
 	printf("%d %d %d\n", rbyte, gbyte, bbyte);
 }
 
 t_ray get_ray(const t_camera cam, int *idx)
 {
-	t_ray r;
 	const t_vec3f	pdu = cam.pixel_delta_u;
 	const t_vec3f	pdv = cam.pixel_delta_v;
-	const t_vec3f	p00_loc = cam.pixel00_loc;
+	const t_vec3f	p00_loc = cam.pixel00_center;
 	const t_vec3f	origin = cam.center;
+	t_vec3f			direction;
 	
 	// Camera ray originates from cam center and directed at randomly sampled
 	// point around the pixel location x, y.
 	t_vec3f	offset = {random_float() - 0.5, random_float() - 0.5, 0};
-	t_vec3f	y_offset = vt_multiply(pdv, offset.y + (float)idx[0]);
-	t_vec3f	x_offset = vt_multiply(pdu, offset.x + (float)idx[1]);
+	t_vec3f	y_offset = vt_mul(pdv, offset.y + (float)idx[0]);
+	t_vec3f	x_offset = vt_mul(pdu, offset.x + (float)idx[1]);
 	t_vec3f	total_offset = vv_add(x_offset, y_offset);
 	t_vec3f	pixel_sample = vv_add(p00_loc, total_offset);
-	r.origin = origin;
-	r.direction = unit_vector(vv_sub(pixel_sample, r.origin));
-	return r;
+	direction = unit_vector(vv_sub(pixel_sample, origin));
+	if (idx[0] == 0 && idx[1] == 0) {
+		fprintf(infolog, "Ray origin: [%f, %f, %f]\n", origin.x, origin.y, origin.z);
+		fprintf(infolog, "Ray direction: [%f, %f, %f]\n", direction.x, direction.y, direction.z);
+	}
+	return ((t_ray){origin, direction});
 }
 
 t_vec3f get_pixel_color(const t_hittables  *htbl, const t_camera cam, int *idx)
@@ -77,7 +80,7 @@ void render(const t_hittables *htbl, const t_camera cam, const t_image img)
 	const float		pixel_samples_scale = 1.0f / cam.samples_per_pixel;
 	t_vec3f			final_pixel_color;
 	int				idx[2];
-	fprintf(infolog, "\rheight: %u\n", img_height);
+	fprintf(infolog, "height: %u\n", img_height);
 
 	idx[0] = 0;
 	while (idx[0] < img_height)
@@ -88,7 +91,7 @@ void render(const t_hittables *htbl, const t_camera cam, const t_image img)
 		{
 			final_pixel_color = get_pixel_color(htbl, cam, idx);
 			//fprintf(infolog, "\rfinal_pixel color [%f %f %f]\n", final_pixel_color.x, final_pixel_color.y, final_pixel_color.z);
-			write_color(vt_multiply(final_pixel_color, pixel_samples_scale));
+			write_color(vt_mul(final_pixel_color, pixel_samples_scale));
 			idx[1] += 1;
 		}
 		idx[0] += 1;
