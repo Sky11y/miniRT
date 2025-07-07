@@ -71,6 +71,6 @@ t_vec3f		at(t_ray r, float t);
 t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint16_t depth);
 void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
 float		hit_sphere(const t_sphere s, const t_ray r);
-t_camera	init_camera(const t_image *img);
+void		init_camera(t_camera *cam, const t_image *img);
 
 #endif

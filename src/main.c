@@ -125,7 +125,7 @@ int main()
 		return (1);
 	}
 	
-	cam = init_camera( &img );
+	init_camera(&cam, &img);
 	printf("P3\n%d %d\n255\n", img.image_width, img.image_height);
 	fprintf(infolog, "\rwidth: %d, height: %d\n", img.image_width, img.image_height);
 	
