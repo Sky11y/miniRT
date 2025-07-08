@@ -42,18 +42,14 @@ typedef struct s_hittables
 	uint8_t		plane_count;
 }	t_hittables;
 
-typedef struct s_light
+typedef struct s_lights
 {
-	t_vec3f	center;
-	t_vec4	color;
-	float	brightness;
-}	t_light;
-
-typedef struct s_ambient
-{
-	t_vec4	color;
-	float	brigthness;
-}	t_ambient;
+	t_vec3f	point_center;
+	t_vec3f	point_color;
+	t_vec3f	ambient_color;
+	float	point_brightness;
+	float	ambient_brightness;
+}	t_lights;
 
 typedef struct s_ray
 {
@@ -66,15 +62,14 @@ typedef struct s_hit_record
 	t_vec3f		normal;
 	t_vec3f		hitpoint;
 	t_vec3f		albedo;
-	t_type		shape_type;
-	t_material	mat;
 }	t_hit_record;
 
 t_vec3f		at(t_ray r, float t);
-t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint16_t depth);
-void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
+t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, const t_lights *light, const t_vec3f bg_color);
+void		render(const t_hittables *htbl, const t_camera *cam, const t_image *img, const t_lights *light);
 float		hit_sphere(const t_sphere s, const t_ray r);
 void		init_camera(t_camera *cam, const t_image *img);
 void		init_image(t_image *img);
+void		init_lights(t_lights *l);
 
 #endif

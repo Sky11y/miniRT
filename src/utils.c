@@ -68,51 +68,6 @@ t_vec3f at(t_ray r, float t)
 	return (t_vec3f)vv_add(r.origin, vt_mul(r.direction, t));
 }
 
-t_vec3f random_v()
-{
-	return (t_vec3f){random_float(), random_float(), random_float()};
-}
-
-
-t_vec3f random_v_range(float min, float max)
-{
-	return (t_vec3f){ random_range(min, max),
-					  random_range(min, max),
-					  random_range(min, max) };
-}
-
-t_vec3f random_unit_vector()
-{
-	t_vec3f p;
-	float lensq;
-
-	while (true)
-	{
-		p = random_v_range(-1, 1);
-		lensq = v_length_squared(p);
-		if (lensq > 1e-8 && lensq <= 1.0)
-			return (vt_div(p, sqrt(lensq)));
-	}
-}
-/*This will most likely not be needed and can be removed
-t_vec3f random_on_hemisphere(const t_vec3f normal)
-{
-	t_vec3f on_unit_sphere = random_unit_vector();
-	if (dot(on_unit_sphere, normal) > 0.0)
-		return (on_unit_sphere);
-	return (rotate_v(on_unit_sphere));
-}*/
-
-float random_float( void )
-{
-	return (float)rand() / ((float)RAND_MAX + 1.0f);
-}
-
-float random_range(float min, float max)
-{
-	return min + (max - min) * random_float();
-}
-
 float clamp(const float x, const float min, const float max)
 {
 	if (x < min)
@@ -125,28 +80,4 @@ float clamp(const float x, const float min, const float max)
 float degrees_to_rad(float degrees)
 {
 	return degrees * (M_PI / 180.0);
-}
-
-t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
-{
-	t_vec3f tmp;
-
-	tmp = vt_mul(n, 2 * dot(v, n));
-	return (vv_sub(v, tmp));
-}
-
-/*This function is not needed on the mandatory part
-t_vec3f	get_material(t_material mat)
-{
-	if (mat == diffuse)
-		return (t_vec3f){0.1, 0.2, 0.5};
-	else if (mat == metallic)
-		return (t_vec3f){0.8, 0.8, 0.8};
-	return (t_vec3f){0, 0, 0};
-}*/
-
-bool	near_zero(const t_vec3f v)
-{
-	const float eps = 1e-8;
-	return (fabsf(v.x) < eps && fabsf(v.y) < eps && fabsf(v.z) < eps);
 }

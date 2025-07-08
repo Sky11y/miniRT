@@ -32,19 +32,6 @@ typedef struct t_vec2
 	uint16_t	v;
 }	t_vec2;
 
-typedef enum e_material
-{
-	diffuse,
-	metallic,
-}	t_material;
-
-typedef enum e_type
-{
-	sphere,
-	cylinder,
-	plane,
-}	t_type;
-
 float	inverse_sqrt(float nbr);
 
 /* VECTOR CALCULATIONS */
@@ -62,16 +49,8 @@ t_vec3f	vv_sub(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_mul(const t_vec3f v, const t_vec3f u);
 
 /* HELPERS */
-t_vec3f random_v();
-t_vec3f random_v_range(float min, float max);
-t_vec3f	random_unit_vector(void);
-t_vec3f random_on_hemisphere(const t_vec3f normal);
-float	random_float( void );
-float	random_range(float min, float max);
 float	clamp(const float x, const float min, const float max);
 float	degrees_to_rad(float degrees);
-t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
-t_vec3f	get_material(t_material mat);
 bool	near_zero(const t_vec3f v);
 
 /* RENDER */

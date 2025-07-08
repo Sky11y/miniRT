@@ -8,8 +8,6 @@ typedef struct s_sphere
 	t_vec3f		center;
 	t_vec3f		color;
 	float		radius;
-	t_material	mat;
-	t_type		type;
 }	t_sphere;
 
 typedef struct s_cylinder
