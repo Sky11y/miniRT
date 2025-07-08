@@ -22,7 +22,7 @@ typedef struct s_plane
 {
 	t_vec3f	pos;
 	t_vec3f	orientation;
-	t_vec4	color;
+	t_vec3f	color;
 }	t_plane;
 
 #endif
