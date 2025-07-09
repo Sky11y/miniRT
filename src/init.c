@@ -34,7 +34,7 @@ void	init_camera(t_camera *cam, const t_image *img)
 	cam->viewport_width = 2.0f * half_w * cam->focal_length;
 	cam->viewport_height = cam->viewport_width / img->aspect_ratio;
 	cam->samples_per_pixel = 6;
-	cam->max_rays = 10;
+	cam->max_rays = 10; //remove from mandatory
 
 	//calculate the u, v, w unit basis vectors for the camera coordinate frame
 	cam->w = unit_vector(vv_sub(cam->center, cam->lookat));

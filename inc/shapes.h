@@ -13,8 +13,9 @@ typedef struct s_sphere
 typedef struct s_cylinder
 {
 	t_vec3f	center;
-	t_vec4	color;
-	float	radius;
+	t_vec3f	axis_v;
+	t_vec3f	color;
+	float	diameter;
 	float	height;
 }	t_cylinder;
 
