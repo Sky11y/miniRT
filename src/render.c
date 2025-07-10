@@ -1,69 +1,24 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-extern FILE	*infolog;
-
-void	write_color(const t_vec3f pixel_color)
+//offset[0] = x, offset[1] = y, offset[2] = total offset
+t_ray	get_ray(const t_camera *cam, int *idx)
 {
-	float	r = pixel_color.x;
-	float	g = pixel_color.y;
-	float	b = pixel_color.z;
-
-	if (r > 0)
-		r = sqrtf(r);
-	else
-		r = 0;
-	if (g > 0)
-		g = sqrtf(g);
-	else
-		g = 0;
-	if (b > 0)
-		b = sqrtf(b);
-	else
-		b = 0;
-	int	rbyte = (int)(256 * clamp(r, 0, 0.999));
-	int	gbyte = (int)(256 * clamp(g, 0, 0.999));
-	int	bbyte = (int)(256 * clamp(b, 0, 0.999));
-	printf("%d %d %d\n", rbyte, gbyte, bbyte);
-}
-
-t_ray get_ray(const t_camera *cam, int *idx)
-{
-	const t_vec3f	pdu = cam->pixel_delta_u;
-	const t_vec3f	pdv = cam->pixel_delta_v;
-	const t_vec3f	p00_loc = cam->pixel00_center;
-	const t_vec3f	origin = cam->center;
+	t_vec3f			offset[3];
+	t_vec3f			pixel_sample;
 	t_vec3f			direction;
-	
-	t_vec3f	y_offset = vt_mul(pdv, (float)idx[0]);
-	t_vec3f	x_offset = vt_mul(pdu, (float)idx[1]);
-	t_vec3f	total_offset = vv_add(x_offset, y_offset);
-	t_vec3f	pixel_sample = vv_add(p00_loc, total_offset);
-	direction = unit_vector(vv_sub(pixel_sample, origin));
-	return ((t_ray){origin, direction});
+
+	offset[0] = vt_mul(cam->pixel_delta_v, (float)idx[0]);
+	offset[1] = vt_mul(cam->pixel_delta_u, (float)idx[1]);
+	offset[2] = vv_add(offset[0], offset[1]);
+	pixel_sample = vv_add(cam->pixel00_center, offset[2]);
+	direction = unit_vector(vv_sub(pixel_sample, cam->center));
+	return ((t_ray){cam->center, direction});
 }
 
-t_vec3f get_pixel_color(const t_hittables  *htbl, const t_camera *cam, int *idx, const t_lights *light)
-{
-	const uint16_t	samples = cam->samples_per_pixel;
-	t_vec3f			pixel_color;
-	uint16_t		sample_no;
-	t_ray			r;
-	
-	pixel_color.x = 0;
-	pixel_color.y = 0;
-	pixel_color.z = 0;
-	sample_no = 0;
-	while (sample_no < samples)
-	{
-		r = get_ray(cam, idx);
-		pixel_color = vv_add(pixel_color, ray_color(r, htbl, light, vt_mul(light->ambient_color, light->ambient_brightness)));
-		sample_no += 1;
-	}
-	return (pixel_color);
-}
-
-void render(const t_hittables *htbl, const t_camera *cam, const t_image *img, const t_lights *light)
+//idx[0] = y, idx[1] = x
+void	render(const t_hittables *htbl, const t_camera *cam,
+		const t_image *img, const t_lights *light)
 {
 	const uint16_t	img_height = img->image_height;
 	const uint16_t	img_width = img->image_width;
@@ -75,7 +30,6 @@ void render(const t_hittables *htbl, const t_camera *cam, const t_image *img, co
 	while (idx[0] < img_height)
 	{
 		idx[1] = 0;
-		//fprintf(infolog, "\rScanlines remaining: %d\n", img_height - y);
 		while (idx[1] < img_width)
 		{
 			final_pixel_color = get_pixel_color(htbl, cam, idx, light);
@@ -84,5 +38,4 @@ void render(const t_hittables *htbl, const t_camera *cam, const t_image *img, co
 		}
 		idx[0] += 1;
 	}
-	fprintf(infolog, "\rDone.\t\t\t\n");
 }

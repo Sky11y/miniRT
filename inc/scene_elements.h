@@ -62,14 +62,34 @@ typedef struct s_hit_record
 	t_vec3f		normal;
 	t_vec3f		hitpoint;
 	t_vec3f		albedo;
+	uint8_t		index;
+	t_shape		type;
 }	t_hit_record;
 
-t_vec3f		at(t_ray r, float t);
-t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, const t_lights *light, const t_vec3f bg_color);
-void		render(const t_hittables *htbl, const t_camera *cam, const t_image *img, const t_lights *light);
-float		hit_sphere(const t_sphere s, const t_ray r);
-void		init_camera(t_camera *cam, const t_image *img);
-void		init_image(t_image *img);
-void		init_lights(t_lights *l);
+t_vec3f	at(t_ray r, float t);
+t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
+		const t_lights *light);
+t_vec3f	get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
+		int *idx, const t_lights *light);
+void	render(const t_hittables *htbl, const t_camera *cam,
+		const t_image *img, const t_lights *light);
+void	update_hr(const t_hittables *htbl, t_hit_record *hr,
+		const t_ray r, const float t);
+t_ray	get_ray(const t_camera *cam, int *idx);
+void	init_camera(t_camera *cam, const t_image *img);
+void	init_image(t_image *img);
+void	init_lights(t_lights *l);
+
+/* HIT OBJECTS */
+void	hit_all_cylinders(const t_ray r, float *closest_t,
+		const t_hittables *htbl, t_hit_record *hr);
+void	hit_all_cylinder_caps(const t_ray r, float *closest_t,
+		const t_hittables *htbl, t_hit_record *hr);
+void	hit_all_spheres(const t_ray r, float *closest_t,
+		const t_hittables *htbl, t_hit_record *hr);
+void	hit_all_planes(const t_ray r, float *closest_t,
+		const t_hittables *htbl, t_hit_record *hr);
+float	count_light(const t_vec3f normal, const t_vec3f hp,
+		const t_lights *light);
 
 #endif

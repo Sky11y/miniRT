@@ -14,8 +14,10 @@ typedef struct s_cylinder
 {
 	t_vec3f	center;
 	t_vec3f	axis_v;
+	t_vec3f	base;
 	t_vec3f	color;
-	float	diameter;
+	float	radius;
+	float	radius_squared;
 	float	height;
 }	t_cylinder;
 

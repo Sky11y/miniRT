@@ -1,14 +1,12 @@
 #include "scene_elements.h"
 
-extern FILE	*infolog;
-
 // Calculate the location of the upper left pixel
-static void get_pixel00_location(t_camera *cam)
+static void	get_pixel00_location(t_camera *cam)
 {
 	t_vec3f	tmp1;
 	t_vec3f	tmp2;
 	t_vec3f	tmp3;
-	t_vec3f pixel_delta_sum;
+	t_vec3f	pixel_delta_sum;
 
 	pixel_delta_sum = vv_add(cam->pixel_delta_u, cam->pixel_delta_v);
 	tmp1 = vt_mul(cam->w, cam->focal_length);
@@ -22,11 +20,9 @@ void	init_camera(t_camera *cam, const t_image *img)
 {
 	float	half_w;
 
-	//subject given values
 	cam->center = (t_vec3f){0.0, 0.0, 0.0};
 	cam->orientation = (t_vec3f){0, 0, 1.0};
 	cam->fov = 70;
-	//Other values
 	cam->lookat = vv_add(cam->center, cam->orientation);
 	cam->vup = (t_vec3f){0, 1.0f, 0};
 	cam->focal_length = v_length(vv_sub(cam->center, cam->lookat));
@@ -34,21 +30,13 @@ void	init_camera(t_camera *cam, const t_image *img)
 	cam->viewport_width = 2.0f * half_w * cam->focal_length;
 	cam->viewport_height = cam->viewport_width / img->aspect_ratio;
 	cam->samples_per_pixel = 6;
-	cam->max_rays = 10; //remove from mandatory
-
-	//calculate the u, v, w unit basis vectors for the camera coordinate frame
 	cam->w = unit_vector(vv_sub(cam->center, cam->lookat));
 	cam->u = unit_vector(cross(cam->vup, cam->w));
 	cam->v = unit_vector(cross(cam->w, cam->u));
-
-	// Calculate the vectors across the horizontal and down the vertical viewport edges
 	cam->viewport_u = vt_mul(cam->u, -cam->viewport_width);
 	cam->viewport_v = vt_mul(cam->v, -cam->viewport_height);
-
-	// Calculate the horizontal and vertical delta vectors from pixel to pixel
 	cam->pixel_delta_u = vt_div(cam->viewport_u, img->image_width);
 	cam->pixel_delta_v = vt_div(cam->viewport_v, img->image_height);
-
 	get_pixel00_location(cam);
 }
 

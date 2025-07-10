@@ -11,6 +11,14 @@
 # include <stdbool.h>	//true and false
 # include <time.h>		//REMOVE THIS!!!! only used for randomnes
 
+typedef enum e_shape
+{
+	sphere,
+	cylinder,
+	cylinder_cap,
+	plane,
+}	t_shape;
+
 typedef struct t_vec4
 {
 	uint8_t	r;
@@ -55,5 +63,7 @@ bool	near_zero(const t_vec3f v);
 
 /* RENDER */
 void	write_color(const t_vec3f pixel_color);
+
+
 
 #endif
