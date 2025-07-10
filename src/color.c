@@ -25,7 +25,7 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl, const t_lights *light)
 		light_intensity = count_light(hr.normal, hr.hitpoint, light);
 		return (vt_mul(hr.albedo, light_intensity));
 	}
-	return (light->ambient_color);
+	return (light->ambient_tint);
 }
 
 t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,

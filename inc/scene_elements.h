@@ -47,6 +47,7 @@ typedef struct s_lights
 	t_vec3f	point_center;
 	t_vec3f	point_color;
 	t_vec3f	ambient_color;
+	t_vec3f	ambient_tint;
 	float	point_brightness;
 	float	ambient_brightness;
 }	t_lights;

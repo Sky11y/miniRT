@@ -53,9 +53,10 @@ void	init_image(t_image *img)
 
 void	init_lights(t_lights *l)
 {
-	l->ambient_color = (t_vec3f){1, 1, 1};
-	l->ambient_brightness = 0.2f;
-	l->point_center = (t_vec3f){-2.0, 2.0, 0.5};
+	l->ambient_color = (t_vec3f){0.4, 0.4, 0.4};
+	l->ambient_brightness = 0.03f;
+	l->ambient_tint = vt_mul(l->ambient_color, l->ambient_brightness);
+	l->point_center = (t_vec3f){-3.0, 2.0, 0.5};
 	l->point_brightness = 0.7f;
 	l->point_color = (t_vec3f){1, 1, 1};
 }
