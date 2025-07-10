@@ -66,6 +66,17 @@ typedef struct s_hit_record
 	int8_t		face;
 }	t_hit_record;
 
+typedef struct s_master
+{
+	t_hittables	*hittables;
+	t_ambient	*ambient;
+	t_light		*light;
+	t_camera	*camera;
+	uint8_t		amb_count;
+	uint8_t		cam_count;
+	uint8_t		lig_count;
+}	t_master;
+
 t_vec3f	at(t_ray r, float t);
 void	render(const t_hittables *htbl, const t_camera *cam,
 		const t_image *img, const t_lights *light);
@@ -86,5 +97,14 @@ void	hit_all_planes(const t_ray r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr);
 float	count_light(const t_vec3f normal, const t_vec3f hp,
 		const t_lights *light, const t_hittables *htbl);
+
+t_vec3f		at(t_ray r, float t);
+t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth);
+void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
+float		hit_sphere(const t_sphere s, const t_ray r);
+t_camera	init_camera(const t_image *img);
+
+/* PARSING */
+int	parse_file(int argc, char *filename, t_master *master);
 
 #endif

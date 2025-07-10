@@ -64,6 +64,26 @@ int main(int argc, char **argv)
 {
 	t_image		img;
 	t_camera	cam;
+	t_master	master;
+	t_hittables	hittables;
+
+	ft_memset(&master, 0, sizeof(master));
+	ft_memset(&hittables, 0, sizeof(hittables));
+	master.hittables = &hittables;
+	if (parse_file(argc, argv[1], &master))
+		return (1);
+	if (master.amb_count == 0 || master.lig_count == 0)
+	{
+		ft_putstr_fd("error: must have 1 ambient and light\n", 2);
+		return (1);
+	}
+	return (0);
+}
+/*
+int main(int argc, char **argv)
+{
+	t_image img;
+	t_camera cam;
 	t_hittables hittables;
 	t_lights	light;
 
@@ -87,8 +107,37 @@ int main(int argc, char **argv)
 	printf("P3\n%d %d\n255\n", img.image_width, img.image_height);
 	fprintf(infolog, "width: %d, height: %d\n", img.image_width, img.image_height);
 	
-	
 	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
+	//hittable objects
+	//TESTING FOR HITTABLES
+	hittables.sphere_count = 5;
+	float left = -cam.viewport_width / 2;
+	float right = cam.viewport_width / 2;
+	float top = cam.viewport_height / 2;
+	float bottom = -cam.viewport_height / 2;
+	t_sphere sphere1 = { {0, 0, -1}, {0, 0, 0, 255}, 0.5};
+	t_sphere sphere2 = { {left, top, -1}, {0, 0, 0, 255}, 0.5};
+	t_sphere sphere3 = { {right, top, -1}, {0, 0, 0, 255}, 0.5};
+	t_sphere sphere4 = { {left, bottom, -1}, {0, 0, 0, 255}, 0.5};
+	t_sphere sphere5 = { {right, bottom, -1}, {0, 0, 0, 255}, 0.5};
+	//t_sphere sphere2 = { {0, -100.5, -1}, {0, 0, 0, 255}, 100};
+	//t_sphere sphere3 = { {0.5, 0.5, -0.8}, {0, 0, 0, 255}, 0.3};
+	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
+	spheres[0] = sphere1;
+	spheres[1] = sphere2;
+	spheres[2] = sphere3;
+	spheres[3] = sphere4;
+	spheres[4] = sphere5;*/
+	//t_cylinder	*cylinders;
+	//uint8_t		cylinder_count;
+	//RT IN A WEEKEND HITTABLES
+	/*
+	hittables.sphere_count = 2;
+	t_sphere sphere1 = {{0,0,-1},{0,0,0,255},0.5};
+	t_sphere sphere2 = {{0,-100.5,-1},{0,0,0,255},100};
+	t_sphere *spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
+	spheres[0] = sphere1;
+	spheres[1] = sphere2;
 
 	//TESTING THE SCHOOL SUBJECT EXAMPLE
 	hittables.cylinder_count = 2;

@@ -1,7 +1,8 @@
 #ifndef MINI_RT_H
 # define MINI_RT_H
 
-# include <unistd.h>	//open, close, read, write, exit
+# include <unistd.h>	//close, read, write, exit
+# include <fcntl.h>		//open
 # include <stdlib.h>	//malloc, free
 # include <stdio.h>		//printf, perror
 # include <string.h>	//strerror
@@ -64,8 +65,5 @@ bool	near_zero(const t_vec3f v);
 
 /* RENDER */
 void	write_color(const t_vec3f pixel_color);
-
-/* PARSING */
-int	parse_file(int argc, char *filename);
 
 #endif
