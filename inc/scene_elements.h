@@ -21,8 +21,6 @@ typedef struct s_camera
 	float	fov;
 	float	viewport_height;
 	float	viewport_width;
-	uint16_t	samples_per_pixel;
-	uint8_t	max_rays;
 }	t_camera;
 
 typedef struct s_image
@@ -68,15 +66,10 @@ typedef struct s_hit_record
 }	t_hit_record;
 
 t_vec3f	at(t_ray r, float t);
-t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
-		const t_lights *light);
-t_vec3f	get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
-		int *idx, const t_lights *light);
 void	render(const t_hittables *htbl, const t_camera *cam,
 		const t_image *img, const t_lights *light);
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray r, const float t);
-t_ray	get_ray(const t_camera *cam, int *idx);
 void	init_camera(t_camera *cam, const t_image *img);
 void	init_image(t_image *img);
 void	init_lights(t_lights *l);

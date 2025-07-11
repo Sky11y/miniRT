@@ -6,7 +6,7 @@ SRC_PATH	= src/
 OBJ_PATH	= obj/
 HEADERS		= -I./inc
 
-SRC			= main.c utils.c init.c render.c color.c update_hit.c\
+SRC			= main.c utils.c init.c render.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
 			  vector_math1.c vector_math2.c vector_math3.c
 OBJ			= $(SRC:%.c=$(OBJ_PATH)%.o)

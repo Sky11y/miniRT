@@ -61,9 +61,4 @@ float	clamp(const float x, const float min, const float max);
 float	degrees_to_rad(float degrees);
 bool	near_zero(const t_vec3f v);
 
-/* RENDER */
-void	write_color(const t_vec3f pixel_color);
-
-
-
 #endif
