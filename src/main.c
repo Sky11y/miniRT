@@ -62,8 +62,6 @@ t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
 
 int main(int argc, char **argv)
 {
-	t_image		img;
-	t_camera	cam;
 	t_master	master;
 	t_hittables	hittables;
 
@@ -72,11 +70,6 @@ int main(int argc, char **argv)
 	master.hittables = &hittables;
 	if (parse_file(argc, argv[1], &master))
 		return (1);
-	if (master.amb_count == 0 || master.lig_count == 0)
-	{
-		ft_putstr_fd("error: must have 1 ambient and light\n", 2);
-		return (1);
-	}
 	return (0);
 }
 /*
@@ -85,7 +78,6 @@ int main(int argc, char **argv)
 	t_image img;
 	t_camera cam;
 	t_hittables hittables;
-	t_lights	light;
 
 	if (parse_file(argc, argv[1]))
 		return (1);
@@ -94,6 +86,7 @@ int main(int argc, char **argv)
 	img.image_width = 400;
 	img.image_height = (int)(img.image_width / img.aspect_ratio);
 	img.image_height = (img.image_height < 1) ? 1 : img.image_height;
+
 	infolog = fopen("log.md", "w+");
 	if (infolog == NULL)
 	{
@@ -101,13 +94,10 @@ int main(int argc, char **argv)
 		return (1);
 	}
 	
-	init_lights(&light);
-	init_image(&img);
-	init_camera(&cam, &img);
+	cam = init_camera( &img );
 	printf("P3\n%d %d\n255\n", img.image_width, img.image_height);
-	fprintf(infolog, "width: %d, height: %d\n", img.image_width, img.image_height);
+	fprintf(infolog, "\rwidth: %d, height: %d\n", img.image_width, img.image_height);
 	
-	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
 	//hittable objects
 	//TESTING FOR HITTABLES
 	hittables.sphere_count = 5;
@@ -213,12 +203,11 @@ int main(int argc, char **argv)
 	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
 	spheres[0] = s1;
 	spheres[1] = s2;
-	/***** END OF TEST SETUP *****/
 
 	hittables.cylinders = cylinders;
 	hittables.planes = planes;
 	hittables.spheres = spheres;
-	render(&hittables, &cam, &img, &light);
+	render(&hittables, cam, img);
 	
 	fclose(infolog);
 	return (0);
