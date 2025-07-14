@@ -49,5 +49,5 @@ t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
 	t_vec3f	tmp;
 
 	tmp = vt_mul(n, 2 * dot(v, n));
-	return (vv_sub(tmp, v));
+	return (vv_sub(v, tmp));
 }

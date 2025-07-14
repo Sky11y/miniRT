@@ -9,7 +9,10 @@ static inline void	sphere_hr(const t_hittables *htbl, t_hit_record *hr)
 	hr->albedo = final_s.color;
 	hr->fuzz = final_s.fuzz;
 	hr->reflect = final_s.reflect;
-	hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
+	if (final_s.front_face == true)
+		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
+	else
+		hr->normal = unit_vector(vv_sub(final_s.center, hr->hitpoint));
 }
 
 static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)

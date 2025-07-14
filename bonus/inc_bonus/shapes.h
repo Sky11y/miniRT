@@ -12,6 +12,7 @@ typedef struct s_sphere
 	float	radius;
 	float	fuzz;
 	float	reflect;
+	bool	front_face;
 }	t_sphere;
 
 //size = t_vec3f * 4 + float * 3 = 4 * 12 + 3 * 4 = 60 bytes

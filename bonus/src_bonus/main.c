@@ -64,11 +64,11 @@ int main()
 	cylinders[1] = c2;
 	//
 	t_plane p1 = {
-		{0, 0, 10},		//position
+		{0, 0, 6},		//position
 		{0, 0.0, 1.0},	//orientation
 		{1, 0, 1},		//color
 		0.0f,			//fuzz
-		0.1,			//reflect
+		1.0,			//reflect
 	};
 	t_plane p2 = {
 		{0, -1, 0},
@@ -90,6 +90,7 @@ int main()
 		0.5f,			//radius
 		0.0,			//fuzz
 		0.2,			//reflect
+		true,			//front face
 	};
 	t_sphere s2 = {
 		{0, -1, 1},
@@ -97,6 +98,7 @@ int main()
 		0.90f,
 		0.0,
 		0.1,
+		true,
 	};
 	//t_sphere bg = {{0, 0, 12}, {1, 1, 0}, 7.0f};
 	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);

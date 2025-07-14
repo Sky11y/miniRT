@@ -6,12 +6,16 @@ extern FILE *infolog;
 
 t_ray	get_new_ray(const t_ray r, t_hit_record *hr)
 {
-	t_ray			new_ray;
 	const t_vec3f	normal = hr->normal;
+	t_ray			new_ray;
+	t_vec3f			reflected;
+	t_vec3f			scattered;
 
-	t_vec3f reflected = reflect(rotate_v(r.direction), normal);
-	reflected = vv_add(reflected, vt_mul(random_unit_vector(), hr->fuzz));
-	new_ray.direction = unit_vector(reflected);
+	reflected = reflect(r.direction, normal);
+	scattered = vv_add(reflected, vt_mul(random_unit_vector(), hr->fuzz));
+	if (dot(scattered, normal) < 1e-4)
+		scattered = normal;
+	new_ray.direction = unit_vector(scattered);
 	new_ray.origin = vv_add(hr->hitpoint, vt_mul(normal, 1e-4));
 	return (new_ray);
 }
