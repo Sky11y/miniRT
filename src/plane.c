@@ -31,11 +31,11 @@ void	hit_all_planes(const t_ray r, float *closest_t,
 	while (i < count)
 	{
 		current_t = hit_plane(*(p + i), r);
-		if (current_t > 0 && current_t < *closest_t)
+		if (current_t > 1e-4 && current_t < *closest_t)
 		{
 			*closest_t = current_t;
 			save = i;
-			if (*closest_t < 1e-4)
+			if (*closest_t < 1e-8)
 				break ;
 		}
 		i++;

@@ -12,10 +12,10 @@ static inline float	cy_hitpoints(float *arr)
 
 	sqrt_d = sqrtf(arr[3]);
 	near = (-arr[1] - sqrt_d) / (2 * arr[0]);
-	if (near > 1e-8)
+	if (near > 1e-4)
 		return (near);
 	far = (-arr[1] + sqrt_d) / (2 * arr[0]);
-	if (far > 1e-8)
+	if (far > 1e-4)
 		return (far);
 	return (-1.0f);
 }
@@ -68,11 +68,11 @@ void	hit_all_cylinders(const t_ray r, float *closest_t,
 	while (i < count)
 	{
 		current_t = hit_cylinder(c + i, r);
-		if (current_t > 0 && current_t < *closest_t)
+		if (current_t > 1e-4 && current_t < *closest_t)
 		{
 			*closest_t = current_t;
 			save = i;
-			if (*closest_t < 1e-4)
+			if (*closest_t < 1e-8)
 				break ;
 		}
 		i++;
