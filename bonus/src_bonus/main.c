@@ -29,18 +29,20 @@ int main()
 
 	//TESTING THE SCHOOL SUBJECT EXAMPLE
 	hittables.cylinder_count = 2;
-	hittables.sphere_count = 2;
+	hittables.sphere_count = 1;
 	hittables.plane_count = 2;
 
 	//t_cylinder c1 = {{50.0, 0.0, 20.6}, {0, 0, 1.0}, {10, 0, 255 }, 14.2, 21.42};
 	t_cylinder c1 = {
-		{1.3, 0.0, 3},
-		{0.2, 1.0, -0.6},
-		{0, 0, 0},
-		{0.0, 0.0, 1},
-		0.5f,
-		0.5f * 0.5f,
-		0.2f,
+		{1.3, 0.0, 3},		//position
+		{0.2, 1.0, -0.6},	//orientation
+		{0, 0, 0},			//base point -> initialised to zero and calculated later
+		{0.0, 0.0, 1},		//color
+		0.5f,				//radius 
+		0.5f * 0.5f,		//radius squared
+		0.2f,				//height
+		0.3f,				//fuzz (higher == shinier)
+		0.5f,				//reflect (higher == more reflective)
 	};
 	t_cylinder c2 = {
 		{-1.2, 0.0, 3},
@@ -50,6 +52,8 @@ int main()
 		0.5f,
 		0.5f * 0.5f,
 		0.5f,
+		0.3f,
+		0.4f,
 	};
 	c1.axis_v = unit_vector(c1.axis_v);
 	c1.base  = vv_sub(c1.center, vt_mul(c1.axis_v, c1.height / 2));
@@ -60,14 +64,18 @@ int main()
 	cylinders[1] = c2;
 	//
 	t_plane p1 = {
-		{0, 1, 0},
-		{0.0, 1.0, 0},
-		{1, 0, 1},
+		{0, 0, 10},		//position
+		{0, 0.0, 1.0},	//orientation
+		{1, 0, 1},		//color
+		0.0f,			//fuzz
+		0.1,			//reflect
 	};
 	t_plane p2 = {
 		{0, -1, 0},
 		{0.0, 1.0, 0},
 		{0.6, 0.6, 0.85},
+		0.0,
+		0.1,
 	};
 	p1.orientation = unit_vector(p1.orientation);
 	p2.orientation = unit_vector(p2.orientation);
@@ -77,14 +85,18 @@ int main()
 
 	//t_sphere s1 = {{0, 0, 20}, {255, 0, 0}, 20.0f};
 	t_sphere s1 = {
-		{0.0, 0.0, 3},
-		{1, 1, 0},
-		0.5f,
+		{0.0, 0.3, 3},	//position
+		{1, 1, 0},		//color
+		0.5f,			//radius
+		0.0,			//fuzz
+		0.2,			//reflect
 	};
 	t_sphere s2 = {
 		{0, -1, 1},
 		{0, 1, 0},
 		0.90f,
+		0.0,
+		0.1,
 	};
 	//t_sphere bg = {{0, 0, 12}, {1, 1, 0}, 7.0f};
 	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);

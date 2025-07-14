@@ -3,34 +3,20 @@
 #include "shapes.h"
 
 extern FILE *infolog;
-//TODO: do not count new ray if depth == 1!!!
-//
-//
+
 t_ray	get_new_ray(const t_ray r, t_hit_record *hr)
 {
 	t_ray			new_ray;
 	const t_vec3f	normal = hr->normal;
 
-	if (hr->type == sphere || hr->type == cylinder)
-	{
-		float fuzz = 0.0;
-		t_vec3f reflected = reflect(r.direction, normal);
-		reflected = vv_add(reflected, vt_mul(random_unit_vector(), fuzz));
-		new_ray.direction = unit_vector(reflected);
-	}
-	else
-	{
-		new_ray.direction = unit_vector(vv_add(normal, random_unit_vector()));
-		if (near_zero(new_ray.direction))
-			new_ray.direction = normal;
-	}
+	t_vec3f reflected = reflect(rotate_v(r.direction), normal);
+	reflected = vv_add(reflected, vt_mul(random_unit_vector(), hr->fuzz));
+	new_ray.direction = unit_vector(reflected);
 	new_ray.origin = vv_add(hr->hitpoint, vt_mul(normal, 1e-4));
-	if (dot(new_ray.direction, normal) > 0)
-		hr->normal = rotate_v(normal);
 	return (new_ray);
 }
 
-static t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
+t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 		const t_lights *light, uint8_t depth)
 {
 	t_hit_record	hr;
@@ -50,18 +36,15 @@ static t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 	}
 	if (htbl->plane_count)
 		hit_all_planes(r, &closest_t, htbl, &hr);
-	if (closest_t != INFINITY)
-	{
-		update_hr(htbl, &hr, r, closest_t);
-		light_intensity = count_light(hr.normal, hr.hitpoint, light);
-		if (depth > 1)
-		{
-			new_ray = get_new_ray(r, &hr);
-			color = ray_color(new_ray, htbl, light, depth - 1);
-		}
-		return (vv_add(vv_mul(color, hr.albedo), vt_mul(hr.albedo, light_intensity)));
-	}
-	return (light->ambient_tint);
+	if (closest_t == INFINITY)
+		return (light->ambient_tint);
+	update_hr(htbl, &hr, r, closest_t);
+	light_intensity = count_light(hr.normal, hr.hitpoint, light, htbl);
+	if (depth <= 0 || hr.reflect == 0)
+		return (vt_mul(hr.albedo, light_intensity));
+	new_ray = get_new_ray(r, &hr);
+	color = ray_color(new_ray, htbl, light, depth - 1);
+	return (vv_add(vt_mul(hr.albedo, light_intensity), vt_mul(color, hr.reflect)));
 }
 
 t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
@@ -70,9 +53,9 @@ t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
 	const uint16_t	samples = cam->samples_per_pixel;
 	const uint8_t	depth = cam->max_rays;
 	t_vec3f			pixel_color;
+	t_vec3f			ret_color;
 	uint16_t		sample_no;
 	t_ray			r;
-	static int		counter = 0; //remove me
 
 	pixel_color.x = 0;
 	pixel_color.y = 0;
@@ -81,12 +64,8 @@ t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
 	while (sample_no < samples)
 	{
 		r = get_ray(cam, idx);
-		pixel_color = vv_add(pixel_color, ray_color(r, htbl, light, depth));
-		if (counter < 5) {
-			fprintf(infolog, "counter: pixel_color = [%f %f %f]\n",
-					pixel_color.x, pixel_color.y, pixel_color.z);
-			counter++;
-		}
+		ret_color = ray_color(r, htbl, light, depth);
+		pixel_color = vv_add(pixel_color, ret_color);
 		sample_no += 1;
 	}
 	return (pixel_color);

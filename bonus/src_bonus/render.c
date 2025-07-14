@@ -38,7 +38,6 @@ void	render(const t_hittables *htbl, const t_camera *cam,
 		{
 			final_pixel_color = get_pixel_color(htbl, cam, idx, light);
 			write_color(vt_mul(final_pixel_color, pixel_samples_scale));
-			//write_color(final_pixel_color);
 			idx[1] += 1;
 		}
 		idx[0] += 1;
@@ -50,5 +49,5 @@ t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
 	t_vec3f	tmp;
 
 	tmp = vt_mul(n, 2 * dot(v, n));
-	return (vv_sub(v, tmp));
+	return (vv_sub(tmp, v));
 }

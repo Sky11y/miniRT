@@ -30,7 +30,7 @@ void	init_camera(t_camera *cam, const t_image *img)
 	cam->viewport_width = 2.0f * half_w * cam->focal_length;
 	cam->viewport_height = cam->viewport_width / img->aspect_ratio;
 	cam->samples_per_pixel = 5;
-	cam->max_rays = 5;
+	cam->max_rays = 3;
 	cam->w = unit_vector(vv_sub(cam->center, cam->lookat));
 	cam->u = unit_vector(cross(cam->vup, cam->w));
 	cam->v = unit_vector(cross(cam->w, cam->u));
@@ -46,7 +46,7 @@ void	init_image(t_image *img)
 	img->aspect_ratio = 16.0 / 9.0;
 	if (img->aspect_ratio == 0)
 		img->aspect_ratio = 1.0f;
-	img->image_width = 600;
+	img->image_width = 1200;
 	img->image_height = (int)(img->image_width / img->aspect_ratio);
 	if (img->image_height < 1)
 		img->image_height = 1;
@@ -57,7 +57,7 @@ void	init_lights(t_lights *l)
 	l->ambient_color = (t_vec3f){1.0f, 0.95f, 0.8f};
 	l->ambient_brightness = 0.2f;
 	l->ambient_tint = vt_mul(l->ambient_color, l->ambient_brightness);
-	l->point_center = (t_vec3f){-3.0, 2.0, 0.5};
+	l->point_center = (t_vec3f){-2.0, 2.0, 0.5};
 	l->point_brightness = 0.7f;
 	l->point_color = (t_vec3f){1, 1, 1};
 }
