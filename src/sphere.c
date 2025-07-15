@@ -16,7 +16,7 @@ static inline float	hit_sphere(const t_sphere s, const t_ray r, int *face)
 	arr[1] = dot(r.direction, oc);
 	arr[2] = v_length_squared(oc) - s.radius * s.radius;
 	arr[3] = arr[1] * arr[1] - arr[0] * arr[2];
-	if (arr[3] < 0.0)
+	if (arr[3] < 1e-6)
 		return (-1.0f);
 	sqrt_d = sqrtf(arr[3]);
 	t[0] = (arr[1] - sqrt_d) / arr[0];

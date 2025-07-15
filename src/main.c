@@ -51,13 +51,25 @@ int main()
 		0.5f * 0.5f,		
 		0.5f,				
 	};
+	t_cylinder c3 = {
+		{0.0, 0.0, 1},		
+		{0.0, 0.0, 1.0},	
+		{0, 0, 0},			
+		{1.0, 0, 0},		
+		0.5f,				
+		0.5f * 0.5f,		
+		0.5f,				
+	};
 	c1.axis_v = unit_vector(c1.axis_v);
 	c1.base  = vv_sub(c1.center, vt_mul(c1.axis_v, c1.height / 2));
 	c2.axis_v = unit_vector(c2.axis_v);
 	c2.base  = vv_sub(c2.center, vt_mul(c2.axis_v, c2.height / 2));
+	c3.axis_v = unit_vector(c3.axis_v);
+	c3.base  = vv_sub(c3.center, vt_mul(c3.axis_v, c3.height / 2));
 	t_cylinder *cylinders = malloc(sizeof(t_cylinder) * hittables.cylinder_count);	
 	cylinders[0] = c1;
 	cylinders[1] = c2;
+	//cylinders[2] = c3;
 	//
 	t_plane p1 = {
 		{0, 0, 6},			//position
@@ -86,11 +98,9 @@ int main()
 		{0, 1, 0},
 		0.8f,
 	};
-	//t_sphere bg = {{0, 0, 12}, {1, 1, 0}, 7.0f};
 	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
 	spheres[0] = s1;
 	spheres[1] = s2;
-	//spheres[2] = bg;
 	/***** END OF TEST SETUP *****/
 
 	hittables.cylinders = cylinders;

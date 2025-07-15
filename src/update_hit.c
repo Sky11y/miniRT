@@ -10,22 +10,25 @@ static inline void	sphere_hr(const t_hittables *htbl, t_hit_record *hr)
 	if (hr->face == 1)
 		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
 	else
-		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
+		hr->normal = unit_vector(vv_sub(final_s.center, hr->hitpoint));
 }
 
 static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)
 {
 	t_cylinder	*final_c;
 	t_vec3f		v;
-	t_vec3f		projected;
+	t_vec3f		foot;
 	float		proj;
 
 	final_c = htbl->cylinders + hr->index;
 	hr->albedo = final_c->color;
 	v = vv_sub(hr->hitpoint, final_c->base);
 	proj = dot(v, final_c->axis_v);
-	projected = vt_mul(final_c->axis_v, proj);
-	hr->normal = unit_vector(vv_sub(v, projected));
+	foot = vv_add(final_c->base, vt_mul(final_c->axis_v, proj));
+	if (hr->face == 1)
+		hr->normal = unit_vector(vv_sub(hr->hitpoint, foot));
+	else
+		hr->normal = unit_vector(vv_sub(foot, hr->hitpoint));
 }
 
 static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr,
