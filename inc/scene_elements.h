@@ -61,8 +61,9 @@ typedef struct s_hit_record
 	t_vec3f		normal;
 	t_vec3f		hitpoint;
 	t_vec3f		albedo;
-	uint8_t		index;
 	t_shape		type;
+	uint8_t		index;
+	int8_t		face;
 }	t_hit_record;
 
 t_vec3f	at(t_ray r, float t);
@@ -84,6 +85,6 @@ void	hit_all_spheres(const t_ray r, float *closest_t,
 void	hit_all_planes(const t_ray r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr);
 float	count_light(const t_vec3f normal, const t_vec3f hp,
-		const t_lights *light);
+		const t_lights *light, const t_hittables *htbl);
 
 #endif

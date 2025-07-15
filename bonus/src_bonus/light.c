@@ -34,16 +34,16 @@ inline static bool	hit_anything(const t_ray r, const t_hittables *htbl)
 float	count_light(const t_vec3f normal, const t_vec3f hp,
 		const t_lights *light, const t_hittables *htbl)
 {
-	float			i;
+	float			intensity;
 	t_vec3f			light_dir;
 	float			diffuse;
 
-	i = light->ambient_brightness;
+	intensity = light->ambient_brightness;
 	light_dir = unit_vector(vv_sub(light->point_center, hp));
 	if (hit_anything((t_ray){hp, light_dir}, htbl))
-		return (i);
+		return (intensity);
 	diffuse = dot(normal, light_dir);
 	if (diffuse > 0.0f)
-		i += light->point_brightness * diffuse;
-	return (i);
+		intensity += light->point_brightness * diffuse;
+	return (intensity);
 }

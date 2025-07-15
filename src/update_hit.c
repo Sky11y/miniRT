@@ -7,7 +7,10 @@ static inline void	sphere_hr(const t_hittables *htbl, t_hit_record *hr)
 
 	final_s = *(htbl->spheres + hr->index);
 	hr->albedo = final_s.color;
-	hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
+	if (hr->face == 1)
+		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
+	else
+		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
 }
 
 static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)
@@ -25,22 +28,28 @@ static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)
 	hr->normal = unit_vector(vv_sub(v, projected));
 }
 
-static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr)
+static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr,
+		const t_ray r)
 {
 	t_cylinder	*final_c;
 
 	final_c = htbl->cylinders + hr->index;
 	hr->albedo = final_c->color;
 	hr->normal = final_c->axis_v;
+	if (dot(r.direction, hr->normal) > 0.0f)
+		hr->normal = rotate_v(hr->normal);
 }
 
-static inline void	plane_hr(const t_hittables *htbl, t_hit_record *hr)
+static inline void	plane_hr(const t_hittables *htbl, t_hit_record *hr,
+		const t_ray r)
 {
 	t_plane		final_p;
 
 	final_p = *(htbl->planes + hr->index);
 	hr->albedo = final_p.color;
 	hr->normal = unit_vector(final_p.orientation);
+	if (dot(r.direction, hr->normal) > 0.0f)
+		hr->normal = rotate_v(hr->normal);
 }
 
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
@@ -52,7 +61,8 @@ void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 	else if (hr->type == cylinder)
 		cylinder_hr(htbl, hr);
 	else if (hr->type == cylinder_cap)
-		cylinder_cap_hr(htbl, hr);
+		cylinder_cap_hr(htbl, hr, r);
 	else if (hr->type == plane)
-		plane_hr(htbl, hr);
+		plane_hr(htbl, hr, r);
+	hr->hitpoint = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4));
 }
