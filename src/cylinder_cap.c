@@ -31,9 +31,9 @@ static inline float	hit_cylinder_caps(const t_cylinder c, const t_ray r)
 		return (-1.0);
 	t[0] = hit_cap(top, d, c, r);
 	t[1] = hit_cap(bottom, d, c, r);
-	if (t[0] > 0 && (t[1] < 0 || t[0] < t[1]))
+	if (t[0] > 1e-4 && (t[1] < 0 || t[0] < t[1]))
 		return (t[0]);
-	if (t[1] > 0)
+	if (t[1] > 1e-4)
 		return (t[1]);
 	return (-1.0f);
 }
@@ -57,8 +57,6 @@ void	hit_all_cylinder_caps(const t_ray r, float *closest_t,
 		{
 			*closest_t = current_t;
 			save = i;
-			if (*closest_t < 1e-8)
-				break ;
 		}
 		i++;
 	}

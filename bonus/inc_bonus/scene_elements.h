@@ -63,10 +63,12 @@ typedef struct s_hit_record
 	t_vec3f	normal;
 	t_vec3f	hitpoint;
 	t_vec3f	albedo;
+	t_mat_type	mat;
 	t_shape	type;
 	float	fuzz;
 	float	reflect;
 	uint8_t	index;
+	int8_t	face;
 }	t_hit_record;
 
 t_vec3f	at(t_ray r, float t);
@@ -79,6 +81,8 @@ void	render(const t_hittables *htbl, const t_camera *cam,
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray r, const float t);
 t_ray	get_ray(const t_camera *cam, int *idx);
+t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
+		const t_hit_record *hr, t_scatter_type *type);
 void	init_camera(t_camera *cam, const t_image *img);
 void	init_image(t_image *img);
 void	init_lights(t_lights *l);
@@ -95,5 +99,7 @@ void	hit_all_planes(const t_ray r, float *closest_t,
 float	count_light(const t_vec3f normal, const t_vec3f hp,
 		const t_lights *light, const t_hittables *htbl);
 t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
+t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
+		const float cos_theta);
 
 #endif

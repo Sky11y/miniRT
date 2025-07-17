@@ -7,9 +7,8 @@ static inline void	sphere_hr(const t_hittables *htbl, t_hit_record *hr)
 
 	final_s = *(htbl->spheres + hr->index);
 	hr->albedo = final_s.color;
-	hr->fuzz = final_s.fuzz;
-	hr->reflect = final_s.reflect;
-	if (final_s.front_face == true)
+	hr->mat = final_s.mat;
+	if (hr->face == 1)
 		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
 	else
 		hr->normal = unit_vector(vv_sub(final_s.center, hr->hitpoint));
@@ -19,17 +18,21 @@ static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)
 {
 	t_cylinder	*final_c;
 	t_vec3f		v;
-	t_vec3f		projected;
+	t_vec3f		foot;
 	float		proj;
 
 	final_c = htbl->cylinders + hr->index;
 	hr->albedo = final_c->color;
+	hr->mat = final_c->mat;
 	hr->fuzz = final_c->fuzz;
 	hr->reflect = final_c->reflect;
 	v = vv_sub(hr->hitpoint, final_c->base);
 	proj = dot(v, final_c->axis_v);
-	projected = vt_mul(final_c->axis_v, proj);
-	hr->normal = unit_vector(vv_sub(v, projected));
+	foot = vv_add(final_c->base, vt_mul(final_c->axis_v, proj));
+	if (hr->face == 1)
+		hr->normal = unit_vector(vv_sub(hr->hitpoint, foot));
+	else
+		hr->normal = unit_vector(vv_sub(foot, hr->hitpoint));
 }
 
 static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr,
@@ -39,6 +42,7 @@ static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr,
 
 	final_c = htbl->cylinders + hr->index;
 	hr->albedo = final_c->color;
+	hr->mat = final_c->mat;
 	hr->fuzz = final_c->fuzz;
 	hr->reflect = final_c->reflect;
 	hr->normal = unit_vector(final_c->axis_v);
@@ -53,6 +57,7 @@ static inline void	plane_hr(const t_hittables *htbl, t_hit_record *hr,
 
 	final_p = *(htbl->planes + hr->index);
 	hr->albedo = final_p.color;
+	hr->mat = final_p.mat;
 	hr->fuzz = final_p.fuzz;
 	hr->reflect = final_p.reflect;
 	hr->normal = unit_vector(final_p.orientation);
@@ -65,11 +70,16 @@ void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 {
 	hr->hitpoint = at(r, t);
 	if (hr->type == sphere)
+	{
+		hr->fuzz = 0.1;
+		hr->reflect = 0.1;
 		sphere_hr(htbl, hr);
+	}
 	else if (hr->type == cylinder)
 		cylinder_hr(htbl, hr);
 	else if (hr->type == cylinder_cap)
 		cylinder_cap_hr(htbl, hr, r);
 	else if (hr->type == plane)
 		plane_hr(htbl, hr, r);
+	hr->hitpoint = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4));
 }

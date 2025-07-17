@@ -7,14 +7,22 @@ extern FILE *infolog;
 t_ray	get_new_ray(const t_ray r, t_hit_record *hr)
 {
 	const t_vec3f	normal = hr->normal;
+	t_scatter_type	scatter_type;
 	t_ray			new_ray;
-	t_vec3f			reflected;
+	t_vec3f			new_dir;
 	t_vec3f			scattered;
+	float scattered_normal;
 
-	reflected = reflect(r.direction, normal);
-	scattered = vv_add(reflected, vt_mul(random_unit_vector(), hr->fuzz));
-	if (dot(scattered, normal) < 1e-4)
-		scattered = normal;
+	new_dir = new_ray_dir(r.direction, normal, hr, &scatter_type);
+	if (hr->mat == GLASS) {
+		scattered = vv_add(new_dir, vt_mul(random_unit_vector(), 0));
+	} else {
+		scattered = vv_add(new_dir, vt_mul(random_unit_vector(), hr->fuzz));
+	}
+	scattered_normal = dot(scattered, normal);
+	if ((scatter_type == REFLECT && scattered_normal < 1e-4) ||
+		(scatter_type == REFRACT && scattered_normal > 1e-4))
+		scattered = new_dir;
 	new_ray.direction = unit_vector(scattered);
 	new_ray.origin = vv_add(hr->hitpoint, vt_mul(normal, 1e-4));
 	return (new_ray);
@@ -44,10 +52,13 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 		return (light->ambient_tint);
 	update_hr(htbl, &hr, r, closest_t);
 	light_intensity = count_light(hr.normal, hr.hitpoint, light, htbl);
-	if (depth <= 0 || hr.reflect == 0)
+	if (depth <= 0 || hr.mat == DIFFUSE)
 		return (vt_mul(hr.albedo, light_intensity));
 	new_ray = get_new_ray(r, &hr);
 	color = ray_color(new_ray, htbl, light, depth - 1);
+	if (hr.mat == GLASS)
+		return (vv_add(vt_mul(hr.albedo, light_intensity),
+						vt_mul(color, 0.05)));
 	return (vv_add(vt_mul(hr.albedo, light_intensity), vt_mul(color, hr.reflect)));
 }
 

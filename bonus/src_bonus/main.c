@@ -21,6 +21,7 @@ int main()
 	init_lights(&light);
 	init_image(&img);
 	init_camera(&cam, &img);
+
 	printf("P3\n%d %d\n255\n", img.image_width, img.image_height);
 	fprintf(infolog, "width: %d, height: %d\n", img.image_width, img.image_height);
 	
@@ -43,6 +44,7 @@ int main()
 		0.2f,				//height
 		0.3f,				//fuzz (higher == shinier)
 		0.5f,				//reflect (higher == more reflective)
+		METAL,
 	};
 	t_cylinder c2 = {
 		{-1.2, 0.0, 3},
@@ -54,6 +56,7 @@ int main()
 		0.5f,
 		0.3f,
 		0.4f,
+		METAL,
 	};
 	c1.axis_v = unit_vector(c1.axis_v);
 	c1.base  = vv_sub(c1.center, vt_mul(c1.axis_v, c1.height / 2));
@@ -68,7 +71,8 @@ int main()
 		{0, 0.0, 1.0},	//orientation
 		{1, 0, 1},		//color
 		0.0f,			//fuzz
-		1.0,			//reflect
+		0.2,			//reflect
+		METAL,
 	};
 	t_plane p2 = {
 		{0, -1, 0},
@@ -76,6 +80,7 @@ int main()
 		{0.6, 0.6, 0.85},
 		0.0,
 		0.1,
+		METAL,
 	};
 	p1.orientation = unit_vector(p1.orientation);
 	p2.orientation = unit_vector(p2.orientation);
@@ -86,19 +91,15 @@ int main()
 	//t_sphere s1 = {{0, 0, 20}, {255, 0, 0}, 20.0f};
 	t_sphere s1 = {
 		{0.0, 0.3, 3},	//position
-		{1, 1, 0},		//color
+		{0.9, 0.95, 1},	//color
 		0.5f,			//radius
-		0.0,			//fuzz
-		0.2,			//reflect
-		true,			//front face
+		GLASS,
 	};
 	t_sphere s2 = {
 		{0, -1, 1},
 		{0, 1, 0},
 		0.90f,
-		0.0,
-		0.1,
-		true,
+		METAL
 	};
 	//t_sphere bg = {{0, 0, 12}, {1, 1, 0}, 7.0f};
 	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);

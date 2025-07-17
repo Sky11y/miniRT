@@ -11,9 +11,9 @@ static inline float	hit_plane(const t_plane p, const t_ray r)
 	if (fabs(ray_plane_dot) < 1e-8)
 		return (-1);
 	t = dot(oc, p.orientation) / ray_plane_dot;
-	if (t > 0)
+	if (t > 1e-4)
 		return (t);
-	return (-1);
+	return (-1.0);
 }
 
 void	hit_all_planes(const t_ray r, float *closest_t,
@@ -35,8 +35,6 @@ void	hit_all_planes(const t_ray r, float *closest_t,
 		{
 			*closest_t = current_t;
 			save = i;
-			if (*closest_t < 1e-8)
-				break ;
 		}
 		i++;
 	}

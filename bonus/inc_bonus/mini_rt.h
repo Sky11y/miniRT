@@ -19,6 +19,25 @@ typedef enum e_shape
 	plane,
 }	t_shape;
 
+typedef enum e_scatter_type
+{
+	REFLECT,
+	REFRACT,
+}	t_scatter_type;
+
+typedef enum e_mat_type {
+	DIFFUSE,
+	GLASS,
+	METAL,
+
+}	t_mat_type;
+
+typedef struct s_material {
+	float	reflect;
+	float	fuzz;
+	float	ior;
+}	t_material;
+
 typedef struct t_vec4
 {
 	uint8_t	r;

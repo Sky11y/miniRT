@@ -51,3 +51,56 @@ t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
 	tmp = vt_mul(n, 2 * dot(v, n));
 	return (vv_sub(v, tmp));
 }
+
+t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
+		const float cos_theta)
+{
+	t_vec3f	tmp1;
+	t_vec3f	tmp2;
+	float	k;
+
+	k = 1.0 - eta * eta * (1.0 - cos_theta * cos_theta);
+	if (k < 0.0)
+		return ((t_vec3f){0, 0, 0});
+	tmp1 = vt_mul(v, eta);
+	tmp2 = vt_mul(n, eta * cos_theta - sqrtf(k));
+	return (vv_add(tmp1, tmp2));
+}
+
+inline static bool	schlick_prob(const float cos_theta, const float eta)
+{
+	float	r0;
+	float	prob;
+
+	r0 = (1.0 - eta) / (1.0 + eta);
+	r0 = r0 * r0;
+	prob = r0 + (1.0 - r0) * powf(1.0 - cos_theta, 5);
+	return (prob > random_range(0.0, 1.0));
+}
+
+t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
+		const t_hit_record *hr, t_scatter_type *type)
+{
+	float	cos_theta; 
+	float	sin_theta;
+	float	eta;
+
+	if (hr->mat != GLASS)
+	{
+		*type = REFLECT;
+		return (reflect(v, n));
+	}
+	if (hr->face == 1)
+		eta = 1.0 / 1.5;
+	else
+		eta = 1.5 / 1.0;
+	cos_theta = fminf(-dot(v, n), 1.0);
+	sin_theta = sqrtf(1.0 - cos_theta * cos_theta);
+	if (eta * sin_theta > 1.0 || schlick_prob(clamp(cos_theta, 0.0, 1.0), eta))
+	{
+		*type = REFLECT;
+		return (reflect(v, n));
+	}
+	*type = REFRACT;
+	return (refract(v, n, eta, cos_theta));
+}
