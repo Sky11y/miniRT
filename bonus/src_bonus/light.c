@@ -11,22 +11,22 @@ inline static bool	hit_anything(const t_ray r, const t_hittables *htbl,
 	if (htbl->sphere_count)
 	{
 		hit_all_spheres(r, &closest_t, htbl, &hr);
-		if (closest_t < max_t)
+		if (closest_t < max_t && ((htbl->spheres + hr.index)->mat != GLASS))
 			return (true);
 	}
 	if (htbl->cylinder_count)
 	{
 		hit_all_cylinders(r, &closest_t, htbl, &hr);
-		if (closest_t < max_t)
+		if (closest_t < max_t && ((htbl->cylinders + hr.index)->mat != GLASS))
 			return (true);
 		hit_all_cylinder_caps(r, &closest_t, htbl, &hr);
-		if (closest_t < max_t)
+		if (closest_t < max_t && ((htbl->cylinders + hr.index)->mat != GLASS))
 			return (true);
 	}
 	if (htbl->plane_count)
 	{
 		hit_all_planes(r, &closest_t, htbl, &hr);
-		if (closest_t < max_t)
+		if (closest_t < max_t && ((htbl->planes + hr.index)->mat != GLASS))
 			return (true);
 	}
 	return (false);

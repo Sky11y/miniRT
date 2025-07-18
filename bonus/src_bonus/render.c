@@ -57,14 +57,22 @@ t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
 {
 	t_vec3f	tmp1;
 	t_vec3f	tmp2;
+	float	tmp3;
+	t_vec3f	tmp4;
 	float	k;
 
-	k = 1.0 - eta * eta * (1.0 - cos_theta * cos_theta);
-	if (k < 0.0)
+	k = 1.0f - eta * eta * (1.0f - cos_theta * cos_theta);
+	if (k < 0.0f){
 		return ((t_vec3f){0, 0, 0});
-	tmp1 = vt_mul(v, eta);
-	tmp2 = vt_mul(n, eta * cos_theta - sqrtf(k));
-	return (vv_add(tmp1, tmp2));
+	}
+	tmp1 = vv_add(v, vt_mul(n, cos_theta));
+	tmp2 = vt_mul(tmp1, eta);
+	tmp3 = sqrtf(fabs(1.0f - v_length_squared(tmp2)));
+	tmp4 = vt_mul(n, tmp3 * -1.0f);
+	return (vv_add(tmp2, tmp4));
+	//tmp1 = vt_mul(v, eta);
+	//tmp2 = vt_mul(n, eta * cos_theta - sqrtf(k));
+	//return (vv_add(tmp1, tmp2));
 }
 
 inline static bool	schlick_prob(const float cos_theta, const float eta)
@@ -72,10 +80,10 @@ inline static bool	schlick_prob(const float cos_theta, const float eta)
 	float	r0;
 	float	prob;
 
-	r0 = (1.0 - eta) / (1.0 + eta);
+	r0 = (1.0f - eta) / (1.0f + eta);
 	r0 = r0 * r0;
-	prob = r0 + (1.0 - r0) * powf(1.0 - cos_theta, 5);
-	return (prob > random_range(0.0, 1.0));
+	prob = r0 + (1.0f - r0) * powf(1.0f - cos_theta, 5);
+	return (prob > random_range(0.0f, 1.0f));
 }
 
 t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
@@ -91,12 +99,12 @@ t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
 		return (reflect(v, n));
 	}
 	if (hr->face == 1)
-		eta = 1.0 / 1.5;
+		eta = 0.67f;
 	else
-		eta = 1.5 / 1.0;
-	cos_theta = fminf(-dot(v, n), 1.0);
-	sin_theta = sqrtf(1.0 - cos_theta * cos_theta);
-	if (eta * sin_theta > 1.0 || schlick_prob(clamp(cos_theta, 0.0, 1.0), eta))
+		eta = 1.5f;
+	cos_theta = fminf(-dot(v, n), 1.0f);
+	sin_theta = sqrtf(1.0f - cos_theta * cos_theta);
+	if (eta * sin_theta > 1.0f || schlick_prob(cos_theta, eta))
 	{
 		*type = REFLECT;
 		return (reflect(v, n));
