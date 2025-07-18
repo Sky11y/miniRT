@@ -8,6 +8,8 @@ static inline void	sphere_hr(const t_hittables *htbl, t_hit_record *hr)
 	final_s = *(htbl->spheres + hr->index);
 	hr->albedo = final_s.color;
 	hr->mat = final_s.mat;
+	hr->fuzz = 0.0f;
+	hr->reflect = 0.2f;
 	if (hr->face == 1)
 		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
 	else
@@ -77,5 +79,4 @@ void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		cylinder_cap_hr(htbl, hr, r);
 	else if (hr->type == plane)
 		plane_hr(htbl, hr, r);
-	hr->hitpoint = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4));
 }

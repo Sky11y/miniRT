@@ -10,14 +10,17 @@ t_ray	get_new_ray(const t_ray r, t_hit_record *hr, t_scatter_type *scatter_type)
 	t_vec3f			scattered;
 	float scattered_normal;
 
-	new_dir = new_ray_dir(r.direction, normal, hr, scatter_type);
+	new_dir = new_ray_dir(r.direction, normal, hr, &scatter_type);
 	scattered = vv_add(new_dir, random_unit_vector());
 	scattered_normal = dot(scattered, normal);
-	if ((*scatter_type == REFLECT && scattered_normal < 1e-4) ||
-		(*scatter_type == REFRACT && scattered_normal > 1e-4))
+	if ((scatter_type == REFLECT && scattered_normal < 1e-4) ||
+		(scatter_type == REFRACT && scattered_normal > -1e-4))
 		scattered = new_dir;
 	new_ray.direction = unit_vector(scattered);
-	new_ray.origin = hr->hitpoint;
+	if (scatter_type == REFRACT)
+		new_ray.origin = vv_sub(hr->hitpoint, vt_mul(normal, 1e-4));
+	else
+		new_ray.origin = vv_add(hr->hitpoint, vt_mul(normal, 1e-4));
 	return (new_ray);
 }
 
@@ -51,9 +54,8 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 	new_ray = get_new_ray(r, &hr, &scatter_type);
 	color = ray_color(new_ray, htbl, light, depth - 1);
 	if (scatter_type == REFRACT)
-		return (vv_add(vt_mul(hr.albedo, light_intensity),
-						vt_mul(color, 0.05)));
-	return (vv_add(vt_mul(hr.albedo, light_intensity), vt_mul(color, hr.reflect)));
+		return vv_add(vt_mul(vt_mul(hr.albedo, light_intensity), 0.0f), vt_mul(color, 1));
+	return vv_add(vt_mul(vt_mul(hr.albedo, light_intensity), 0.5f), vt_mul(color, hr.reflect));
 }
 
 t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,

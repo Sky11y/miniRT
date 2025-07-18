@@ -57,10 +57,10 @@ t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
 		const float cos_theta)
 {
 	t_vec3f	tmp1;
-	t_vec3f	tmp2;
-	float	tmp3;
-	t_vec3f	tmp4;
-	float	k;
+	t_vec3f	perpendicular;
+	float	tmp2;
+	t_vec3f	parallel;
+	//float	k;
 
 	k = 1.0f - eta * eta * (1.0f - cos_theta * cos_theta);
 	if (k < 0.0f)
@@ -68,13 +68,13 @@ t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
 		return ((t_vec3f){0, 0, 0});
 	}
 	tmp1 = vv_add(v, vt_mul(n, cos_theta));
-	tmp2 = vt_mul(tmp1, eta);
-	tmp3 = sqrtf(fabs(1.0f - v_length_squared(tmp2)));
-	tmp4 = vt_mul(n, tmp3 * -1.0f);
-	return (vv_add(tmp2, tmp4));
-	/*tmp1 = vt_mul(v, eta);
-	tmp2 = vt_mul(n, eta * cos_theta - sqrtf(k));
-	return (vv_add(tmp1, tmp2));*/
+	perpendicular = vt_mul(tmp1, eta);
+	tmp2 = sqrtf(fabs(1.0f - v_length_squared(perpendicular)));
+	parallel = vt_mul(n, tmp2 * -1.0f);
+	return (vv_add(perpendicular, parallel));
+	//tmp1 = vt_mul(v, eta);
+	//tmp2 = vt_mul(n, eta * cos_theta - sqrtf(k));
+	//return (vv_add(tmp1, tmp2));
 }
 
 inline static bool	schlick_prob(const float cos_theta, const float eta)
@@ -106,7 +106,7 @@ t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
 		eta = 1.5f;
 	cos_theta = fminf(-dot(v, n), 1.0f);
 	sin_theta = sqrtf(1.0f - cos_theta * cos_theta);
-	if (eta * sin_theta > 1.0f || schlick_prob(cos_theta, eta))
+	if (eta * sin_theta > 1.0f) // || schlick_prob(cos_theta, eta))
 	{
 		*type = REFLECT;
 		return (reflect(v, n));
