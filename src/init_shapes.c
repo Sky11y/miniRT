@@ -9,12 +9,14 @@ static int	init_line(char *line, t_master *master)
 	error = 0;
 	if (line_first(line, "A", 1))
 		error = init_ambient(line, master);
+	/*
 	else if (line_first(line, "C", 1))
-		error = init_camera();
+		error = init_camera(line, master);
+	*/
 	else if (line_first(line, "L", 1))
 		error = init_light();
 	else if (line_first(line, "pl", 2))
-		error = init_plane();
+		error = init_plane(line, master);
 	else if (line_first(line, "sp", 2))
 		error = init_sphere();
 	else if (line_first(line, "cy", 2))

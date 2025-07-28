@@ -2,59 +2,11 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-int	is_float(char **split)
-{
-	int	i;
-	int	j;
-	int	decimal;
-
-	i = 1;
-	decimal = 0;
-	while (split[i])
-	{
-		j = 0;
-		decimal = 0;
-		while (split[i][j])
-		{
-			if (split[i][j] == '.' || split[i][j] == ',')
-			{
-				j++;
-				if (split[i][j] == '.')
-					decimal++;
-			}
-			if (split[i][j] < '0' || split[i][j] > '9' || decimal > 1)
-				return (1);
-			j++;
-		}
-		i++;
-	}
-	return (0);
-}
-
-static int	set_colors(char *str, t_master *master, int i)
-{
-	int	error;
-
-	error = 0;
-	error = string_to_color(str);
-	if (error == -1)
-		return (print_error("error: invalid colors\n"));
-	if (i == 0)
-		colors->x = (float)error;
-	else if (i == 1)
-		colors->y = (float)error;
-	else if (i == 2)
-		colors->z = (float)error;
-	}
-	return (0);
-}
-
 static int	init_color(char *str, t_master *master)
 {
 	char	**split;
 	int		i;
 	int		error;
-	t_vec3f	colors;
 
 	i = 0;
 	error = 0;
@@ -63,9 +15,12 @@ static int	init_color(char *str, t_master *master)
 		return (print_error("error: malloc fail\n"));
 	while (split[i] && i < 3)
 	{
-		error = set_colors(split[i], master, i);
-		if (error == 1)
+		master->lights->ambient_colors = set_colors(split[i], master, i);
+		if (master->lights->ambient_colors == NULL)
+		{
+			error = 1;
 			break ;
+		}
 		i++;
 	}
 	free_arr(split);
@@ -106,7 +61,7 @@ int	init_ambient(char *line, t_master *master)
 			error = 1;
 			print_error("error: ambient has too many variables\n");
 		}
-		free_arr(split);
 	}
+	free_arr(split);
 	return (error);
 }

@@ -29,7 +29,7 @@ t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
 
 	if (depth <= 0)
 		return (t_vec3f){0,0,0};
-	/*if (htbl->sphere_count)
+	if (htbl->sphere_count)
 		hit_sphere(&save, &closest_t, htbl->spheres, htbl->sphere_count);
 if (htbl->cylinder_count)
 		hit_cylinder(&save, &closest_t, htbl->cylinders, htbl->cylinder_count);*/
