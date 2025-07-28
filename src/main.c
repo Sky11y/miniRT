@@ -4,6 +4,7 @@
 
 FILE *infolog;
 
+/*
 float hit_sphere(const t_sphere s, const t_ray r)
 {
 	t_vec3f oc = vv_sub(s.center, r.origin);
@@ -30,8 +31,9 @@ t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
 		return (t_vec3f){0,0,0};
 	/*if (htbl->sphere_count)
 		hit_sphere(&save, &closest_t, htbl->spheres, htbl->sphere_count);
-	if (htbl->cylinder_count)
+if (htbl->cylinder_count)
 		hit_cylinder(&save, &closest_t, htbl->cylinders, htbl->cylinder_count);*/
+/*
 	for (int i = 0; i < count; i++)
 	{
 		current_t = hit_sphere(*(s + i), r);
@@ -59,6 +61,7 @@ t_vec3f ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth)
 	t_vec3f white = { 1.0, 1.0, 1.0 };
 	return vv_add(vt_multiply(white, (1.0 - a)), vt_multiply(gradient, a));
 }
+*/
 
 int main(int argc, char **argv)
 {
