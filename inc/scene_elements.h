@@ -35,9 +35,7 @@ typedef struct s_hittables
 	t_sphere	*spheres;
 	t_cylinder	*cylinders;
 	t_plane		*planes;
-	uint8_t		sphere_count;
-	uint8_t		cylinder_count;
-	uint8_t		plane_count;
+	uint8_t		obj_count;
 }	t_hittables;
 
 typedef struct s_lights
@@ -69,8 +67,7 @@ typedef struct s_hit_record
 typedef struct s_master
 {
 	t_hittables	*hittables;
-	t_ambient	*ambient;
-	t_light		*light;
+	t_lights	*lights;
 	t_camera	*camera;
 	uint8_t		amb_count;
 	uint8_t		cam_count;
@@ -105,6 +102,8 @@ float		hit_sphere(const t_sphere s, const t_ray r);
 t_camera	init_camera(const t_image *img);
 
 /* PARSING */
-int	parse_file(int argc, char *filename, t_master *master);
+int		parse_file(int argc, char *filename, t_master *master);
+bool	line_first(char *line, char *value, int len);
+int		print_error(char *error_msg);
 
 #endif

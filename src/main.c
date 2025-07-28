@@ -65,6 +65,11 @@ int main(int argc, char **argv)
 	t_master	master;
 	t_hittables	hittables;
 
+	if (argc != 2)
+	{
+		ft_putstr_fd("error: usage: ./miniRT [maps/mapname]", 2);
+		return (1);
+	}
 	ft_memset(&master, 0, sizeof(master));
 	ft_memset(&hittables, 0, sizeof(hittables));
 	master.hittables = &hittables;

@@ -9,7 +9,7 @@ HEADERS		= -I./inc -I./libft
 SRC			= main.c utils.c init.c render.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
 			  vector_math1.c vector_math2.c vector_math3.c \
-			  parsing.c
+			  parsing.c parsing_utils.c init_shapes.c
 
 OBJ			= $(SRC:%.c=$(OBJ_PATH)%.o)
 

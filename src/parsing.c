@@ -1,12 +1,6 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-static int	print_error(char *error_msg)
-{
-	ft_putstr_fd(error_msg, 2);
-	return (1);
-}
-
 static int	validate_filename(char *filename)
 {
 	int	len;
@@ -17,32 +11,21 @@ static int	validate_filename(char *filename)
 	return (0);
 }
 
-static bool	line_first(char *line, char *value, int len)
-{
-	int	i;
-
-	i = 0;
-	while (ft_iswhitespace(line[i]) && line[i] != '\n')
-		i++;
-	if (!ft_strncmp(&line[i], value, len))
-		return (true);
-	return (false);
-}
-
 static int	check_limitations(t_master *master)
 {
+	int			obj_count;
+	t_hittables	*tmp;
+
+	tmp = master->hittables;
 	if (master->amb_count > 1)
 		return (print_error("error: too many ambients\n"));
 	if (master->cam_count > 1)
 		return (print_error("error: too many cameras\n"));
 	if (master->lig_count > 1)
 		return (print_error("error: too many light\n"));
-	if (master->hittables->plane_count > 10)
-		return (print_error("error: too many planes\n"));
-	if (master->hittables->sphere_count > 10)
-		return (print_error("error: too many spheres\n"));
-	if (master->hittables->cylinder_count > 10)
-		return (print_error("error: too many cylinders\n"));
+	obj_count = tmp->plane_count + tmp->cylinder_count + tmp->sphere_count;
+	if (obj_count > 300)
+		return (print_error("error: too many object\n"));
 	return (0);
 }
 
@@ -74,8 +57,6 @@ int	parse_file(int argc, char *filename, t_master *master)
 	char	*line;
 
 	error = 0;
-	if (argc != 2)
-		return (print_error("error: argument\n"));
 	if (validate_filename(filename))
 		return (print_error("error: filename\n"));
 	file_fd = open(filename, O_RDONLY);
@@ -89,9 +70,10 @@ int	parse_file(int argc, char *filename, t_master *master)
 		error = parse_line(line, master);
 		free(line);
 		if (error >= 1)
-			return (1);
+			break ;
 	}
+	close(file_fd);
 	if (master->amb_count == 0 || master->lig_count == 0)
 		return (print_error("error: must have 1 ambient and light\n"));
-	return (0);
+	return (error);
 }
