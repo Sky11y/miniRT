@@ -55,12 +55,12 @@ int	init_ambient(char *line, t_master *master)
 			error = init_brightness(split[i], master);
 		if (i == 2)
 			error = init_color(split[i], master);
-		i++;
 		if (i > 2)
 		{
 			error = 1;
 			print_error("error: ambient has too many variables\n");
 		}
+		i++;
 	}
 	free_arr(split);
 	return (error);

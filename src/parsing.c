@@ -23,9 +23,9 @@ static int	check_limitations(t_master *master)
 		return (print_error("error: too many cameras\n"));
 	if (master->lig_count > 1)
 		return (print_error("error: too many light\n"));
-	obj_count = tmp->plane_count + tmp->cylinder_count + tmp->sphere_count;
 	if (obj_count > 300)
 		return (print_error("error: too many objects\n"));
+	master->hittables = tmp;
 	return (0);
 }
 
@@ -38,11 +38,11 @@ static int	parse_line(char *line, t_master *master)
 	else if (line_first(line, "L", 1))
 		master->lig_count++;
 	else if (line_first(line, "pl", 2))
-		master->hittables->plane_count++;
+		master->hittables->obj_count++;
 	else if (line_first(line, "sp", 2))
-		master->hittables->sphere_count++;
+		master->hittables->obj_count++;
 	else if (line_first(line, "cy", 2))
-		master->hittables->cylinder_count++;
+		master->hittables->obj_count++;
 	else if (line_first(line, "\n", 1))
 		return (0);
 	else
