@@ -217,3 +217,4 @@ int main(int argc, char **argv)
 	fclose(infolog);
 	return (0);
 }
+*/

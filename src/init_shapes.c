@@ -2,29 +2,6 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-int	init_ambient(char *line, t_master *master)
-{
-	char	**split;
-	int		i;
-	int		j;
-
-	split = ft_multisplit(line);
-	if (!split)
-		return (print_error("error: malloc fail\n"));
-	i = 1;
-	while (split[i])
-	{
-		j = 0;
-		while (split[i][j])
-		{
-			j++;
-		}
-		i++;
-		if (i > 3)
-			return (print_error("error: ambient has too many variables\n"));
-	}
-}
-
 static int	init_line(char *line, t_master *master)
 {
 	int	error;
