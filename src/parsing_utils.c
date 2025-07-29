@@ -15,6 +15,7 @@ bool	line_first(char *line, char *value, int len)
 
 int	print_error(char *error_msg)
 {
+	ft_putstr_fd("Error\n", 1);
 	ft_putstr_fd(error_msg, 2);
 	return (1);
 }

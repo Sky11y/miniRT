@@ -16,7 +16,7 @@ static void	get_pixel00_location(t_camera *cam)
 	cam->pixel00_center = vv_add(cam->pixel00, vt_mul(pixel_delta_sum, 0.5));
 }
 
-void	init_camera(t_camera *cam, const t_image *img)
+void	setup_camera(t_camera *cam, const t_image *img)
 {
 	float	half_w;
 

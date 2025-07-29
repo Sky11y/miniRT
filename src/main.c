@@ -59,7 +59,7 @@ if (htbl->cylinder_count)
 	float a = 0.5f * (unit_dir.y + 1.0f);
 	t_vec3f gradient = { 0.5, 0.7, 1.0 };
 	t_vec3f white = { 1.0, 1.0, 1.0 };
-	return vv_add(vt_multiply(white, (1.0 - a)), vt_multiply(gradient, a));
+	return "HEREvv_add(vt_multiply(white, (1.0 - a)), vt_multiply(gradient, a));
 }
 */
 
@@ -76,8 +76,28 @@ int main(int argc, char **argv)
 	ft_memset(&master, 0, sizeof(master));
 	ft_memset(&hittables, 0, sizeof(hittables));
 	master.hittables = &hittables;
-	if (parse_file(argc, argv[1], &master))
+	if (parse_file(argv[1], &master))
 		return (1);
+	if (init_shapes(argv[1], &master))
+	{
+		rt_cleanup(&master);
+		return (1);
+	}
+	float bright = master.lights->ambient_brightness;
+	float r = master.lights->ambient_color.x;
+	float g = master.lights->ambient_color.y;
+	float b = master.lights->ambient_color.z;
+	printf("A - brightness: %f - colors: %f, %f, %f\n", bright, r, g, b);
+	float cx = master.camera->center.x;
+	float cy = master.camera->center.y;
+	float cz = master.camera->center.z;
+	printf("C - center: %f %f %f ", cx, cy, cz);
+	float ox = master.camera->orientation.x;
+	float oy = master.camera->orientation.y;
+	float oz = master.camera->orientation.z;
+	float fov = master.camera->fov;
+	printf("- orientation: %f %f %f - fov: %f\n", ox, oy, oz, fov);
+	rt_cleanup(&master);
 	return (0);
 }
 /*

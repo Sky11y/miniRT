@@ -99,8 +99,13 @@ char	*get_next_line(int fd)
 	char		*next_line;
 	static char	buffer[BUFFER_SIZE + 1];
 
-	if (fd < 0 || fd > 1024)
+	if (fd > 1024)
 		return (NULL);
+	if (fd == -1)
+	{
+		buffer[0] = 0;
+		return (NULL);
+	}
 	stash = malloc(1);
 	if (stash == NULL)
 		return (NULL);

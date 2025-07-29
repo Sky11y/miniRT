@@ -39,8 +39,9 @@ float	rt_atof(char *str)
 		integer = integer * 10 + str[i] - '0';
 		i++;
 	}
-	if (str[i] == '.')
-		i++;
+	if (str[i] != '.')
+		return (sign * (float)integer);
+	i++;
 	return (rt_atof_decimals(&str[i], integer, sign));
 }
 
@@ -50,6 +51,7 @@ int	string_to_color(char *str)
 	size_t	num;
 
 	i = 0;
+	num = 0;
 	while (str[i])
 	{
 		if (str[i] < '0' || str[i] > '9')
@@ -62,52 +64,40 @@ int	string_to_color(char *str)
 	return ((int)num);
 }
 
-t_vec3f	set_colors(char *str, int i)
+void	set_colors(char *str, int i, t_vec3f *colors)
 {
 	int		color_value;
-	t_vec3f	colors;
 
-	ft_memset(&colors, 0, sizeof(colors)
 	color_value = 0;
-	color_value = string_to_color(str);
-	if (color_value == -1)
-	{
-		print_error("error: invalid colors\n");
-		return (NULL);
-	}
+	if (i < 3)
+		color_value = string_to_color(str);
 	if (i == 0)
 		colors->x = (float)color_value;
 	else if (i == 1)
 		colors->y = (float)color_value;
 	else if (i == 2)
 		colors->z = (float)color_value;
-	return (colors);
 }
 
-int	is_float(char **split)
+int	is_float(char *str)
 {
 	int	i;
-	int	j;
 	int	decimal;
 
-	i = 1;
+	i = 0;
 	decimal = 0;
-	while (split[i])
+	if (str[i] == '-')
+		i++;
+	while (str[i])
 	{
-		j = 0;
 		decimal = 0;
-		while (split[i][j])
+		if (str[i] == '.')
 		{
-			if (split[i][j] == '.' || split[i][j] == ',')
-			{
-				j++;
-				if (split[i][j] == '.')
-					decimal++;
-			}
-			if (split[i][j] < '0' || split[i][j] > '9' || decimal > 1)
-				return (1);
-			j++;
+			i++;
+			decimal++;
 		}
+		if (str[i] < '0' || str[i] > '9' || decimal > 1)
+			return (1);
 		i++;
 	}
 	return (0);

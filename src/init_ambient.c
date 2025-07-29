@@ -13,17 +13,20 @@ static int	init_color(char *str, t_master *master)
 	split = ft_split(str, ',');
 	if (!split)
 		return (print_error("error: malloc fail\n"));
-	while (split[i] && i < 3)
+	while (split[i])
 	{
-		master->lights->ambient_colors = set_colors(split[i], master, i);
-		if (master->lights->ambient_colors == NULL)
-		{
-			error = 1;
-			break ;
-		}
+		set_colors(split[i], i, &master->lights->ambient_color);
 		i++;
 	}
 	free_arr(split);
+	if (master->lights->ambient_color.x == -1
+		|| master->lights->ambient_color.y == -1
+		|| master->lights->ambient_color.z == -1
+		|| i != 3)
+	{
+		print_error("error: invalid colors\n");
+		error = 1;
+	}
 	return (error);
 }
 
@@ -32,36 +35,43 @@ static int	init_brightness(char *str, t_master *master)
 	float	brightness;
 
 	if (is_float(str))
-		return (1);
+		return (print_error("error: invalid value in brightness\n"));
 	brightness = rt_atof(str);
+	if (brightness < 0 || brightness > 1)
+		return (print_error("error: invalid brightness\n"));
 	master->lights->ambient_brightness = brightness;
 	return (0);
 }
 
-int	init_ambient(char *line, t_master *master)
+static int	init_values(char **split, t_master *master)
+{
+	if (count_values(split) != 3)
+		return (print_error("error: invalid amount of values in ambient\n"));
+	if (init_brightness(split[1], master))
+		return (1);
+	if (init_color(split[2], master))
+		return (1);
+	return (0);
+}
+
+int	init_ambient(t_master *master, char *file)
 {
 	char	**split;
-	int		i;
+	char	*line;
 	int		error;
 
 	error = 0;
-	split = ft_multisplit(line, " \t");
+	master->lights = malloc(sizeof(t_lights));
+	if (!(master->lights))
+		return (print_error("error: malloc fail\n"));
+	line = get_line("A", file, 1);
+	if (!line)
+		return (print_error("error: malloc fail\n"));
+	split = ft_multi_split(line, " \t\n");
+	free(line);
 	if (!split)
 		return (print_error("error: malloc fail\n"));
-	i = 1;
-	while (split[i] && i < 3 && error != 0)
-	{
-		if (i == 1)
-			error = init_brightness(split[i], master);
-		if (i == 2)
-			error = init_color(split[i], master);
-		if (i > 2)
-		{
-			error = 1;
-			print_error("error: ambient has too many variables\n");
-		}
-		i++;
-	}
+	error = init_values(split, master);
 	free_arr(split);
 	return (error);
 }

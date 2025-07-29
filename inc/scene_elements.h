@@ -35,6 +35,9 @@ typedef struct s_hittables
 	t_sphere	*spheres;
 	t_cylinder	*cylinders;
 	t_plane		*planes;
+	uint8_t		plane_count;
+	uint8_t		sphere_count;
+	uint8_t		cylinder_count;
 	uint8_t		obj_count;
 }	t_hittables;
 
@@ -79,7 +82,7 @@ void	render(const t_hittables *htbl, const t_camera *cam,
 		const t_image *img, const t_lights *light);
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray r, const float t);
-void	init_camera(t_camera *cam, const t_image *img);
+void	setup_camera(t_camera *cam, const t_image *img);
 void	init_image(t_image *img);
 void	init_lights(t_lights *l);
 
@@ -94,16 +97,30 @@ void	hit_all_planes(const t_ray r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr);
 float	count_light(const t_vec3f normal, const t_vec3f hp,
 		const t_lights *light, const t_hittables *htbl);
-
+/*
 t_vec3f		at(t_ray r, float t);
 t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth);
 void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
 float		hit_sphere(const t_sphere s, const t_ray r);
 t_camera	init_camera(const t_image *img);
+*/
 
 /* PARSING */
-int		parse_file(int argc, char *filename, t_master *master);
+int		parse_file(char *filename, t_master *master);
 bool	line_first(char *line, char *value, int len);
 int		print_error(char *error_msg);
+
+/* INIT SHAPES */
+int		init_shapes(char *filename, t_master *master);
+int		init_ambient(t_master *master, char *file);
+int		init_camera(t_master *master, char *file);
+int		is_float(char *str);
+int		string_to_color(char *str);
+float	rt_atof(char *str);
+char	*get_line(char *type, char *file, int size);
+void	set_colors(char *str, int i, t_vec3f *colors);
+int		count_values(char **split);
+
+void	rt_cleanup(t_master *master);
 
 #endif
