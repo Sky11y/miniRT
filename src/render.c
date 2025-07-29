@@ -3,7 +3,7 @@
 
 //rgb[0] = r, rgb[1] = g, rgb[2] = b
 //rgb_byte[0] = rbyte, rgb_byte[1] = gbyte, rgb_byte[2] = bbyte
-inline static int write_color(const t_vec3f pixel_color)
+inline static int	get_color(const t_vec3f pixel_color)
 {
 	float	rgb[3];
 	uint8_t	rgb_byte[3];
@@ -75,22 +75,21 @@ void	render(t_master *master, mlx_image_t *mlx_img)
 {
 	const uint16_t	img_height = master->img->image_height;
 	const uint16_t	img_width = master->img->image_width;
-	int				y;
-	int				x;
+	int				idx[2];
 	int				color;
 	t_ray			r;
-	
-	y = 0;
-	while (y < img_height)
+
+	idx[0] = 0;
+	while (idx[0] < img_height)
 	{
-		x = 0;
-		while (x < img_width)
+		idx[1] = 0;
+		while (idx[1] < img_width)
 		{
-			r = get_ray(master->cam, x, y);
-			color = write_color(ray_color(r, master->htbl, master->light));
-			mlx_put_pixel(mlx_img, x, y, color);
-			x += 1;
+			r = get_ray(master->cam, idx[1], idx[0]);
+			color = get_color(ray_color(r, master->htbl, master->light));
+			mlx_put_pixel(mlx_img, idx[1], idx[0], color);
+			idx[1] += 1;
 		}
-		y += 1;
+		idx[0] += 1;
 	}
 }

@@ -7,5 +7,5 @@ void	check_events(mlx_key_data_t keydata, void *param)
 
 	master = (t_master *)param;
 	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-		mlx_close_window(master->mlx);	
+		mlx_close_window(master->mlx);
 }

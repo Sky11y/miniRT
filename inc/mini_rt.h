@@ -7,9 +7,7 @@
 # include <string.h> 	//strerror
 # include <math.h> 		//all the math
 # include <stdint.h> 	//explicit int values
-# include <limits.h>	//INT_MAX -> math.h includes INFINITY so we migth not need this
 # include <stdbool.h>	//true and false
-# include <time.h>		//REMOVE THIS!!!! only used for randomnes
 
 # include "MLX42/MLX42.h"
 # include "MLX42/MLX42_Int.h"
@@ -50,7 +48,7 @@ float	inverse_sqrt(float nbr);
 float	dot(const t_vec3f u, const t_vec3f v);
 t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
-t_vec3f rotate_v(const t_vec3f v);
+t_vec3f	rotate_v(const t_vec3f v);
 float	v_length(const t_vec3f v);
 float	v_length_squared(const t_vec3f v);
 

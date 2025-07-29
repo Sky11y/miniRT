@@ -4,14 +4,15 @@
 # include "mini_rt.h"
 # include "shapes.h"
 
-
 typedef struct s_camera
 {
 	t_vec3f	center;
 	t_vec3f	orientation;
-	t_vec3f lookat;
-	t_vec3f vup;
-	t_vec3f	u, v, w;
+	t_vec3f	lookat;
+	t_vec3f	vup;
+	t_vec3f	u;
+	t_vec3f	v;
+	t_vec3f	w;
 	t_vec3f	viewport_u;
 	t_vec3f	viewport_v;
 	t_vec3f	pixel_delta_u;
@@ -51,7 +52,8 @@ typedef struct s_lights
 	float	ambient_brightness;
 }	t_lights;
 
-typedef struct s_master {
+typedef struct s_master
+{
 	mlx_t		*mlx;
 	mlx_image_t	*mlx_img;
 	t_camera	*cam;
@@ -76,26 +78,26 @@ typedef struct s_hit_record
 	int8_t		face;
 }	t_hit_record;
 
-t_vec3f	at(t_ray r, float t);
+t_vec3f		at(t_ray r, float t);
 //void	render(const t_hittables *htbl, const t_camera *cam,
 //		const t_image *img, const t_lights *light);
-void	render(t_master *master, mlx_image_t *mlx_img);
-		void	update_hr(const t_hittables *htbl, t_hit_record *hr,
-		const t_ray r, const float t);
+void		render(t_master *master, mlx_image_t *mlx_img);
+void		update_hr(const t_hittables *htbl, t_hit_record *hr,
+				const t_ray r, const float t);
 t_camera	*init_camera(t_camera *cam, const t_image *img);
 t_image		*init_image(t_image *img);
 t_lights	*init_lights(t_lights *l);
 
 /* HIT OBJECTS */
-void	hit_all_cylinders(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_cylinder_caps(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_spheres(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_planes(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-float	count_light(const t_vec3f normal, const t_vec3f hp,
-		const t_lights *light, const t_hittables *htbl);
+void		hit_all_cylinders(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+void		hit_all_cylinder_caps(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+void		hit_all_spheres(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+void		hit_all_planes(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+float		count_light(const t_vec3f normal, const t_vec3f hp,
+				const t_lights *light, const t_hittables *htbl);
 
 #endif
