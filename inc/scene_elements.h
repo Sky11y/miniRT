@@ -4,6 +4,7 @@
 # include "mini_rt.h"
 # include "shapes.h"
 
+
 typedef struct s_camera
 {
 	t_vec3f	center;
@@ -50,6 +51,15 @@ typedef struct s_lights
 	float	ambient_brightness;
 }	t_lights;
 
+typedef struct s_master {
+	mlx_t		*mlx;
+	mlx_image_t	*mlx_img;
+	t_camera	*cam;
+	t_image		*img;
+	t_hittables	*htbl;
+	t_lights	*light;
+}	t_master;
+
 typedef struct s_ray
 {
 	t_vec3f	origin;
@@ -67,13 +77,14 @@ typedef struct s_hit_record
 }	t_hit_record;
 
 t_vec3f	at(t_ray r, float t);
-void	render(const t_hittables *htbl, const t_camera *cam,
-		const t_image *img, const t_lights *light);
-void	update_hr(const t_hittables *htbl, t_hit_record *hr,
+//void	render(const t_hittables *htbl, const t_camera *cam,
+//		const t_image *img, const t_lights *light);
+void	render(t_master *master, mlx_image_t *mlx_img);
+		void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray r, const float t);
-void	init_camera(t_camera *cam, const t_image *img);
-void	init_image(t_image *img);
-void	init_lights(t_lights *l);
+t_camera	*init_camera(t_camera *cam, const t_image *img);
+t_image		*init_image(t_image *img);
+t_lights	*init_lights(t_lights *l);
 
 /* HIT OBJECTS */
 void	hit_all_cylinders(const t_ray r, float *closest_t,

@@ -12,7 +12,8 @@ HEADERS		= -I./inc -I./$(MLX_PATH)/include
 
 SRC			= main.c utils.c init.c render.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
-			  vector_math1.c vector_math2.c vector_math3.c
+			  vector_math1.c vector_math2.c vector_math3.c \
+			  events.c
 OBJ			= $(SRC:%.c=$(OBJ_PATH)%.o)
 
 SRC_HEADER	= ./inc/mini_rt.h ./inc/shapes.h ./inc/scene_elements.h

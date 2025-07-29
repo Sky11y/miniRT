@@ -2,7 +2,11 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-FILE *infolog;
+static void	minirt(void *param)
+{
+	t_master *master = (t_master *)param;
+	render(master, master->mlx_img);
+}
 
 int main()
 {
@@ -10,20 +14,11 @@ int main()
 	t_camera	cam;
 	t_hittables hittables;
 	t_lights	light;
+	t_master	master;
 
-	infolog = fopen("log.md", "w+");
-	if (infolog == NULL)
-	{
-		perror("Error opening file");
-		return (1);
-	}
-	
-	init_lights(&light);
-	init_image(&img);
-	init_camera(&cam, &img);
-	printf("P3\n%d %d\n255\n", img.image_width, img.image_height);
-	fprintf(infolog, "width: %d, height: %d\n", img.image_width, img.image_height);
-	
+	master.light = init_lights(&light);
+	master.img = init_image(&img);
+	master.cam = init_camera(&cam, &img);
 	
 	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
 
@@ -106,8 +101,16 @@ int main()
 	hittables.cylinders = cylinders;
 	hittables.planes = planes;
 	hittables.spheres = spheres;
-	render(&hittables, &cam, &img, &light);
 	
-	fclose(infolog);
+	master.htbl = &hittables;
+	master.mlx = mlx_init(1600, 800, "MINI RAY TRACER", false);
+	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
+	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
+		exit(1);
+	mlx_key_hook(master.mlx, &check_events, &master);
+	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
+		mlx_terminate(master.mlx);
+	mlx_loop(master.mlx);
+	
 	return (0);
 }

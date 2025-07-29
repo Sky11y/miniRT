@@ -3,7 +3,7 @@
 
 //rgb[0] = r, rgb[1] = g, rgb[2] = b
 //rgb_byte[0] = rbyte, rgb_byte[1] = gbyte, rgb_byte[2] = bbyte
-inline static void write_color(const t_vec3f pixel_color)
+inline static int write_color(const t_vec3f pixel_color)
 {
 	float	rgb[3];
 	uint8_t	rgb_byte[3];
@@ -23,7 +23,7 @@ inline static void write_color(const t_vec3f pixel_color)
 	rgb_byte[0] = (int)(256 * clamp(rgb[0], 0, 0.999));
 	rgb_byte[1] = (int)(256 * clamp(rgb[1], 0, 0.999));
 	rgb_byte[2] = (int)(256 * clamp(rgb[2], 0, 0.999));
-	printf("%d %d %d\n", rgb_byte[0], rgb_byte[1], rgb_byte[2]);
+	return (rgb_byte[0] << 24 | rgb_byte[1] << 16 | rgb_byte[2] << 8 | 255);
 }
 
 inline static t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
@@ -71,13 +71,13 @@ inline static t_ray	get_ray(const t_camera *cam, float x, float y)
 }
 
 //idx[0] = y, idx[1] = x
-void	render(const t_hittables *htbl, const t_camera *cam,
-		const t_image *img, const t_lights *light)
+void	render(t_master *master, mlx_image_t *mlx_img)
 {
-	const uint16_t	img_height = img->image_height;
-	const uint16_t	img_width = img->image_width;
+	const uint16_t	img_height = master->img->image_height;
+	const uint16_t	img_width = master->img->image_width;
 	int				y;
 	int				x;
+	int				color;
 	t_ray			r;
 	
 	y = 0;
@@ -86,8 +86,9 @@ void	render(const t_hittables *htbl, const t_camera *cam,
 		x = 0;
 		while (x < img_width)
 		{
-			r = get_ray(cam, x, y);
-			write_color(ray_color(r, htbl, light));
+			r = get_ray(master->cam, x, y);
+			color = write_color(ray_color(r, master->htbl, master->light));
+			mlx_put_pixel(mlx_img, x, y, color);
 			x += 1;
 		}
 		y += 1;

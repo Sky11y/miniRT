@@ -15,15 +15,6 @@
 # include "MLX42/MLX42_Int.h"
 //# include "libft.h"
 
-typedef struct	s_master {
-	mlx_t		*mlx;
-//	t_camera	*cam;
-//	t_image		*img;
-//	t_hittables	*htbl;
-//	t_lights	*light;
-
-} t_master;
-
 typedef enum e_shape
 {
 	sphere,
@@ -68,6 +59,9 @@ t_vec3f	vt_div(const t_vec3f v, float t);
 t_vec3f	vv_add(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_sub(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_mul(const t_vec3f v, const t_vec3f u);
+
+/* MLX RELATED */
+void	check_events(mlx_key_data_t keydata, void *param);
 
 /* HELPERS */
 float	clamp(const float x, const float min, const float max);

@@ -16,7 +16,7 @@ static void	get_pixel00_location(t_camera *cam)
 	cam->pixel00_center = vv_add(cam->pixel00, vt_mul(pixel_delta_sum, 0.5));
 }
 
-void	init_camera(t_camera *cam, const t_image *img)
+t_camera	*init_camera(t_camera *cam, const t_image *img)
 {
 	float	half_w;
 
@@ -37,9 +37,10 @@ void	init_camera(t_camera *cam, const t_image *img)
 	cam->pixel_delta_u = vt_div(cam->viewport_u, img->image_width);
 	cam->pixel_delta_v = vt_div(cam->viewport_v, img->image_height);
 	get_pixel00_location(cam);
+	return (cam);
 }
 
-void	init_image(t_image *img)
+t_image	*init_image(t_image *img)
 {
 	img->aspect_ratio = 16.0 / 9.0;
 	if (img->aspect_ratio == 0)
@@ -48,9 +49,10 @@ void	init_image(t_image *img)
 	img->image_height = (int)(img->image_width / img->aspect_ratio);
 	if (img->image_height < 1)
 		img->image_height = 1;
+	return (img);
 }
 
-void	init_lights(t_lights *l)
+t_lights	*init_lights(t_lights *l)
 {
 	l->ambient_color = (t_vec3f){0.4, 0.4, 0.4};
 	l->ambient_brightness = 0.03f;
@@ -58,4 +60,5 @@ void	init_lights(t_lights *l)
 	l->point_center = (t_vec3f){-1.5, 2.2, -0.5};
 	l->point_brightness = 0.7f;
 	l->point_color = (t_vec3f){1, 1, 1};
+	return (l);
 }
