@@ -1,10 +1,14 @@
 NAME		= miniRT
+LIBMLX		= $(MLX_PATH)/build/libmlx42.a
 
 FLAGS		= -Werror -Wall -Wextra -O3
+MLX42		= $(LIBMLX) -Iinclude -ldl -lglfw -pthread -lm
 
 SRC_PATH	= src/
 OBJ_PATH	= obj/
-HEADERS		= -I./inc
+MLX_PATH	= lib/MLX42/
+
+HEADERS		= -I./inc -I $(MLX_PATH)/include
 
 SRC			= main.c utils.c init.c render.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
@@ -15,8 +19,15 @@ SRC_HEADER	= ./inc/mini_rt.h ./inc/shapes.h ./inc/scene_elements.h
 
 all:		$(NAME)
 
-$(NAME):	$(OBJ_PATH) $(OBJ) $(SRC_HEADER)
-			cc $(OBJ) -o $@ -lm
+$(NAME):	$(LIBMLX) $(OBJ_PATH) $(OBJ) $(SRC_HEADER)
+			cc $(OBJ) $(MLX42) -o $@ -lm
+
+$(LIBMLX):
+			cmake $(MLX_PATH) -B $(MLX_PATH)/build
+			make -C $(MLX_PATH)/build -j4
+
+$(LIBFT):
+			make all -C ./libft
 
 $(OBJ):		$(OBJ_PATH)%.o: $(SRC_PATH)%.c
 			cc $(FLAGS) -c $< -o $@ $(HEADERS)
@@ -29,6 +40,8 @@ clean:
 
 fclean:		clean
 			rm -rf $(NAME)
+			rm -rf $(MLX_PATH)/build
+			#rm -rf $(LIBFT)
 
 re:			fclean all
 
