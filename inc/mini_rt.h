@@ -11,6 +11,19 @@
 # include <stdbool.h>	//true and false
 # include <time.h>		//REMOVE THIS!!!! only used for randomnes
 
+# include "MLX42/MLX42.h"
+# include "MLX42/MLX42_Int.h"
+//# include "libft.h"
+
+typedef struct	s_master {
+	mlx_t		*mlx;
+//	t_camera	*cam;
+//	t_image		*img;
+//	t_hittables	*htbl;
+//	t_lights	*light;
+
+} t_master;
+
 typedef enum e_shape
 {
 	sphere,

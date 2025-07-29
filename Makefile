@@ -8,7 +8,7 @@ SRC_PATH	= src/
 OBJ_PATH	= obj/
 MLX_PATH	= lib/MLX42/
 
-HEADERS		= -I./inc -I $(MLX_PATH)/include
+HEADERS		= -I./inc -I./$(MLX_PATH)/include
 
 SRC			= main.c utils.c init.c render.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
