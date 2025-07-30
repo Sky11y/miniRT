@@ -46,7 +46,7 @@ inline static t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 	}
 	if (shape_count[2])
 		hit_all_planes(r, &closest_t, htbl, &hr);
-	if (closest_t != INFINITY)
+	if (closest_t < INFINITY)
 	{
 		update_hr(htbl, &hr, r, closest_t);
 		light_intensity = count_light(hr.normal, hr.hitpoint, light, htbl);

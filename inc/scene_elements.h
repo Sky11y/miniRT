@@ -79,12 +79,10 @@ typedef struct s_hit_record
 }	t_hit_record;
 
 t_vec3f		at(t_ray r, float t);
-//void	render(const t_hittables *htbl, const t_camera *cam,
-//		const t_image *img, const t_lights *light);
 void		render(t_master *master, mlx_image_t *mlx_img);
 void		update_hr(const t_hittables *htbl, t_hit_record *hr,
 				const t_ray r, const float t);
-t_camera	*init_camera(t_camera *cam, const t_image *img);
+t_camera	*setup_camera(t_camera *cam, const t_image *img);
 t_image		*init_image(t_image *img);
 t_lights	*init_lights(t_lights *l);
 
