@@ -40,15 +40,13 @@ t_camera	*setup_camera(t_camera *cam, const t_image *img)
 	return (cam);
 }
 
-t_image	*init_image(t_image *img)
+t_image	*setup_image(t_image *img, uint16_t width, uint16_t height)
 {
-	img->aspect_ratio = 16.0 / 9.0;
-	if (img->aspect_ratio == 0)
+	img->image_width = width;
+	img->image_height = height;
+	img->aspect_ratio = (float)width / height;
+	if (img->aspect_ratio < 1e-4)
 		img->aspect_ratio = 1.0f;
-	img->image_width = 1600;
-	img->image_height = (int)(img->image_width / img->aspect_ratio);
-	if (img->image_height < 1)
-		img->image_height = 1;
 	return (img);
 }
 

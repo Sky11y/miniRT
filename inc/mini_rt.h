@@ -13,6 +13,9 @@
 # include "MLX42/MLX42_Int.h"
 //# include "libft.h"
 
+# define WIN_HEIGHT 800
+# define WIN_WIDTH 1600
+
 typedef enum e_shape
 {
 	sphere,

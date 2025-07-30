@@ -83,7 +83,7 @@ void		render(t_master *master, mlx_image_t *mlx_img);
 void		update_hr(const t_hittables *htbl, t_hit_record *hr,
 				const t_ray r, const float t);
 t_camera	*setup_camera(t_camera *cam, const t_image *img);
-t_image		*init_image(t_image *img);
+t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
 t_lights	*init_lights(t_lights *l);
 
 /* HIT OBJECTS */

@@ -2,9 +2,29 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
+static bool is_window_size_changed(mlx_t *mlx)
+{
+	static int32_t width = WIN_WIDTH;
+	static int32_t height = WIN_HEIGHT;
+
+	if (mlx->width != width || mlx->height != height)
+	{
+		width = mlx->width;
+		height = mlx->height;
+		return (true);
+	}
+	return (false);
+}
+
 static void	minirt(void *param)
 {
 	t_master *master = (t_master *)param;
+	if (is_window_size_changed(master->mlx))
+	{
+		master->img = setup_image(master->img, master->mlx->width, master->mlx->height);
+		master->cam = setup_camera(master->cam, master->img);
+		mlx_resize_image(master->mlx_img, master->mlx->width, master->mlx->height);
+	}
 	render(master, master->mlx_img);
 }
 
@@ -17,7 +37,7 @@ int main()
 	t_master	master;
 
 	master.light = init_lights(&light);
-	master.img = init_image(&img);
+	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
 	master.cam = setup_camera(&cam, &img);
 	
 	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
@@ -28,7 +48,7 @@ int main()
 	hittables.plane_count = 2;
 
 	t_cylinder c1 = {
-		{-0.0f, 0.0f, -10.6f},		//position
+		{15.0f, 0.0f, -10.6f},		//position
 		{0.0f, 1.0f, 1.0f},	//orientation
 		{0, 0, 0},			//base point -> initialised to zero and calculated later
 		{10.0 / 255, 0.0f, 1},		//color
@@ -102,7 +122,7 @@ int main()
 	hittables.spheres = spheres;
 	
 	master.htbl = &hittables;
-	master.mlx = mlx_init(1600, 800, "MINI RAY TRACER", false);
+	master.mlx = mlx_init(1600, 800, "MINI RAY TRACER", true);
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
 		exit(1);
