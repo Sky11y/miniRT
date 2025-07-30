@@ -2,29 +2,22 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-extern FILE *infolog;
-
-t_ray	get_new_ray(const t_ray r, t_hit_record *hr)
+t_ray	get_new_ray(const t_ray r, t_hit_record *hr, t_scatter_type *scatter_type)
 {
 	const t_vec3f	normal = hr->normal;
-	t_scatter_type	scatter_type;
 	t_ray			new_ray;
 	t_vec3f			new_dir;
 	t_vec3f			scattered;
 	float scattered_normal;
 
-	new_dir = new_ray_dir(r.direction, normal, hr, &scatter_type);
-	if (hr->mat == GLASS) {
-		scattered = vv_add(new_dir, vt_mul(random_unit_vector(), 0));
-	} else {
-		scattered = vv_add(new_dir, vt_mul(random_unit_vector(), hr->fuzz));
-	}
+	new_dir = new_ray_dir(r.direction, normal, hr, scatter_type);
+	scattered = vv_add(new_dir, random_unit_vector());
 	scattered_normal = dot(scattered, normal);
-	if ((scatter_type == REFLECT && scattered_normal < 1e-4) ||
-		(scatter_type == REFRACT && scattered_normal > 1e-4))
+	if ((*scatter_type == REFLECT && scattered_normal < 1e-4) ||
+		(*scatter_type == REFRACT && scattered_normal > 1e-4))
 		scattered = new_dir;
 	new_ray.direction = unit_vector(scattered);
-	new_ray.origin = vv_add(hr->hitpoint, vt_mul(normal, 1e-4));
+	new_ray.origin = hr->hitpoint;
 	return (new_ray);
 }
 
@@ -36,6 +29,7 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 	float			light_intensity;
 	t_ray			new_ray;
 	t_vec3f			color;
+	t_scatter_type	scatter_type;
 
 	closest_t = INFINITY;
 	light_intensity = 0;
@@ -54,9 +48,9 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 	light_intensity = count_light(hr.normal, hr.hitpoint, light, htbl);
 	if (depth <= 0 || hr.mat == DIFFUSE)
 		return (vt_mul(hr.albedo, light_intensity));
-	new_ray = get_new_ray(r, &hr);
+	new_ray = get_new_ray(r, &hr, &scatter_type);
 	color = ray_color(new_ray, htbl, light, depth - 1);
-	if (hr.mat == GLASS)
+	if (scatter_type == REFRACT)
 		return (vv_add(vt_mul(hr.albedo, light_intensity),
 						vt_mul(color, 0.05)));
 	return (vv_add(vt_mul(hr.albedo, light_intensity), vt_mul(color, hr.reflect)));
@@ -65,8 +59,8 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
 		int *idx, const t_lights *light)
 {
-	const uint16_t	samples = cam->samples_per_pixel;
-	const uint8_t	depth = cam->max_rays;
+	const uint16_t	samples = SAMPLES_PER_PIXEL;
+	const uint8_t	depth = MAX_RAYS;
 	t_vec3f			pixel_color;
 	t_vec3f			ret_color;
 	uint16_t		sample_no;
@@ -78,7 +72,7 @@ t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
 	sample_no = 0;
 	while (sample_no < samples)
 	{
-		r = get_ray(cam, idx);
+		r = get_ray(cam, idx[1], idx[0]);
 		ret_color = ray_color(r, htbl, light, depth);
 		pixel_color = vv_add(pixel_color, ret_color);
 		sample_no += 1;
@@ -88,16 +82,11 @@ t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
 
 //rgb[0] = r, rgb[1] = g, rgb[2] = b
 //rgb_byte[0] = rbyte, rgb_byte[1] = gbyte, rgb_byte[2] = bbyte
-void	write_color(const t_vec3f pixel_color)
+uint32_t	get_color(const t_vec3f pixel_color)
 {
 	float	rgb[3];
 	uint8_t	rgb_byte[3];
-	static bool flag1 = true; //remove me
-	static bool flag2 = true; //remove me
-	if (flag1) {
-		fprintf(infolog, "%f %f %f\n", pixel_color.x, pixel_color.y, pixel_color.z);
-		flag1 = false;
-	}
+
 	if (pixel_color.x > 0.0)
 		rgb[0] = sqrtf(pixel_color.x);
 	else
@@ -113,9 +102,5 @@ void	write_color(const t_vec3f pixel_color)
 	rgb_byte[0] = (int)(256 * clamp(rgb[0], 0, 0.999));
 	rgb_byte[1] = (int)(256 * clamp(rgb[1], 0, 0.999));
 	rgb_byte[2] = (int)(256 * clamp(rgb[2], 0, 0.999));
-	if (flag2) {
-		fprintf(infolog, "%d %d %d\n", rgb_byte[0], rgb_byte[1], rgb_byte[2]);
-		flag2 = false;
-	}
-	printf("%d %d %d\n", rgb_byte[0], rgb_byte[1], rgb_byte[2]);
+	return (rgb_byte[0] << 24 | rgb_byte[1] << 16 | rgb_byte[2] << 8 | 255);
 }

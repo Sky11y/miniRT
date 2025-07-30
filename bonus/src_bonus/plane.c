@@ -2,18 +2,17 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static inline float	hit_plane(const t_plane p, const t_ray r)
+static inline bool	hit_plane(const t_plane p, const t_ray r, float *current_t)
 {
-	float			t;
 	const t_vec3f	oc = vv_sub(p.pos, r.origin);
 	const float		ray_plane_dot = dot(r.direction, p.orientation);
 
-	if (fabs(ray_plane_dot) < 1e-8)
-		return (-1);
-	t = dot(oc, p.orientation) / ray_plane_dot;
-	if (t > 1e-4)
-		return (t);
-	return (-1.0);
+	if (fabs(ray_plane_dot) < 1e-4)
+		return (false);
+	*current_t = dot(oc, p.orientation) / ray_plane_dot;
+	if (*current_t > 1e-4)
+		return (true);
+	return (false);
 }
 
 void	hit_all_planes(const t_ray r, float *closest_t,
@@ -30,8 +29,7 @@ void	hit_all_planes(const t_ray r, float *closest_t,
 	current_t = INFINITY;
 	while (i < count)
 	{
-		current_t = hit_plane(*(p + i), r);
-		if (current_t > 1e-4 && current_t < *closest_t)
+		if (hit_plane(*(p + i), r, &current_t) && current_t < *closest_t)
 		{
 			*closest_t = current_t;
 			save = i;

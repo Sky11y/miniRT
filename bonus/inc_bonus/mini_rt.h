@@ -11,6 +11,15 @@
 # include <stdbool.h>	//true and false
 # include <time.h>		
 
+# include "MLX42/MLX42.h"
+# include "MLX42/MLX42_Int.h"
+//# include "libft.h"
+
+# define WIN_HEIGHT 800
+# define WIN_WIDTH 1600
+# define SAMPLES_PER_PIXEL 3
+# define MAX_RAYS 3
+
 typedef enum e_shape
 {
 	sphere,
@@ -87,9 +96,11 @@ t_vec3f	random_v(void);
 t_vec3f	random_v_range(float min, float max);
 t_vec3f	random_unit_vector(void);
 
+/* MLX RELATED */
+void	check_events(mlx_key_data_t keydata, void *param);
 
 /* RENDER */
-void	write_color(const t_vec3f pixel_color);
+uint32_t	get_color(const t_vec3f pixel_color);
 
 
 

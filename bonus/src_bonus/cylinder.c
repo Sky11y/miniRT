@@ -2,38 +2,36 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-//t[0] = cylinder near, t[1] = cylinder far
 //arr[0] = a, arr[1] = b, arr[2] = c, arr[3] = discriminant
-static inline float	cy_hitpoints(float *arr, int *face)
+static inline bool	cy_hitpoints(float *arr, int *face, float *current_t)
 {
 	float	sqrt_d;
-	float	t[2];
 
 	sqrt_d = sqrtf(arr[3]);
-	t[0] = (-arr[1] - sqrt_d) / (2 * arr[0]);
-	if (t[0] > 1e-4)
+	*current_t = (-arr[1] - sqrt_d) / (2 * arr[0]);
+	if (*current_t > 1e-4)
 	{
 		*face = 1;
-		return (t[0]);
+		return (true);
 	}
-	t[1] = (-arr[1] + sqrt_d) / (2 * arr[0]);
-	if (t[1] > 1e-4)
+	*current_t = (-arr[1] + sqrt_d) / (2 * arr[0]);
+	if (*current_t > 1e-4)
 	{
 		*face = -1;
-		return (t[1]);
+		return (true);
 	}
-	return (-1.0f);
+	return (false);
 }
 
-//arr[0] = a, arr[1] = b, arr[2] = c, arr[3] = discriminant,
-//arr[4] = closest_t, arr[5] = proj
+//arr[0] = a, arr[1] = b, arr[2] = c, arr[3] = discriminant, arr[4] = proj
 //vec[0] = cylinder normalized axis vector
-//vec[1]...vec[3] helpers to count coefficent
-static inline float	hit_cylinder(const t_cylinder *c, const t_ray r, int* face)
+//vec[1...3] are helpers to count coefficents
+static inline bool	hit_cylinder(const t_cylinder *c, const t_ray r, int *face,
+		float *current_t)
 {
 	t_vec3f			vec[4];
 	t_vec3f			between;
-	float			arr[6];
+	float			arr[5];
 
 	vec[0] = c->axis_v;
 	vec[1] = vv_sub(r.origin, c->center);
@@ -43,18 +41,18 @@ static inline float	hit_cylinder(const t_cylinder *c, const t_ray r, int* face)
 	arr[1] = 2 * dot(vec[2], vec[3]);
 	arr[2] = dot(vec[3], vec[3]) - c->radius_squared;
 	arr[3] = arr[1] * arr[1] - (4 * arr[0] * arr[2]);
-	if (arr[3] < 1e-6)
-		return (-1.0);
-	arr[4] = cy_hitpoints(arr, face);
-	if (arr[4] == -1.0f)
-		return (-1.0f);
-	between = vv_sub(at(r, arr[4]), c->base);
-	arr[5] = dot(between, vec[0]);
-	if (arr[5] >= 0 && arr[5] <= c->height)
-		return (arr[4]);
-	return (-1.0);
+	if (arr[3] < 1e-4)
+		return (false);
+	if (!cy_hitpoints(arr, face, current_t))
+		return (false);
+	between = vv_sub(at(r, *current_t), c->base);
+	arr[4] = dot(between, vec[0]);
+	if (arr[4] >= 0 && arr[4] <= c->height)
+		return (true);
+	return (false);
 }
 
+//save[0] = index of cylinder, save[1] = face of cylinder
 void	hit_all_cylinders(const t_ray r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr)
 {
@@ -70,8 +68,8 @@ void	hit_all_cylinders(const t_ray r, float *closest_t,
 	current_t = INFINITY;
 	while (i < count)
 	{
-		current_t = hit_cylinder(c + i, r, &save[1]);
-		if (current_t > 1e-4 && current_t < *closest_t)
+		if (hit_cylinder(c + i, r, &save[1], &current_t)
+			&& current_t < *closest_t)
 		{
 			*closest_t = current_t;
 			save[0] = i;

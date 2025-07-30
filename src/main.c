@@ -2,7 +2,7 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static bool is_window_size_changed(mlx_t *mlx)
+inline static bool is_window_size_changed(mlx_t *mlx)
 {
 	static int32_t width = WIN_WIDTH;
 	static int32_t height = WIN_HEIGHT;
@@ -16,7 +16,7 @@ static bool is_window_size_changed(mlx_t *mlx)
 	return (false);
 }
 
-static void	minirt(void *param)
+inline static void	minirt(void *param)
 {
 	t_master *master = (t_master *)param;
 	if (is_window_size_changed(master->mlx))
@@ -30,11 +30,11 @@ static void	minirt(void *param)
 
 int main()
 {
-	t_image		img;
-	t_camera	cam;
-	t_hittables hittables;
-	t_lights	light;
 	t_master	master;
+	t_camera	cam;
+	t_image		img;
+	t_lights	light;
+	t_hittables hittables;
 
 	master.light = init_lights(&light);
 	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
@@ -122,7 +122,7 @@ int main()
 	hittables.spheres = spheres;
 	
 	master.htbl = &hittables;
-	master.mlx = mlx_init(1600, 800, "MINI RAY TRACER", true);
+	master.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
 		exit(1);

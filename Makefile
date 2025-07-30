@@ -46,8 +46,5 @@ fclean:		clean
 
 re:			fclean all
 
-run:		all
-			./run.sh
-
 .PHONY:		all clean fclean re
 

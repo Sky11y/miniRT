@@ -21,8 +21,6 @@ typedef struct s_camera
 	float	fov;
 	float	viewport_height;
 	float	viewport_width;
-	uint16_t	samples_per_pixel;
-	uint8_t	max_rays;
 }	t_camera;
 
 typedef struct s_image
@@ -52,6 +50,16 @@ typedef struct s_lights
 	float	ambient_brightness;
 }	t_lights;
 
+typedef struct s_master
+{
+	mlx_t		*mlx;
+	mlx_image_t	*mlx_img;
+	t_camera	*cam;
+	t_image		*img;
+	t_hittables	*htbl;
+	t_lights	*light;
+}	t_master;
+
 typedef struct s_ray
 {
 	t_vec3f	origin;
@@ -65,7 +73,6 @@ typedef struct s_hit_record
 	t_vec3f	albedo;
 	t_mat_type	mat;
 	t_shape	type;
-	float	fuzz;
 	float	reflect;
 	uint8_t	index;
 	int8_t	face;
@@ -76,16 +83,15 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 		const t_lights *light, uint8_t depth);
 t_vec3f	get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
 		int *idx, const t_lights *light);
-void	render(const t_hittables *htbl, const t_camera *cam,
-		const t_image *img, const t_lights *light);
+void	render(t_master *master, mlx_image_t *mlx_img);
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray r, const float t);
-t_ray	get_ray(const t_camera *cam, int *idx);
+t_ray	get_ray(const t_camera *cam, float x, float y);
 t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
 		const t_hit_record *hr, t_scatter_type *type);
-void	init_camera(t_camera *cam, const t_image *img);
-void	init_image(t_image *img);
-void	init_lights(t_lights *l);
+t_camera	*setup_camera(t_camera *cam, const t_image *img);
+t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
+t_lights	*init_lights(t_lights *l);
 
 /* HIT OBJECTS */
 void	hit_all_cylinders(const t_ray r, float *closest_t,

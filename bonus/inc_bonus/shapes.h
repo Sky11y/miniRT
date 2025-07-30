@@ -23,7 +23,6 @@ typedef struct s_cylinder
 	float	radius;
 	float	radius_squared;
 	float	height;
-	float	fuzz;
 	float	reflect;
 	t_mat_type	mat;
 }	t_cylinder;
@@ -34,7 +33,6 @@ typedef struct s_plane
 	t_vec3f	pos;
 	t_vec3f	orientation;
 	t_vec3f	color;
-	float	fuzz;
 	float	reflect;
 	t_mat_type	mat;
 }	t_plane;

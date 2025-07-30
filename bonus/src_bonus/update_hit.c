@@ -24,7 +24,6 @@ static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)
 	final_c = htbl->cylinders + hr->index;
 	hr->albedo = final_c->color;
 	hr->mat = final_c->mat;
-	hr->fuzz = final_c->fuzz;
 	hr->reflect = final_c->reflect;
 	v = vv_sub(hr->hitpoint, final_c->base);
 	proj = dot(v, final_c->axis_v);
@@ -43,7 +42,6 @@ static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr,
 	final_c = htbl->cylinders + hr->index;
 	hr->albedo = final_c->color;
 	hr->mat = final_c->mat;
-	hr->fuzz = final_c->fuzz;
 	hr->reflect = final_c->reflect;
 	hr->normal = unit_vector(final_c->axis_v);
 	if (dot(r.direction, hr->normal) > 0.0f)
@@ -58,7 +56,6 @@ static inline void	plane_hr(const t_hittables *htbl, t_hit_record *hr,
 	final_p = *(htbl->planes + hr->index);
 	hr->albedo = final_p.color;
 	hr->mat = final_p.mat;
-	hr->fuzz = final_p.fuzz;
 	hr->reflect = final_p.reflect;
 	hr->normal = unit_vector(final_p.orientation);
 	if (dot(r.direction, hr->normal) > 0.0f)
@@ -71,7 +68,6 @@ void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 	hr->hitpoint = at(r, t);
 	if (hr->type == sphere)
 	{
-		hr->fuzz = 0.1;
 		hr->reflect = 0.1;
 		sphere_hr(htbl, hr);
 	}
