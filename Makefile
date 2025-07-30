@@ -10,8 +10,9 @@ SRC			= main.c utils.c init.c render.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
 			  vector_math1.c vector_math2.c vector_math3.c \
 			  parsing.c parsing_utils.c init_shapes.c \
-			  init_ambient.c init_camera.c init_shapes_utils.c \
-			  init_shapes_utils2.c
+			  init_ambient.c init_camera.c init_light.c \
+			  init_plane.c init_sphere.c init_vectors.c \
+			  init_shapes_utils.c init_shapes_utils2.c rt_cleanup.c \
 
 OBJ			= $(SRC:%.c=$(OBJ_PATH)%.o)
 

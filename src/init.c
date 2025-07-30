@@ -50,6 +50,7 @@ void	init_image(t_image *img)
 		img->image_height = 1;
 }
 
+/*
 void	init_lights(t_lights *l)
 {
 	l->ambient_color = (t_vec3f){0.4, 0.4, 0.4};
@@ -59,3 +60,4 @@ void	init_lights(t_lights *l)
 	l->point_brightness = 0.7f;
 	l->point_color = (t_vec3f){1, 1, 1};
 }
+*/

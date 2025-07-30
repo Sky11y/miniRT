@@ -2,47 +2,75 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static float	rt_atof_decimals(char *str, int integer, float sign)
+static char	*file_to_str(int fd)
 {
-	int		fraction;
-	int		i;
-	size_t	fraction_power;
+	char	*full_file;
+	char	*line;
 
-	i = 0;
-	fraction = 0;
-	fraction_power = 1;
-	while (str[i] >= '0' && str[i] <= '9')
+	full_file = NULL;
+	while (true)
 	{
-		fraction_power *= 10;
-		fraction = fraction * 10 + str[i] - '0';
-		i++;
+		line = get_next_line(fd);
+		if (!line)
+			break ;
+		if (!full_file)
+		{
+			full_file = ft_strdup(line);
+			free(line);
+		}
+		else
+			full_file = wrap_join(full_file, line);
+		if (!full_file)
+		{
+			print_error("error: malloc fail\n");
+			return (NULL);
+		}
 	}
-	return (sign * (integer + (float)fraction / fraction_power));
+	return (full_file);
 }
 
-float	rt_atof(char *str)
+char	**file_to_array(char *filename)
 {
-	int		integer;
-	int		i;
-	float	sign;
+	int		fd;
+	char	*filestr;
+	char	**file_arr;
 
-	sign = 1.;
-	i = 0;
-	if (str[i] == '+' || str[i] == '-')
+	fd = open(filename, O_RDONLY);
+	filestr = file_to_str(fd);
+	if (!filestr)
+		return (NULL);
+	close(fd);
+	file_arr = ft_split(filestr, '\n');
+	free(filestr);
+	if (!file_arr)
+		return (NULL);
+	return (file_arr);
+}
+
+int	set_vector(t_vec3f *vec, char **values, bool limit)
+{
+	vec->x = rt_atof(values[0]);
+	vec->y = rt_atof(values[1]);
+	vec->z = rt_atof(values[2]);
+	if (limit)
 	{
-		sign = -1.;
-		i++;
+		if (vec->x > 1.0 || vec->x < -1.0)
+		{
+			free_arr(values);
+			return (1);
+		}
+		if (vec->y > 1.0 || vec->y < -1.0)
+		{
+			free_arr(values);
+			return (1);
+		}
+		if (vec->z > 1.0 || vec->z < -1.0)
+		{
+			free_arr(values);
+			return (1);
+		}
 	}
-	integer = 0;
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		integer = integer * 10 + str[i] - '0';
-		i++;
-	}
-	if (str[i] != '.')
-		return (sign * (float)integer);
-	i++;
-	return (rt_atof_decimals(&str[i], integer, sign));
+	return (0);
 }
 
 int	string_to_color(char *str)
@@ -77,28 +105,4 @@ void	set_colors(char *str, int i, t_vec3f *colors)
 		colors->y = (float)color_value;
 	else if (i == 2)
 		colors->z = (float)color_value;
-}
-
-int	is_float(char *str)
-{
-	int	i;
-	int	decimal;
-
-	i = 0;
-	decimal = 0;
-	if (str[i] == '-')
-		i++;
-	while (str[i])
-	{
-		decimal = 0;
-		if (str[i] == '.')
-		{
-			i++;
-			decimal++;
-		}
-		if (str[i] < '0' || str[i] > '9' || decimal > 1)
-			return (1);
-		i++;
-	}
-	return (0);
 }

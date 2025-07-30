@@ -2,15 +2,15 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static int	init_values(char **split, t_plane *plane)
+static int	init_values(char **split, t_sphere *sphere)
 {
 	if (count_values(split) != 4)
-		return (print_error("error: invalid amount of values in plane\n"));
-	if (init_vector(split[1], &plane->pos, false))
+		return (print_error("error: invalid amount of values in spheres\n"));
+	if (init_vector(split[1], &sphere->center, false))
 		return (1);
-	if (init_vector(split[2], &plane->orientation, true))
+	if (init_radius(split[2], &sphere->radius))
 		return (1);
-	if (init_color(split[3], &plane->color))
+	if (init_color(split[3], &sphere->color))
 		return (1);
 	return (0);
 }
@@ -27,12 +27,12 @@ static int	search_file(t_master *master, char **file)
 	error = 0;
 	while (file[i] && error == 0)
 	{
-		if (line_first(file[i], "pl", 2))
+		if (line_first(file[i], "sp", 2))
 		{
 			split = ft_multi_split(file[i], " \t");
 			if (!split)
 				return (print_error("error: malloc fail\n"));
-			error = init_values(split, &master->hittables->planes[j]);
+			error = init_values(split, &master->hittables->spheres[j]);
 			free_arr(split);
 			j++;
 		}
@@ -41,16 +41,17 @@ static int	search_file(t_master *master, char **file)
 	return (error);
 }
 
-int	init_plane(t_master *master, char **file)
+int	init_sphere(t_master *master, char **file)
 {
-	t_plane	*planes;
-	int		error;
+	t_sphere	*spheres;
+	int			error;
 
+	// SEG FAULT
 	error = 0;
-	planes = malloc(master->hittables->plane_count * sizeof(t_plane));
-	if (!planes)
+	spheres = malloc(master->hittables->sphere_count * sizeof(t_sphere));
+	if (!spheres)
 		return (print_error("error: malloc fail\n"));
-	master->hittables->planes = planes;
+	master->hittables->spheres = spheres;
 	error = search_file(master, file);
 	return (error);
 }

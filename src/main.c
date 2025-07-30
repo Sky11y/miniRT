@@ -63,6 +63,74 @@ if (htbl->cylinder_count)
 }
 */
 
+static void	print_values(t_master master)
+{
+	float bright = master.lights->ambient_brightness;
+	float r = master.lights->ambient_color.x;
+	float g = master.lights->ambient_color.y;
+	float b = master.lights->ambient_color.z;
+	float tx = master.lights->ambient_tint.x;
+	float ty = master.lights->ambient_tint.y;
+	float tz = master.lights->ambient_tint.z;
+	printf("A - brightness: %f - colors: %f, %f, %f ", bright, r, g, b);
+	printf("- tint: %f %f %f\n", tx, ty, tz);
+
+	float cx = master.camera->center.x;
+	float cy = master.camera->center.y;
+	float cz = master.camera->center.z;
+	printf("C - center: %f %f %f ", cx, cy, cz);
+	float ox = master.camera->orientation.x;
+	float oy = master.camera->orientation.y;
+	float oz = master.camera->orientation.z;
+	float fov = master.camera->fov;
+	printf("- orientation: %f %f %f - fov: %f\n", ox, oy, oz, fov);
+
+	float lx = master.lights->point_center.x;
+	float ly = master.lights->point_center.y;
+	float lz = master.lights->point_center.z;
+	float lr = master.lights->point_color.x;
+	float lg = master.lights->point_color.y;
+	float lb = master.lights->point_color.z;
+	float lbright = master.lights->point_brightness;
+	printf("L - center: %f %f %f ", lx, ly, lz);
+	printf("- brightness: %f - colors: %f, %f, %f\n", lbright, lr, lg, lb);
+
+	int	i = 0;
+	while (i < master.hittables->plane_count)
+	{
+		float ppx = master.hittables->planes[i].pos.x;
+		float ppy = master.hittables->planes[i].pos.y;
+		float ppz = master.hittables->planes[i].pos.z;
+		float pox = master.hittables->planes[i].orientation.x;
+		float poy = master.hittables->planes[i].orientation.y;
+		float poz = master.hittables->planes[i].orientation.z;
+		float plr = master.hittables->planes[i].color.x;
+		float plg = master.hittables->planes[i].color.y;
+		float plb = master.hittables->planes[i].color.z;
+		printf("pl[%d] - pos: %f %f %f ",i,  ppx, ppy, ppz);
+		printf("- orientation: %f %f %f ", pox, poy, poz);
+		printf("- color: %f %f %f\n", plr, plg, plb);
+		i++;
+	}
+
+	i = 0;
+	while (i < master.hittables->sphere_count)
+	{
+		float spx = master.hittables->spheres[i].center.x;
+		float spy = master.hittables->spheres[i].center.y;
+		float spz = master.hittables->spheres[i].center.z;
+		float spr = master.hittables->spheres[i].color.x;
+		float spg = master.hittables->spheres[i].color.y;
+		float spb = master.hittables->spheres[i].color.z;
+		float sprad = master.hittables->spheres[i].radius;
+		printf("sp[%d] - pos: %f %f %f ",i,  spx, spy, spz);
+		printf("- radius: %f ", sprad);
+		printf("- color: %f %f %f\n", spr, spg, spb);
+		i++;
+	}
+
+}
+
 int main(int argc, char **argv)
 {
 	t_master	master;
@@ -83,20 +151,7 @@ int main(int argc, char **argv)
 		rt_cleanup(&master);
 		return (1);
 	}
-	float bright = master.lights->ambient_brightness;
-	float r = master.lights->ambient_color.x;
-	float g = master.lights->ambient_color.y;
-	float b = master.lights->ambient_color.z;
-	printf("A - brightness: %f - colors: %f, %f, %f\n", bright, r, g, b);
-	float cx = master.camera->center.x;
-	float cy = master.camera->center.y;
-	float cz = master.camera->center.z;
-	printf("C - center: %f %f %f ", cx, cy, cz);
-	float ox = master.camera->orientation.x;
-	float oy = master.camera->orientation.y;
-	float oz = master.camera->orientation.z;
-	float fov = master.camera->fov;
-	printf("- orientation: %f %f %f - fov: %f\n", ox, oy, oz, fov);
+	print_values(master); //REMOVE
 	rt_cleanup(&master);
 	return (0);
 }
