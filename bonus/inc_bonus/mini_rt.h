@@ -15,10 +15,10 @@
 # include "MLX42/MLX42_Int.h"
 //# include "libft.h"
 
-# define WIN_HEIGHT 800
-# define WIN_WIDTH 1600
+# define WIN_HEIGHT 400
+# define WIN_WIDTH 800
 # define SAMPLES_PER_PIXEL 3
-# define MAX_RAYS 3
+# define MAX_RAYS 5
 
 typedef enum e_shape
 {
@@ -28,23 +28,9 @@ typedef enum e_shape
 	plane,
 }	t_shape;
 
-typedef enum e_scatter_type
-{
-	REFLECT,
-	REFRACT,
-}	t_scatter_type;
-
-typedef enum e_mat_type {
-	DIFFUSE,
-	GLASS,
-	METAL,
-
-}	t_mat_type;
-
 typedef struct s_material {
 	float	reflect;
-	float	fuzz;
-	float	ior;
+	float	transparency;
 }	t_material;
 
 typedef struct t_vec4

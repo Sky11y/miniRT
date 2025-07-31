@@ -58,11 +58,11 @@ inline static bool	hit_anything(const t_ray r, const t_hittables *htbl,
 float	count_light(const t_vec3f normal, t_vec3f hp,
 		const t_lights *light, const t_hittables *htbl)
 {
-	float			intensity;
-	t_vec3f			light_dir;
-	float			diffuse;
-	t_vec3f			hp_to_light;
-	float			max_t;
+	t_vec3f	hp_to_light;
+	t_vec3f	light_dir;
+	float	intensity;
+	float	diffuse;
+	float	max_t;
 
 	hp = vv_add(hp, vt_mul(normal, 1e-4));
 	hp_to_light = vv_sub(light->point_center, hp);
