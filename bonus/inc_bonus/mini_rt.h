@@ -15,8 +15,8 @@
 # include "MLX42/MLX42_Int.h"
 //# include "libft.h"
 
-# define WIN_HEIGHT 400
-# define WIN_WIDTH 800
+# define WIN_HEIGHT 800
+# define WIN_WIDTH 1600
 # define SAMPLES_PER_PIXEL 3
 # define MAX_RAYS 5
 

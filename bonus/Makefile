@@ -1,7 +1,7 @@
 NAME		= miniRT
 LIBMLX		= $(MLX_PATH)/build/libmlx42.a
 
-FLAGS		= -Werror -Wall -Wextra -g -O3
+FLAGS		= -Werror -Wall -Wextra -O3 -march=native
 MLX42		= $(LIBMLX) -Iinclude -ldl -lglfw -pthread -lm
 
 SRC_PATH	= src_bonus/

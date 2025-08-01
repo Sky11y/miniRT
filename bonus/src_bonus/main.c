@@ -102,6 +102,7 @@ int main()
 		{1.0f, 1.0f, 1.0f},	//color
 		{0.0f, 0.7f},		//material
 		20.0f,			//radius
+		20.0f * 20.f,	//radius_squared
 	};
 	
 	t_sphere s2 = {
@@ -109,12 +110,14 @@ int main()
 		{0.0f, 1.0f, 0.0f},
 		{0.3f, 0.0f},
 		5.00f,
+		5.0f * 5.0f,
 	};
 	t_sphere s3 = {
 		{55.0f, 2.0f, -10.0f},
 		{1.0f, 1.0f, 0.0f},
 		{0.3f, 0.0f},
 		5.00f,
+		5.0f * 5.0f,
 	};
 	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
 	spheres[0] = s1;

@@ -5,7 +5,7 @@
 static void reflect_ray(t_ray *new_ray, t_vec3f dir, t_hit_record *hr)
 {
 	new_ray->direction = unit_vector(reflect(dir, hr->normal));
-	new_ray->origin = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4));
+	new_ray->origin = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4f));
 }
 
 void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr)
@@ -111,7 +111,7 @@ t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 		t_vec3f refractionColor = (t_vec3f){0, 0, 0};
 		//fresnel(r.direction, hr.normal, 1.5f, &hr.kr);
 		hr.kr = schlick_prob(r->direction, hr.normal, 1.5f);
-		t_vec3f bias = vt_mul(hr.normal, 1e-4);
+		t_vec3f bias = vt_mul(hr.normal, 1e-4f);
 		if (hr.kr < 1)
 		{
 			new_ray.direction = refractDir(r->direction, hr.normal, 1.5f, hr.face);

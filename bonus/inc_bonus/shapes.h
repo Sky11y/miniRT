@@ -11,6 +11,7 @@ typedef struct s_sphere
 	t_vec3f		color;
 	t_material	mat;
 	float		radius;
+	float		radius_squared;
 }	t_sphere;
 
 //size = t_vec3f * 4 + float * 3 = 4 * 12 + 3 * 4 = 60 bytes

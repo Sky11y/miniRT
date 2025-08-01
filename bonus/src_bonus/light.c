@@ -9,9 +9,7 @@ inline static bool	shadow_sphere(const t_ray *r, const t_hittables *htbl,
 
 	closest_t = max_t + 1.0f;
 	hit_all_spheres(r, &closest_t, htbl, &hr);
-	if (closest_t < max_t)
-		return (true);
-	return (false);
+	return (closest_t < max_t);
 }
 
 inline static bool	shadow_cylinder(const t_ray *r, const t_hittables *htbl,
@@ -25,9 +23,7 @@ inline static bool	shadow_cylinder(const t_ray *r, const t_hittables *htbl,
 	if (closest_t < max_t)
 		return (true);
 	hit_all_cylinder_caps(r, &closest_t, htbl, &hr);
-	if (closest_t < max_t)
-		return (true);
-	return (false);
+	return (closest_t < max_t);
 }
 
 inline static bool	shadow_plane(const t_ray *r, const t_hittables *htbl,
@@ -38,9 +34,7 @@ inline static bool	shadow_plane(const t_ray *r, const t_hittables *htbl,
 
 	closest_t = max_t + 1.0f;
 	hit_all_planes(r, &closest_t, htbl, &hr);
-	if (closest_t < max_t)
-		return (true);
-	return (false);
+	return (closest_t < max_t);
 }
 
 inline static bool	hit_anything(const t_ray r, const t_hittables *htbl,
@@ -64,7 +58,7 @@ float	count_light(const t_vec3f normal, t_vec3f hp,
 	float	diffuse;
 	float	max_t;
 
-	hp = vv_add(hp, vt_mul(normal, 1e-4));
+	hp = vv_add(hp, vt_mul(normal, 1e-4f));
 	hp_to_light = vv_sub(light->point_center, hp);
 	intensity = light->ambient_brightness;
 	max_t = v_length(hp_to_light);

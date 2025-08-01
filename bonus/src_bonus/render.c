@@ -31,9 +31,9 @@ uint32_t	mix_colors(uint32_t color, uint32_t prev_color)
 	rgb_prev_color[0] = (prev_color >> 24) & 0xFF;
 	rgb_prev_color[1] = (prev_color >> 16) & 0xFF;
 	rgb_prev_color[2] = (prev_color >> 8) & 0xFF;
-	final_color[0] = rgb_color[0] / 2 + rgb_prev_color[0] / 2;
-	final_color[1] = rgb_color[1] / 2 + rgb_prev_color[1] / 2;
-	final_color[2] = rgb_color[2] / 2 + rgb_prev_color[2] / 2;
+	final_color[0] = (rgb_color[0] + rgb_prev_color[0]) >> 1;
+	final_color[1] = (rgb_color[1] + rgb_prev_color[1]) >> 1;
+	final_color[2] = (rgb_color[2] + rgb_prev_color[2]) >> 1;
 	return (final_color[0] << 24 | final_color[1] << 16 | final_color[2] << 8 | 255);
 
 }
