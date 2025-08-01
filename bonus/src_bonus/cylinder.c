@@ -26,7 +26,7 @@ static inline bool	cy_hitpoints(float *arr, int *face, float *current_t)
 //arr[0] = a, arr[1] = b, arr[2] = c, arr[3] = discriminant, arr[4] = proj
 //vec[0] = cylinder normalized axis vector
 //vec[1...3] are helpers to count coefficents
-static inline bool	hit_cylinder(const t_cylinder *c, const t_ray r, int *face,
+static inline bool	hit_cylinder(const t_cylinder *c, const t_ray *r, int *face,
 		float *current_t)
 {
 	t_vec3f			vec[4];
@@ -34,8 +34,8 @@ static inline bool	hit_cylinder(const t_cylinder *c, const t_ray r, int *face,
 	float			arr[5];
 
 	vec[0] = c->axis_v;
-	vec[1] = vv_sub(r.origin, c->center);
-	vec[2] = vv_sub(r.direction, vt_mul(vec[0], dot(r.direction, vec[0])));
+	vec[1] = vv_sub(r->origin, c->center);
+	vec[2] = vv_sub(r->direction, vt_mul(vec[0], dot(r->direction, vec[0])));
 	vec[3] = vv_sub(vec[1], vt_mul(vec[0], dot(vec[1], vec[0])));
 	arr[0] = dot(vec[2], vec[2]);
 	arr[1] = 2 * dot(vec[2], vec[3]);
@@ -53,7 +53,7 @@ static inline bool	hit_cylinder(const t_cylinder *c, const t_ray r, int *face,
 }
 
 //save[0] = index of cylinder, save[1] = face of cylinder
-void	hit_all_cylinders(const t_ray r, float *closest_t,
+void	hit_all_cylinders(const t_ray *r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr)
 {
 	int					i;

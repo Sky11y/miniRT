@@ -1,6 +1,8 @@
 # Picture output
 *.ppm
 
+# perfromance data
+*perf*
 # Logs
 *.md
 

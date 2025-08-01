@@ -26,6 +26,7 @@ inline static void	minirt(void *param)
 		mlx_resize_image(master->mlx_img, master->mlx->width, master->mlx->height);
 	}
 	render(master, master->mlx_img);
+	printf("delta time %lf\n", master->mlx->delta_time);
 }
 
 int main()

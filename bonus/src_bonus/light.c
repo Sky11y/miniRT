@@ -1,7 +1,7 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-inline static bool	shadow_sphere(const t_ray r, const t_hittables *htbl,
+inline static bool	shadow_sphere(const t_ray *r, const t_hittables *htbl,
 		const float max_t)
 {
 	t_hit_record	hr;
@@ -14,7 +14,7 @@ inline static bool	shadow_sphere(const t_ray r, const t_hittables *htbl,
 	return (false);
 }
 
-inline static bool	shadow_cylinder(const t_ray r, const t_hittables *htbl,
+inline static bool	shadow_cylinder(const t_ray *r, const t_hittables *htbl,
 		const float max_t)
 {
 	t_hit_record	hr;
@@ -30,7 +30,7 @@ inline static bool	shadow_cylinder(const t_ray r, const t_hittables *htbl,
 	return (false);
 }
 
-inline static bool	shadow_plane(const t_ray r, const t_hittables *htbl,
+inline static bool	shadow_plane(const t_ray *r, const t_hittables *htbl,
 		const float max_t)
 {
 	t_hit_record	hr;
@@ -46,11 +46,11 @@ inline static bool	shadow_plane(const t_ray r, const t_hittables *htbl,
 inline static bool	hit_anything(const t_ray r, const t_hittables *htbl,
 		const float max_t)
 {
-	if (htbl->sphere_count && shadow_sphere(r, htbl, max_t))
+	if (htbl->sphere_count && shadow_sphere(&r, htbl, max_t))
 		return (true);
-	if (htbl->cylinder_count && shadow_cylinder(r, htbl, max_t))
+	if (htbl->cylinder_count && shadow_cylinder(&r, htbl, max_t))
 		return (true);
-	if (htbl->plane_count && shadow_plane(r, htbl, max_t))
+	if (htbl->plane_count && shadow_plane(&r, htbl, max_t))
 		return (true);
 	return (false);
 }

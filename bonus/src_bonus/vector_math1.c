@@ -29,7 +29,7 @@ t_vec3f	unit_vector(const t_vec3f v)
 	return ((t_vec3f){v.x / length, v.y / length, v.z / length});
 }
 
-t_vec3f	at(t_ray r, float t)
+t_vec3f	at(const t_ray *r, float t)
 {
-	return ((t_vec3f)vv_add(r.origin, vt_mul(r.direction, t)));
+	return ((t_vec3f)vv_add(r->origin, vt_mul(r->direction, t)));
 }

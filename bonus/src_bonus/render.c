@@ -19,6 +19,25 @@ t_ray	get_ray(const t_camera *cam, float x, float y)
 	return ((t_ray){cam->center, direction});
 }
 
+uint32_t	mix_colors(uint32_t color, uint32_t prev_color)
+{
+	uint8_t	rgb_color[3];
+	uint8_t	rgb_prev_color[3];
+	uint8_t	final_color[3];
+
+	rgb_color[0] = (color >> 24) & 0xFF;
+	rgb_color[1] = (color >> 16) & 0xFF;
+	rgb_color[2] = (color >> 8) & 0xFF;
+	rgb_prev_color[0] = (prev_color >> 24) & 0xFF;
+	rgb_prev_color[1] = (prev_color >> 16) & 0xFF;
+	rgb_prev_color[2] = (prev_color >> 8) & 0xFF;
+	final_color[0] = rgb_color[0] / 2 + rgb_prev_color[0] / 2;
+	final_color[1] = rgb_color[1] / 2 + rgb_prev_color[1] / 2;
+	final_color[2] = rgb_color[2] / 2 + rgb_prev_color[2] / 2;
+	return (final_color[0] << 24 | final_color[1] << 16 | final_color[2] << 8 | 255);
+
+}
+
 //idx[0] = y, idx[1] = x
 void	render(t_master *master, mlx_image_t *mlx_img)
 {
@@ -26,7 +45,9 @@ void	render(t_master *master, mlx_image_t *mlx_img)
 	const uint16_t	img_width = master->img->image_width;
 	const float		pixel_samples_scale = 1.0f / SAMPLES_PER_PIXEL;
 	t_vec3f			final_pixel_color;
+	uint32_t		mixed_color = 0;
 	uint32_t		color;
+	uint32_t		prev_color = 0;
 	int				idx[2];
 
 	idx[0] = 0;
@@ -39,7 +60,15 @@ void	render(t_master *master, mlx_image_t *mlx_img)
 					master->cam, idx, master->light);
 			color = get_color(vt_mul(final_pixel_color, pixel_samples_scale));
 			mlx_put_pixel(mlx_img, idx[1], idx[0], color);
-			idx[1] += 1;
+			if (idx[1] != 0)
+			{
+				mixed_color = mix_colors(color, prev_color);
+				mlx_put_pixel(mlx_img, idx[1] - 1, idx[0], mixed_color);
+			}
+			prev_color = color;
+			if (idx[1] + 2 == img_width)
+				mlx_put_pixel(mlx_img, idx[1] + 1, idx[0], color);
+			idx[1] += 2;
 		}
 		idx[0] += 1;
 	}
@@ -52,32 +81,3 @@ t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
 	tmp = vt_mul(n, 2 * dot(v, n));
 	return (vv_sub(v, tmp));
 }
-
-/*
-t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
-		const t_hit_record *hr, t_scatter_type *type)
-{
-	float	cos_theta; 
-	float	sin_theta;
-	float	eta;
-
-	if (hr->tranparency == 0)
-	{
-		*type = REFLECT;
-		return (reflect(v, n));
-	}
-	if (hr->face == 1)
-		eta = 0.67f;
-	else
-		eta = 1.5f;
-	cos_theta = fminf(-dot(v, n), 1.0f);
-	sin_theta = sqrtf(1.0f - cos_theta * cos_theta);
-	if (eta * sin_theta > 1.0f) // || schlick_prob(cos_theta, eta))
-	{
-		*type = REFLECT;
-		return (reflect(v, n));
-	}
-	*type = REFRACT;
-	return (refract(v, n, eta, cos_theta));
-}*/
-

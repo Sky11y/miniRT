@@ -62,7 +62,7 @@ t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
 t_vec3f rotate_v(const t_vec3f v);
 float	v_length(const t_vec3f v);
-float	v_length_squared(const t_vec3f v);
+float	v_length_squared(const t_vec3f *v);
 
 t_vec3f	vt_mul(const t_vec3f v, float t);
 t_vec3f	vt_div(const t_vec3f v, float t);

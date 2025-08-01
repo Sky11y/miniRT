@@ -3,13 +3,13 @@
 #include "shapes.h"
 
 static inline float	hit_cap(const t_vec3f base, const float d,
-		const t_cylinder c, const t_ray r)
+		const t_cylinder c, const t_ray *r)
 {
 	t_vec3f			hp;
 	t_vec3f			dd;
 	float			t;
 
-	t = dot(vv_sub(base, r.origin), c.axis_v) / d;
+	t = dot(vv_sub(base, r->origin), c.axis_v) / d;
 	if (t < 1e-4)
 		return (-1.0f);
 	hp = at(r, t);
@@ -19,14 +19,14 @@ static inline float	hit_cap(const t_vec3f base, const float d,
 	return (t);
 }
 
-static inline float	hit_cylinder_caps(const t_cylinder c, const t_ray r)
+static inline float	hit_cylinder_caps(const t_cylinder c, const t_ray *r)
 {
 	const t_vec3f	bottom = c.base;
 	const t_vec3f	top = vv_add(bottom, vt_mul(c.axis_v, c.height));
 	float			t[2];
 	float			d;
 
-	d = dot(c.axis_v, r.direction);
+	d = dot(c.axis_v, r->direction);
 	if (fabs(d) < 1e-4)
 		return (-1.0);
 	t[0] = hit_cap(top, d, c, r);
@@ -38,7 +38,7 @@ static inline float	hit_cylinder_caps(const t_cylinder c, const t_ray r)
 	return (-1.0f);
 }
 
-void	hit_all_cylinder_caps(const t_ray r, float *closest_t,
+void	hit_all_cylinder_caps(const t_ray *r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr)
 {
 	int					i;

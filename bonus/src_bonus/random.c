@@ -32,7 +32,7 @@ t_vec3f	random_unit_vector(void)
 	while (true)
 	{
 		p = random_v_range(-1, 1);
-		lensq = v_length_squared(p);
+		lensq = v_length_squared(&p);
 		if (lensq > 1e-8 && lensq <= 1)
 			return (vt_div(p, sqrtf(lensq)));
 	}

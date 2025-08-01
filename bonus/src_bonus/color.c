@@ -74,7 +74,7 @@ inline static float	schlick_prob(const t_vec3f v, const t_vec3f n, const float i
 	return r0 + (1.0f - r0) * powf(1.0f - fabsf(cosi), 5.0f);
 }
 
-t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
+t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 		const t_lights *light, uint8_t depth)
 {
 	t_hit_record	hr;
@@ -102,29 +102,29 @@ t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
 		return (vt_mul(hr.albedo, light_intensity));
 	else if (hr.transparency == 0.0f && hr.reflect > 0.0f)
 	{
-		reflect_ray(&new_ray, r.direction, &hr);
-		color = vt_mul(ray_color(new_ray, htbl, light, depth - 1), hr.reflect);
+		reflect_ray(&new_ray, r->direction, &hr);
+		color = vt_mul(ray_color(&new_ray, htbl, light, depth - 1), hr.reflect);
 		return (vv_add(color, vt_mul(hr.albedo, light_intensity)));
 	}
 	else if (hr.transparency > 0.0f)
 	{
 		t_vec3f refractionColor = (t_vec3f){0, 0, 0};
 		//fresnel(r.direction, hr.normal, 1.5f, &hr.kr);
-		hr.kr = schlick_prob(r.direction, hr.normal, 1.5f);
+		hr.kr = schlick_prob(r->direction, hr.normal, 1.5f);
 		t_vec3f bias = vt_mul(hr.normal, 1e-4);
 		if (hr.kr < 1)
 		{
-			new_ray.direction = refractDir(r.direction, hr.normal, 1.5f, hr.face);
+			new_ray.direction = refractDir(r->direction, hr.normal, 1.5f, hr.face);
 			if (v_length(new_ray.direction) > 0.0f)
 			{
 				new_ray.direction = unit_vector(new_ray.direction);
 				new_ray.origin = vv_sub(hr.hitpoint, bias);
-				refractionColor = ray_color(new_ray, htbl, light, depth - 1);
+				refractionColor = ray_color(&new_ray, htbl, light, depth - 1);
 			}
 		}
-		new_ray.direction = reflect(r.direction, hr.normal);
+		new_ray.direction = reflect(r->direction, hr.normal);
 		new_ray.origin = vv_add(hr.hitpoint, bias);
-		t_vec3f reflectionColor = ray_color(new_ray, htbl, light, depth - 1);
+		t_vec3f reflectionColor = ray_color(&new_ray, htbl, light, depth - 1);
 		color = vv_add(vt_mul(reflectionColor, hr.kr), vt_mul(refractionColor, 1 - hr.kr));
 		color = vt_mul(color, hr.transparency);
 		t_vec3f diffuse = vt_mul(hr.albedo, light_intensity * (1.0f - hr.transparency));
@@ -148,7 +148,7 @@ t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
 	while (sample_no < SAMPLES_PER_PIXEL)
 	{
 		r = get_ray(cam, idx[1], idx[0]);
-		ret_color = ray_color(r, htbl, light, MAX_RAYS);
+		ret_color = ray_color(&r, htbl, light, MAX_RAYS);
 		pixel_color = vv_add(pixel_color, ret_color);
 		sample_no += 1;
 	}
