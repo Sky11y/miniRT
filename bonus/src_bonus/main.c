@@ -53,6 +53,7 @@ inline static void	minirt(void *param)
 {
 	t_master *m = (t_master *)param;
 	t_renderer *r = m->renderer;
+	static int	frame = 0;
 
 	check_mouse(m);
 	if (is_window_size_changed(m->mlx) || is_cam_moved(m->cam))
@@ -69,7 +70,7 @@ inline static void	minirt(void *param)
 		for (int i = 0; i < THREAD_COUNT; i++)
 		{
 			r->args[i] = (t_thread){
-				.id = i,
+				.id = i * THREAD_COUNT + frame * THREAD_COUNT * THREAD_COUNT,
 				.width = m->img->image_width,
 				.height = m->img->image_height,
 				.pixels = r->image_buffer,
@@ -91,8 +92,14 @@ inline static void	minirt(void *param)
 				exit(1);
 		}
 		r->rendering = false;
-		r->rendering_done = true;
+		//r->rendering_done = true;
 		//memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
+	}
+	frame++;
+	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
+	{
+		frame = 0;
+		r->rendering_done = true;
 	}
 	printf("delta time %lf\n", m->mlx->delta_time);
 }
