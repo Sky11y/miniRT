@@ -17,21 +17,23 @@ inline static bool is_window_size_changed(mlx_t *mlx)
 inline static bool is_cam_moved(t_camera *c)
 {
 	static int32_t	center = 1;
-	int32_t			cmp;
+	int32_t			cmp_center;
+	static int32_t	orientation = 1;
+	int32_t			cmp_orientation;
 	
-	cmp = dot(c->center, c->center);
-	if (cmp == center)
+	cmp_center = dot(c->center, c->center);
+	cmp_orientation = dot(c->orientation, c->orientation);
+	if (cmp_center == center && cmp_orientation == orientation)
 		return (false);
-	center = cmp;
+	center = cmp_center;
+	orientation = cmp_orientation;
 	return (true);
 }
 
 static t_renderer	*init_renderer(t_renderer *r, t_image *i)
 {
 	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width * i->image_height);
-	//r->threads = malloc(sizeof(pthread_t) * THREAD_COUNT);
-	//r->args = malloc(sizeof(t_thread) * THREAD_COUNT);
-	if (!r->image_buffer)// || !r->threads || !r->args)
+	if (!r->image_buffer)
 		exit(1);
 	r->rendering = false;
 	r->rendering_done = false;
@@ -52,6 +54,7 @@ inline static void	minirt(void *param)
 	t_master *m = (t_master *)param;
 	t_renderer *r = m->renderer;
 
+	check_mouse(m);
 	if (is_window_size_changed(m->mlx) || is_cam_moved(m->cam))
 	{
 		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
@@ -205,7 +208,6 @@ int main()
 	mlx_key_hook(master.mlx, &check_events, &master);
 	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
 		mlx_terminate(master.mlx);
-	mlx_image_to_window(master.mlx, master.mlx_img, 0, 0);
 	mlx_loop(master.mlx);
 	mlx_terminate(master.mlx);
 	
