@@ -7,26 +7,91 @@ inline static bool is_window_size_changed(mlx_t *mlx)
 	static int32_t width = WIN_WIDTH;
 	static int32_t height = WIN_HEIGHT;
 
-	if (mlx->width != width || mlx->height != height)
-	{
-		width = mlx->width;
-		height = mlx->height;
-		return (true);
-	}
-	return (false);
+	if (mlx->width == width && mlx->height == height)
+		return (false);
+	width = mlx->width;
+	height = mlx->height;
+	return (true);
+}
+
+inline static bool is_cam_moved(t_camera *c)
+{
+	static int32_t	center = 1;
+	int32_t			cmp;
+	
+	cmp = dot(c->center, c->center);
+	if (cmp == center)
+		return (false);
+	center = cmp;
+	return (true);
+}
+
+static t_renderer	*init_renderer(t_renderer *r, t_image *i)
+{
+	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width * i->image_height);
+	//r->threads = malloc(sizeof(pthread_t) * THREAD_COUNT);
+	//r->args = malloc(sizeof(t_thread) * THREAD_COUNT);
+	if (!r->image_buffer)// || !r->threads || !r->args)
+		exit(1);
+	r->rendering = false;
+	r->rendering_done = false;
+	return (r);
+}
+
+static t_renderer	*setup_renderer(t_renderer *r, t_image *i)
+{
+	free(r->image_buffer);
+	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width * i->image_height);
+	if (!r->image_buffer)
+		exit(1);
+	return (r);
 }
 
 inline static void	minirt(void *param)
 {
-	t_master *master = (t_master *)param;
-	if (is_window_size_changed(master->mlx))
+	t_master *m = (t_master *)param;
+	t_renderer *r = m->renderer;
+
+	if (is_window_size_changed(m->mlx) || is_cam_moved(m->cam))
 	{
-		master->img = setup_image(master->img, master->mlx->width, master->mlx->height);
-		master->cam = setup_camera(master->cam, master->img);
-		mlx_resize_image(master->mlx_img, master->mlx->width, master->mlx->height);
+		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
+		m->cam = setup_camera(m->cam, m->img);
+		m->renderer = setup_renderer(m->renderer, m->img);
+		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
+		r->rendering_done = false;
 	}
-	render(master, master->mlx_img);
-	printf("delta time %lf\n", master->mlx->delta_time);
+	if (!r->rendering && !r->rendering_done)
+	{
+		r->rendering = true;
+		for (int i = 0; i < THREAD_COUNT; i++)
+		{
+			r->args[i] = (t_thread){
+				.id = i,
+				.width = m->img->image_width,
+				.height = m->img->image_height,
+				.pixels = r->image_buffer,
+				.cam = m->cam,
+				.htbl = m->htbl,
+				.light = m->light,
+				.mlx_img = m->mlx_img,
+			};
+			pthread_create(&r->threads[i], NULL, render_thread, &r->args[i]);
+			//handle errors
+		}
+	}
+	if (r->rendering && !r->rendering_done)
+	{
+		int count = 0;
+		while (count < THREAD_COUNT)
+		{
+			if (pthread_join(r->threads[count++], NULL))
+				exit(1);
+		}
+		r->rendering = false;
+		r->rendering_done = true;
+		//memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
+	}
+	printf("delta time %lf\n", m->mlx->delta_time);
 }
 
 int main()
@@ -34,12 +99,15 @@ int main()
 	t_master	master;
 	t_camera	cam;
 	t_image		img;
+	t_renderer	r;
 	t_lights	light;
 	t_hittables	hittables;
 
 	master.light = init_lights(&light);
 	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
+	master.cam = init_camera(&cam);
 	master.cam = setup_camera(&cam, &img);
+	master.renderer = init_renderer(&r, &img);
 	
 	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
 
@@ -137,7 +205,9 @@ int main()
 	mlx_key_hook(master.mlx, &check_events, &master);
 	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
 		mlx_terminate(master.mlx);
+	mlx_image_to_window(master.mlx, master.mlx_img, 0, 0);
 	mlx_loop(master.mlx);
+	mlx_terminate(master.mlx);
 	
 	return (0);
 }

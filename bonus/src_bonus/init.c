@@ -16,15 +16,20 @@ inline static void	get_pixel00_location(t_camera *cam)
 	cam->pixel00_center = vv_add(cam->pixel00, vt_mul(pixel_delta_sum, 0.5));
 }
 
+t_camera	*init_camera(t_camera *cam)
+{
+	cam->center = (t_vec3f){-30.0f, 10.0f, 100.0f};
+	cam->orientation = (t_vec3f){0.5f, -0.0, -1.0};
+	cam->fov = 70;
+	cam->vup = (t_vec3f){0, 1.0f, 0};
+	return (cam);
+}
+
 t_camera	*setup_camera(t_camera *cam, const t_image *img)
 {
 	float	half_w;
 
-	cam->center = (t_vec3f){-30.0f, 10.0f, 100.0f};
-	cam->orientation = (t_vec3f){0.5f, -0.0, -1.0};
-	cam->fov = 70;
 	cam->lookat = vv_add(cam->center, cam->orientation);
-	cam->vup = (t_vec3f){0, 1.0f, 0};
 	cam->focal_length = v_length(vv_sub(cam->center, cam->lookat));
 	half_w = tanf(degrees_to_rad(cam->fov) / 2);
 	cam->viewport_width = 2.0f * half_w * cam->focal_length;

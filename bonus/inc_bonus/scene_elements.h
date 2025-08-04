@@ -50,8 +50,30 @@ typedef struct s_lights
 	float	ambient_brightness;
 }	t_lights;
 
+typedef struct s_thread
+{
+	mlx_image_t	*mlx_img;
+	uint32_t	*pixels;
+	t_camera	*cam;
+	t_lights	*light;
+	t_hittables	*htbl;
+	uint16_t	width;
+	uint16_t	height;
+	uint8_t		id;
+}	t_thread;
+
+typedef struct s_renderer
+{
+	uint32_t	*image_buffer;
+	pthread_t	threads[THREAD_COUNT];
+	t_thread	args[THREAD_COUNT];
+	bool		rendering;
+	bool		rendering_done;
+}	t_renderer;
+
 typedef struct s_master
 {
+	t_renderer	*renderer;
 	mlx_t		*mlx;
 	mlx_image_t	*mlx_img;
 	t_camera	*cam;
@@ -84,12 +106,11 @@ t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 		const t_lights *light, uint8_t depth);
 t_vec3f	get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
 		int *idx, const t_lights *light);
-void	render(t_master *master, mlx_image_t *mlx_img);
+void	*render_thread(void *param);
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray *r, const float t);
 t_ray	get_ray(const t_camera *cam, float x, float y);
-//t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
-//		const t_hit_record *hr, t_scatter_type *type);
+t_camera	*init_camera(t_camera *cam);
 t_camera	*setup_camera(t_camera *cam, const t_image *img);
 t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
 t_lights	*init_lights(t_lights *l);

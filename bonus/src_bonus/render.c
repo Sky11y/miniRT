@@ -39,10 +39,11 @@ uint32_t	mix_colors(uint32_t color, uint32_t prev_color)
 }
 
 //idx[0] = y, idx[1] = x
-void	render(t_master *master, mlx_image_t *mlx_img)
+void	*render_thread(void *param)
 {
-	const uint16_t	img_height = master->img->image_height;
-	const uint16_t	img_width = master->img->image_width;
+	t_thread *thread = (t_thread *)param;
+	const uint16_t	img_height = thread->height;
+	const uint16_t	img_width = thread->width;
 	const float		pixel_samples_scale = 1.0f / SAMPLES_PER_PIXEL;
 	t_vec3f			final_pixel_color;
 	uint32_t		mixed_color = 0;
@@ -50,28 +51,33 @@ void	render(t_master *master, mlx_image_t *mlx_img)
 	uint32_t		prev_color = 0;
 	int				idx[2];
 
-	idx[0] = 0;
+	idx[0] = thread->id;
+	printf("%d\n", thread->id);
 	while (idx[0] < img_height)
 	{
 		idx[1] = 0;
 		while (idx[1] < img_width)
 		{
-			final_pixel_color = get_pixel_color(master->htbl,
-					master->cam, idx, master->light);
+			final_pixel_color = get_pixel_color(thread->htbl,
+					thread->cam, idx, thread->light);
 			color = get_color(vt_mul(final_pixel_color, pixel_samples_scale));
-			mlx_put_pixel(mlx_img, idx[1], idx[0], color);
+			thread->pixels[idx[0] * img_width + idx[1]] = color;
 			if (idx[1] != 0)
 			{
 				mixed_color = mix_colors(color, prev_color);
-				mlx_put_pixel(mlx_img, idx[1] - 1, idx[0], mixed_color);
+				thread->pixels[idx[0] * img_width + idx[1] - 1] = mixed_color;
 			}
 			prev_color = color;
 			if (idx[1] + 2 == img_width)
-				mlx_put_pixel(mlx_img, idx[1] + 1, idx[0], color);
+				thread->pixels[idx[0] * img_width + idx[1] + 1] = color;
 			idx[1] += 2;
 		}
-		idx[0] += 1;
+		memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
+				&thread->pixels[idx[0] * img_width],
+				sizeof(uint32_t) * img_width);
+		idx[0] += THREAD_COUNT;
 	}
+	return (NULL);
 }
 
 t_vec3f	reflect(const t_vec3f v, const t_vec3f n)

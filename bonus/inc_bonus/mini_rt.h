@@ -10,6 +10,7 @@
 # include <limits.h>	//INT_MAX -> math.h includes INFINITY so we migth not need this
 # include <stdbool.h>	//true and false
 # include <time.h>		
+# include <pthread.h>
 
 # include "MLX42/MLX42.h"
 # include "MLX42/MLX42_Int.h"
@@ -19,6 +20,7 @@
 # define WIN_WIDTH 1600
 # define SAMPLES_PER_PIXEL 3
 # define MAX_RAYS 5
+# define THREAD_COUNT 8
 
 typedef enum e_shape
 {
