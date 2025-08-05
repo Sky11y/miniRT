@@ -1,9 +1,9 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-inline float	dot(const t_vec3f u, const t_vec3f v)
+inline float	dot(const t_vec3f *u, const t_vec3f *v)
 {
-	return (u.x * v.x + u.y * v.y + u.z * v.z);
+	return (u->x * v->x + u->y * v->y + u->z * v->z);
 }
 
 inline t_vec3f	cross(const t_vec3f u, const t_vec3f v)

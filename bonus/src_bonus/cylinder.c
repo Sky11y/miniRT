@@ -35,18 +35,18 @@ static inline bool	hit_cylinder(const t_cylinder *c, const t_ray *r, int *face,
 
 	vec[0] = c->axis_v;
 	vec[1] = vv_sub(r->origin, c->center);
-	vec[2] = vv_sub(r->direction, vt_mul(vec[0], dot(r->direction, vec[0])));
-	vec[3] = vv_sub(vec[1], vt_mul(vec[0], dot(vec[1], vec[0])));
-	arr[0] = dot(vec[2], vec[2]);
-	arr[1] = 2 * dot(vec[2], vec[3]);
-	arr[2] = dot(vec[3], vec[3]) - c->radius_squared;
+	vec[2] = vv_sub(r->direction, vt_mul(vec[0], dot(&r->direction, &vec[0])));
+	vec[3] = vv_sub(vec[1], vt_mul(vec[0], dot(&vec[1], &vec[0])));
+	arr[0] = dot(&vec[2], &vec[2]);
+	arr[1] = 2 * dot(&vec[2], &vec[3]);
+	arr[2] = dot(&vec[3], &vec[3]) - c->radius_squared;
 	arr[3] = arr[1] * arr[1] - (4 * arr[0] * arr[2]);
 	if (arr[3] < 1e-4f)
 		return (false);
 	if (!cy_hitpoints(arr, face, current_t))
 		return (false);
 	between = vv_sub(at(r, *current_t), c->base);
-	arr[4] = dot(between, vec[0]);
+	arr[4] = dot(&between, &vec[0]);
 	return (arr[4] >= 0 && arr[4] <= c->height);
 }
 

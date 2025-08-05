@@ -8,10 +8,10 @@ static inline bool	hit_plane(const t_plane *p, const t_ray *r, float *current_t)
 	float	ray_plane_dot;
 
 	oc = vv_sub(p->pos, r->origin);
-	ray_plane_dot = dot(r->direction, p->orientation);
+	ray_plane_dot = dot(&r->direction, &p->orientation);
 	if (fabsf(ray_plane_dot) < 1e-4f)
 		return (false);
-	*current_t = dot(oc, p->orientation) / ray_plane_dot;
+	*current_t = dot(&oc, &p->orientation) / ray_plane_dot;
 	return (*current_t > 1e-4f);
 }
 

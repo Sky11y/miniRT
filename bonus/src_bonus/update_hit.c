@@ -27,7 +27,7 @@ static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)
 	hr->reflect = final_c->mat.reflect;
 	hr->transparency = final_c->mat.transparency;
 	v = vv_sub(hr->hitpoint, final_c->base);
-	proj = dot(v, final_c->axis_v);
+	proj = dot(&v, &final_c->axis_v);
 	foot = vv_add(final_c->base, vt_mul(final_c->axis_v, proj));
 	if (hr->face == 1)
 		hr->normal = unit_vector(vv_sub(hr->hitpoint, foot));
@@ -45,7 +45,7 @@ static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr,
 	hr->reflect = final_c->mat.reflect;
 	hr->transparency = final_c->mat.transparency;
 	hr->normal = unit_vector(final_c->axis_v);
-	if (dot(r->direction, hr->normal) > 0.0f)
+	if (dot(&r->direction, &hr->normal) > 0.0f)
 		hr->normal = rotate_v(hr->normal);
 }
 
@@ -59,7 +59,7 @@ static inline void	plane_hr(const t_hittables *htbl, t_hit_record *hr,
 	hr->reflect = final_p.mat.reflect;
 	hr->transparency = final_p.mat.transparency;
 	hr->normal = unit_vector(final_p.orientation);
-	if (dot(r->direction, hr->normal) > 0.0f)
+	if (dot(&r->direction, &hr->normal) > 0.0f)
 		hr->normal = rotate_v(hr->normal);
 }
 

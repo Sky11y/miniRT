@@ -8,13 +8,14 @@ static inline float	hit_cap(const t_vec3f base, const float d,
 	t_vec3f			hp;
 	t_vec3f			dd;
 	float			t;
+	const t_vec3f	base_to_origin = vv_sub(base, r->origin);
 
-	t = dot(vv_sub(base, r->origin), c->axis_v) / d;
+	t = dot(&base_to_origin, &c->axis_v) / d;
 	if (t < 1e-4f)
 		return (-1.0f);
 	hp = at(r, t);
 	dd = vv_sub(hp, base);
-	if (dot(dd, dd) > c->radius_squared)
+	if (dot(&dd, &dd) > c->radius_squared)
 		return (-1.0f);
 	return (t);
 }
@@ -26,7 +27,7 @@ static inline float	hit_cylinder_caps(const t_cylinder *c, const t_ray *r)
 	float			t[2];
 	float			d;
 
-	d = dot(c->axis_v, r->direction);
+	d = dot(&c->axis_v, &r->direction);
 	if (fabs(d) < 1e-4f)
 		return (-1.0);
 	t[0] = hit_cap(top, d, c, r);

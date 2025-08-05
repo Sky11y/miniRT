@@ -9,8 +9,8 @@ t_ray	get_ray(const t_camera *cam, float x, float y)
 	t_vec3f			direction;
 	float			dir_off[2];
 
-	dir_off[0] = x + random_range(0.0, 1.0);
-	dir_off[1] = y + random_range(0.0, 1.0);
+	dir_off[0] = x;// + random_range(0.0, 1.0);
+	dir_off[1] = y;// + random_range(0.0, 1.0);
 	offset[0] = vt_mul(cam->pixel_delta_u, dir_off[0]);
 	offset[1] = vt_mul(cam->pixel_delta_v, dir_off[1]);
 	offset[2] = vv_add(offset[0], offset[1]);
@@ -74,11 +74,11 @@ void	*render_thread(void *param)
 				thread->pixels[idx[0] * img_width + idx[1] + 1] = color;
 			idx[1] += 2;
 		}
-		//memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
-		//		&thread->pixels[idx[0] * img_width],
-		//		sizeof(uint32_t) * img_width);
+		memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
+				&thread->pixels[idx[0] * img_width],
+				sizeof(uint32_t) * img_width);
 		printf("%d\n", idx[0]);
-		idx[0] += 1;
+		idx[0] += THREAD_COUNT;
 		i++;
 	}
 	return (NULL);
@@ -88,6 +88,6 @@ t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
 {
 	t_vec3f	tmp;
 
-	tmp = vt_mul(n, 2 * dot(v, n));
+	tmp = vt_mul(n, 2 * dot(&v, &n));
 	return (vv_sub(v, tmp));
 }

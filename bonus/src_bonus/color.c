@@ -10,7 +10,7 @@ static void reflect_ray(t_ray *new_ray, t_vec3f dir, t_hit_record *hr)
 
 void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr)
 {
-	float cosi = clamp(dot(v, n), -1.0, 1.0);
+	float cosi = clamp(dot(&v, &n), -1.0, 1.0);
 	float etai = 1.0f;
 	float etat = ior;
 
@@ -35,7 +35,7 @@ void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr)
 static t_vec3f refractDir(const t_vec3f v, const t_vec3f n, const float ior,
 		const int front_face)
 {
-	float cosi = clamp(dot(n, v), -1.0f, 1.0f);
+	float cosi = clamp(dot(&n, &v), -1.0f, 1.0f);
 	float etai = 1.0f;
 	float etat = ior;
 	t_vec3f normal = n;
@@ -58,7 +58,7 @@ static t_vec3f refractDir(const t_vec3f v, const t_vec3f n, const float ior,
 inline static float	schlick_prob(const t_vec3f v, const t_vec3f n, const float ior)
 {
 	float	r0;
-	float	cosi = clamp(dot(v, n), -1.0f, 1.0f);
+	float	cosi = clamp(dot(&v, &n), -1.0f, 1.0f);
 	float	etai = 1.0f;
 	float	etat = ior;
 

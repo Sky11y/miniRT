@@ -65,7 +65,7 @@ float	count_light(const t_vec3f normal, t_vec3f hp,
 	light_dir = unit_vector(hp_to_light);
 	if (hit_anything((t_ray){hp, light_dir}, htbl, max_t))
 		return (intensity);
-	diffuse = dot(normal, light_dir);
+	diffuse = dot(&normal, &light_dir);
 	if (diffuse > 0.0f)
 		intensity += light->point_brightness * diffuse;
 	return (intensity);

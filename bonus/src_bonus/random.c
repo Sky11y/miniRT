@@ -31,9 +31,9 @@ t_vec3f	random_unit_vector(void)
 
 	while (true)
 	{
-		p = random_v_range(-1, 1);
+		p = random_v_range(-1.0f, 1.0f);
 		lensq = v_length_squared(&p);
-		if (lensq > 1e-8f && lensq <= 1)
+		if (lensq > 1e-8f && lensq <= 1.0f)
 			return (vt_div(p, sqrtf(lensq)));
 	}
 }

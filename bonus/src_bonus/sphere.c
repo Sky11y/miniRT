@@ -12,7 +12,7 @@ static inline bool	hit_sphere(const t_sphere *s, const t_ray *r, int *face,
 
 	oc = vv_sub(s->center, r->origin);
 	arr[0] = v_length_squared(&r->direction);
-	arr[1] = dot(r->direction, oc);
+	arr[1] = dot(&r->direction, &oc);
 	arr[2] = v_length_squared(&oc) - s->radius_squared;
 	arr[3] = arr[1] * arr[1] - arr[0] * arr[2];
 	if (arr[3] < 1e-4f)

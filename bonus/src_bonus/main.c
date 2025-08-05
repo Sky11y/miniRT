@@ -21,8 +21,8 @@ inline static bool is_cam_moved(t_camera *c)
 	static int32_t	orientation = 1;
 	int32_t			cmp_orientation;
 	
-	cmp_center = dot(c->center, c->center);
-	cmp_orientation = dot(c->orientation, c->orientation);
+	cmp_center = dot(&c->center, &c->center);
+	cmp_orientation = dot(&c->orientation, &c->orientation);
 	if (cmp_center == center && cmp_orientation == orientation)
 		return (false);
 	center = cmp_center;
@@ -69,10 +69,11 @@ inline static void	minirt(void *param)
 	if (!r->rendering && !r->rendering_done)
 	{
 		r->rendering = true;
+		uint16_t starting_row = THREAD_COUNT * THREAD_COUNT * frame;
 		for (int i = 0; i < THREAD_COUNT; i++)
 		{
 			r->args[i] = (t_thread){
-				.id = i * THREAD_COUNT + frame * THREAD_COUNT * THREAD_COUNT,
+				.id = i + starting_row,
 				.width = m->img->image_width,
 				.height = m->img->image_height,
 				.pixels = r->image_buffer,
@@ -95,7 +96,7 @@ inline static void	minirt(void *param)
 		}
 		r->rendering = false;
 		//r->rendering_done = true;
-		memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
+		//memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
 	}
 	frame++;
 	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
@@ -107,11 +108,10 @@ inline static void	minirt(void *param)
 		{
 			cycle = 0;
 			r->rendering_done = true;
-			
 		}
 	}
 
-	//printf("delta time %lf\n", m->mlx->delta_time);
+	printf("delta time %lf\n", m->mlx->delta_time);
 }
 
 int main()

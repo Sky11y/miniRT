@@ -60,7 +60,7 @@ typedef struct t_vec2
 float	inverse_sqrt(float nbr);
 
 /* VECTOR CALCULATIONS */
-float	dot(const t_vec3f u, const t_vec3f v);
+float	dot(const t_vec3f *u, const t_vec3f *v);
 t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
 t_vec3f rotate_v(const t_vec3f v);
