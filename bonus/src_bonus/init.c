@@ -29,9 +29,11 @@ t_camera	*init_camera(t_camera *cam)
 t_camera	*setup_camera(t_camera *cam, const t_image *img)
 {
 	float	half_w;
+	t_vec3f	temp;
 
 	cam->lookat = vv_add(cam->center, cam->orientation);
-	cam->focal_length = v_length(vv_sub(cam->center, cam->lookat));
+	temp = vv_sub(cam->center, cam->lookat); 
+	cam->focal_length = v_length(&temp);
 	half_w = tanf(degrees_to_rad(cam->fov) / 2);
 	cam->viewport_width = 2.0f * half_w * cam->focal_length;
 	cam->viewport_height = cam->viewport_width / img->aspect_ratio;

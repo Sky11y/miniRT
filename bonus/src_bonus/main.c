@@ -51,25 +51,26 @@ static t_renderer	*setup_renderer(t_renderer *r, t_image *i)
 
 inline static void	minirt(void *param)
 {
-	t_master *m = (t_master *)param;
-	t_renderer *r = m->renderer;
+	t_master	*m = (t_master *)param;
+	t_renderer	*r = m->renderer;
+	uint16_t	starting_row;
 	static int	frame = 0;
 	static int	cycle = 0;
+	static double previous = 0;
 
-	check_mouse(m);
-	if (is_window_size_changed(m->mlx) || is_cam_moved(m->cam))
+	if (check_keys(m) || check_mouse(m))
 	{
 		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
 		m->cam = setup_camera(m->cam, m->img);
 		m->renderer = setup_renderer(m->renderer, m->img);
 		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
 		r->rendering_done = false;
-		frame = 0;
+		//frame = 0;
 	}
 	if (!r->rendering && !r->rendering_done)
 	{
 		r->rendering = true;
-		uint16_t starting_row = THREAD_COUNT * THREAD_COUNT * frame;
+		starting_row = THREAD_COUNT * THREAD_COUNT * frame;
 		for (int i = 0; i < THREAD_COUNT; i++)
 		{
 			r->args[i] = (t_thread){
@@ -95,23 +96,25 @@ inline static void	minirt(void *param)
 				exit(1);
 		}
 		r->rendering = false;
-		//r->rendering_done = true;
 		//memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
 	}
 	frame++;
-	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
+	if (!r->rendering_done && frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
 	{
-		//printf("frame: %d height: %d\n", frame, m->mlx->height);
 		frame = 0;
 		cycle++;
-		if (cycle == RENDER_CYCLES)
+		if (cycle == RENDER_CYCLES) // this is only needed if I make a feature that sharpens the image
 		{
 			cycle = 0;
 			r->rendering_done = true;
+			double now = mlx_get_time();
+
+			printf("render time = %lf\n", now - previous);
+			previous = now;
 		}
 	}
 
-	printf("delta time %lf\n", m->mlx->delta_time);
+	//printf("delta time %lf\n", m->mlx->delta_time);
 }
 
 int main()
@@ -222,7 +225,7 @@ int main()
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
 		exit(1);
-	mlx_key_hook(master.mlx, &check_events, &master);
+	//mlx_key_hook(master.mlx, &check_events, &master);
 	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
 		mlx_terminate(master.mlx);
 	mlx_loop(master.mlx);

@@ -64,7 +64,7 @@ float	dot(const t_vec3f *u, const t_vec3f *v);
 t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
 t_vec3f rotate_v(const t_vec3f v);
-float	v_length(const t_vec3f v);
+float	v_length(const t_vec3f *v);
 float	v_length_squared(const t_vec3f *v);
 
 t_vec3f	vt_mul(const t_vec3f v, float t);
@@ -84,9 +84,6 @@ float	random_range(float min, float max);
 t_vec3f	random_v(void);
 t_vec3f	random_v_range(float min, float max);
 t_vec3f	random_unit_vector(void);
-
-/* MLX RELATED */
-void	check_events(mlx_key_data_t keydata, void *param);
 
 /* RENDER */
 uint32_t	get_color(const t_vec3f pixel_color);

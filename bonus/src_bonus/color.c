@@ -115,7 +115,7 @@ t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 		if (hr.kr < 1)
 		{
 			new_ray.direction = refractDir(r->direction, hr.normal, 1.5f, hr.face);
-			if (v_length(new_ray.direction) > 0.0f)
+			if (v_length(&new_ray.direction) > 0.0f)
 			{
 				new_ray.direction = unit_vector(new_ray.direction);
 				new_ray.origin = vv_sub(hr.hitpoint, bias);

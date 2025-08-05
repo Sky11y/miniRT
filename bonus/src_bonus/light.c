@@ -61,7 +61,7 @@ float	count_light(const t_vec3f normal, t_vec3f hp,
 	hp = vv_add(hp, vt_mul(normal, 1e-4f));
 	hp_to_light = vv_sub(light->point_center, hp);
 	intensity = light->ambient_brightness;
-	max_t = v_length(hp_to_light);
+	max_t = v_length(&hp_to_light);
 	light_dir = unit_vector(hp_to_light);
 	if (hit_anything((t_ray){hp, light_dir}, htbl, max_t))
 		return (intensity);

@@ -54,7 +54,6 @@ void	*render_thread(void *param)
 	idx[0] = thread->id;
 	idx[1] = 0;
 	int i = 0;
-	//printf("%d\n", thread->id);
 	while (i < THREAD_COUNT && idx[0] < img_height)
 	{
 		idx[1] = 0;
@@ -77,7 +76,6 @@ void	*render_thread(void *param)
 		memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
 				&thread->pixels[idx[0] * img_width],
 				sizeof(uint32_t) * img_width);
-		printf("%d\n", idx[0]);
 		idx[0] += THREAD_COUNT;
 		i++;
 	}

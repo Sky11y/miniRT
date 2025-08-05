@@ -1,53 +1,50 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-void	check_events(mlx_key_data_t keydata, void *param)
+inline bool	check_keys(t_master *m)
 {
-	t_master	*master;
-
-	master = (t_master *)param;
-	if (keydata.key == MLX_KEY_ESCAPE && keydata.action == MLX_PRESS)
-		mlx_close_window(master->mlx);
-	if (mlx_is_key_down(master->mlx, MLX_KEY_W))
-		master->cam->center.z -= 0.5f;
-	if (mlx_is_key_down(master->mlx, MLX_KEY_S))
-		master->cam->center.z += 0.5f;
-	if (mlx_is_key_down(master->mlx, MLX_KEY_A))
-		master->cam->center.x -= 0.5f;
-	if (mlx_is_key_down(master->mlx, MLX_KEY_D))
-		master->cam->center.x += 0.5f;
+	if (mlx_is_key_down(m->mlx, MLX_KEY_ESCAPE))
+		mlx_close_window(m->mlx);
+	else if (mlx_is_key_down(m->mlx, MLX_KEY_W))
+		m->cam->center.z -= 15.0f * (float)m->mlx->delta_time;
+	else if (mlx_is_key_down(m->mlx, MLX_KEY_S))
+		m->cam->center.z += 15.0f * (float)m->mlx->delta_time;
+	else if (mlx_is_key_down(m->mlx, MLX_KEY_A))
+		m->cam->center.x -= 15.0f * (float)m->mlx->delta_time;
+	else if (mlx_is_key_down(m->mlx, MLX_KEY_D))
+		m->cam->center.x += 15.0f * (float)m->mlx->delta_time;
+	else
+		return (false);
+	return (true);
 }
 
-void	check_mouse(t_master *m)
+//pos[0], prev_pos[0], delta_pos[0] are x positions
+//pos[1], prev_pos[1], delta_pos[1] are y positions
+bool	check_mouse(t_master *m)
 {
-	int32_t			x;
-	int32_t			y;
-	static int32_t	prev_x;
-	static int32_t	prev_y;
-	int32_t			dx;
-	int32_t			dy;
+	int32_t			pos[2];
+	static int32_t	prev_pos[2];
+	int32_t			delta_pos[2];
 	static bool		first_frame = true;
 
 	if (mlx_is_mouse_down(m->mlx, MLX_MOUSE_BUTTON_LEFT))
 	{
-		mlx_get_mouse_pos(m->mlx, &x, &y);
+		mlx_get_mouse_pos(m->mlx, &pos[0], &pos[1]);
 		if (first_frame)
 		{
-			prev_x = x;
-			prev_y = y;
+			prev_pos[0] = pos[0];
+			prev_pos[1] = pos[1];
 			first_frame = false;
 		}
-		
-		dx = x - prev_x;
-		dy = y - prev_y;
-
-		m->cam->orientation.x -= dx * 0.0002f;
-		m->cam->orientation.y += dy * 0.0002f;
-		m->cam->orientation = unit_vector(m->cam->orientation);
-
-		prev_x = x;
-		prev_y = y;
+		delta_pos[0] = pos[0] - prev_pos[0];
+		delta_pos[1] = pos[1] - prev_pos[1];
+		m->cam->orientation.x -= delta_pos[0] * 0.0002f;
+		m->cam->orientation.y += delta_pos[1] * 0.0002f;
+		prev_pos[0] = pos[0];
+		prev_pos[1] = pos[1];
+		return (true);
 	}
 	else
-		first_frame = false;
+		first_frame = true;
+	return (false);
 }

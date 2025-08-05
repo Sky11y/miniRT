@@ -22,7 +22,7 @@ inline t_vec3f	rotate_v(const t_vec3f v)
 
 inline t_vec3f	unit_vector(const t_vec3f v)
 {
-	const float	length = v_length(v);
+	const float	length = v_length(&v);
 	float		inverse;
 
 	if (length < 1e-8f)
