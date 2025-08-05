@@ -54,6 +54,7 @@ inline static void	minirt(void *param)
 	t_master *m = (t_master *)param;
 	t_renderer *r = m->renderer;
 	static int	frame = 0;
+	static int	cycle = 0;
 
 	check_mouse(m);
 	if (is_window_size_changed(m->mlx) || is_cam_moved(m->cam))
@@ -63,6 +64,7 @@ inline static void	minirt(void *param)
 		m->renderer = setup_renderer(m->renderer, m->img);
 		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
 		r->rendering_done = false;
+		frame = 0;
 	}
 	if (!r->rendering && !r->rendering_done)
 	{
@@ -93,15 +95,23 @@ inline static void	minirt(void *param)
 		}
 		r->rendering = false;
 		//r->rendering_done = true;
-		//memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
+		memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
 	}
 	frame++;
 	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
 	{
+		//printf("frame: %d height: %d\n", frame, m->mlx->height);
 		frame = 0;
-		r->rendering_done = true;
+		cycle++;
+		if (cycle == RENDER_CYCLES)
+		{
+			cycle = 0;
+			r->rendering_done = true;
+			
+		}
 	}
-	printf("delta time %lf\n", m->mlx->delta_time);
+
+	//printf("delta time %lf\n", m->mlx->delta_time);
 }
 
 int main()

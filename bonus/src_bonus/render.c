@@ -54,9 +54,10 @@ void	*render_thread(void *param)
 	idx[0] = thread->id;
 	idx[1] = 0;
 	int i = 0;
-	printf("%d\n", thread->id);
+	//printf("%d\n", thread->id);
 	while (i < THREAD_COUNT && idx[0] < img_height)
 	{
+		idx[1] = 0;
 		while (idx[1] < img_width)
 		{
 			final_pixel_color = get_pixel_color(thread->htbl,
@@ -73,9 +74,10 @@ void	*render_thread(void *param)
 				thread->pixels[idx[0] * img_width + idx[1] + 1] = color;
 			idx[1] += 2;
 		}
-		memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
-				&thread->pixels[idx[0] * img_width],
-				sizeof(uint32_t) * img_width);
+		//memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
+		//		&thread->pixels[idx[0] * img_width],
+		//		sizeof(uint32_t) * img_width);
+		printf("%d\n", idx[0]);
 		idx[0] += 1;
 		i++;
 	}

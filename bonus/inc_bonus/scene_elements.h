@@ -59,7 +59,7 @@ typedef struct s_thread
 	t_hittables	*htbl;
 	uint16_t	width;
 	uint16_t	height;
-	uint8_t		id;
+	uint16_t	id;
 }	t_thread;
 
 typedef struct s_renderer
