@@ -1,6 +1,9 @@
 # Picture output
 *.ppm
 
+# suppressions
+*.supp
+
 # perfromance data
 *perf*
 # Logs

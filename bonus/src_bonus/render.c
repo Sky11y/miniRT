@@ -38,6 +38,16 @@ uint32_t	mix_colors(uint32_t color, uint32_t prev_color)
 
 }
 
+t_vec3f	get_pixel_color_simple(const t_hittables *htbl, const t_camera *cam,
+		int *idx, const t_lights *light)
+{
+	t_ray			r;
+
+	r = get_ray(cam, idx[1], idx[0]);
+	return (ray_color(&r, htbl, light, 1));
+}
+
+		
 //idx[0] = y, idx[1] = x
 void	*render_thread(void *param)
 {
@@ -52,14 +62,13 @@ void	*render_thread(void *param)
 	int				idx[2];
 
 	idx[0] = thread->id;
-	idx[1] = 0;
 	int i = 0;
 	while (i < THREAD_COUNT && idx[0] < img_height)
 	{
 		idx[1] = 0;
 		while (idx[1] < img_width)
 		{
-			final_pixel_color = get_pixel_color(thread->htbl,
+			final_pixel_color = get_pixel_color_simple(thread->htbl,
 					thread->cam, idx, thread->light);
 			color = get_color(vt_mul(final_pixel_color, pixel_samples_scale));
 			thread->pixels[idx[0] * img_width + idx[1]] = color;
