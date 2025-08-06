@@ -12,6 +12,10 @@ static int	init_height(char *str, float *height)
 
 static int	init_values(char **split, t_cylinder *cylinders)
 {
+	float	height;
+	t_vec3f	axis_v;
+	t_vec3f	center;
+
 	if (count_values(split) != 6)
 		return (print_error("error: invalid amount of values in cylinders\n"));
 	if (init_vector(split[1], &cylinders->center, false))
@@ -24,7 +28,11 @@ static int	init_values(char **split, t_cylinder *cylinders)
 		return (1);
 	if (init_color(split[5], &cylinders->color))
 		return (1);
+	height = cylinders->height;
+	axis_v = cylinders->axis_v;
+	center = cylinders->center;
 	cylinders->radius_squared = cylinders->radius * cylinders->radius;
+	cylinders->base = vv_sub(center, vt_mul(axis_v, height / 2.0f));
 	return (0);
 }
 
