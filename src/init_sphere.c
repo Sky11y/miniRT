@@ -15,7 +15,7 @@ static int	init_values(char **split, t_sphere *sphere)
 	return (0);
 }
 
-static int	search_file(t_master *master, char **file)
+static int	search_file(t_parser *parser, char **file)
 {
 	int		i;
 	int		j;
@@ -32,7 +32,7 @@ static int	search_file(t_master *master, char **file)
 			split = ft_multi_split(file[i], " \t");
 			if (!split)
 				return (print_error("error: malloc fail\n"));
-			error = init_values(split, &master->hittables->spheres[j]);
+			error = init_values(split, &parser->hittables->spheres[j]);
 			free_arr(split);
 			j++;
 		}
@@ -41,16 +41,16 @@ static int	search_file(t_master *master, char **file)
 	return (error);
 }
 
-int	init_sphere(t_master *master, char **file)
+int	init_sphere(t_parser *parser, char **file)
 {
 	t_sphere	*spheres;
 	int			error;
 
 	error = 0;
-	spheres = malloc(master->hittables->sphere_count * sizeof(t_sphere));
+	spheres = malloc(parser->hittables->sphere_count * sizeof(t_sphere));
 	if (!spheres)
 		return (print_error("error: malloc fail\n"));
-	master->hittables->spheres = spheres;
-	error = search_file(master, file);
+	parser->hittables->spheres = spheres;
+	error = search_file(parser, file);
 	return (error);
 }

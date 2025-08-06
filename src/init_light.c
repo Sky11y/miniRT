@@ -2,20 +2,20 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static int	init_values(char **split, t_master *master)
+static int	init_values(char **split, t_parser *parser)
 {
 	if (count_values(split) != 4)
 		return (print_error("error: invalid amount of values in light\n"));
-	if (init_vector(split[1], &master->lights->point_center, false))
+	if (init_vector(split[1], &parser->lights->point_center, false))
 		return (1);
-	if (init_brightness(split[2], &master->lights->point_brightness))
+	if (init_brightness(split[2], &parser->lights->point_brightness))
 		return (1);
-	if (init_color(split[3], &master->lights->point_color))
+	if (init_color(split[3], &parser->lights->point_color))
 		return (1);
 	return (0);
 }
 
-int	init_light(t_master *master, char **file)
+int	init_light(t_parser *parser, char **file)
 {
 	char	**split;
 	char	*line;
@@ -29,7 +29,7 @@ int	init_light(t_master *master, char **file)
 	free(line);
 	if (!split)
 		return (print_error("error: malloc fail\n"));
-	error = init_values(split, master);
+	error = init_values(split, parser);
 	free_arr(split);
 	return (error);
 }

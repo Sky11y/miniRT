@@ -31,32 +31,31 @@ inline static void	minirt(void *param)
 int main(int argc, char **argv)
 {
 	t_master	master;
-	t_camera	cam;
+	t_hittables	hittables;
+	t_camera	*cam;
 	t_image		img;
-	t_lights	light;
-	t_hittables hittables;
+	t_parser	parser;
 
 	if (argc != 2)
 	{
 		ft_putstr_fd("error: usage: ./miniRT [maps/mapname]", 2);
 		return (1);
 	}
-	ft_memset(&master, 0, sizeof(master));
-	ft_memset(&hittables, 0, sizeof(hittables));
-	master.hittables = &hittables;
-	if (parse_file(argv[1], &master))
+	ft_memset(&parser, 0, sizeof(t_parser));
+	ft_memset(&hittables, 0, sizeof(t_hittables));
+	parser.hittables = &hittables;
+	if (parse_file(argv[1], &parser))
 		return (1);
-	if (init_shapes(argv[1], &master))
+	if (init_shapes(argv[1], &parser))
 	{
-		rt_cleanup(&master);
+		rt_cleanup(&parser);
 		return (1);
 	}
-	rt_cleanup(&master);
-
-	master.light = init_lights(&light);
+	master.light = parser.lights;
 	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
-	master.cam = setup_camera(&cam, &img);
-	master.htbl = &hittables;
+	cam = parser.camera;
+	master.cam = setup_camera(cam, &img);
+	master.htbl = parser.hittables;
 	master.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
@@ -65,5 +64,6 @@ int main(int argc, char **argv)
 	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
 		mlx_terminate(master.mlx);
 	mlx_loop(master.mlx);
+	rt_cleanup(&parser);
 	return (0);
 }

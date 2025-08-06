@@ -2,7 +2,7 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-void	rt_cleanup(t_master *master)
+void	rt_cleanup(t_parser *master)
 {
 	free(master->lights);
 	free(master->camera);

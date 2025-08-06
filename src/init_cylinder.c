@@ -28,15 +28,16 @@ static int	init_values(char **split, t_cylinder *cylinders)
 		return (1);
 	if (init_color(split[5], &cylinders->color))
 		return (1);
+	cylinders->axis_v = unit_vector(cylinders->axis_v);
 	height = cylinders->height;
 	axis_v = cylinders->axis_v;
 	center = cylinders->center;
-	cylinders->radius_squared = cylinders->radius * cylinders->radius;
 	cylinders->base = vv_sub(center, vt_mul(axis_v, height / 2.0f));
+	cylinders->radius_squared = cylinders->radius * cylinders->radius;
 	return (0);
 }
 
-static int	search_file(t_master *master, char **file)
+static int	search_file(t_parser *parser, char **file)
 {
 	int		i;
 	int		j;
@@ -53,7 +54,7 @@ static int	search_file(t_master *master, char **file)
 			split = ft_multi_split(file[i], " \t");
 			if (!split)
 				return (print_error("error: malloc fail\n"));
-			error = init_values(split, &master->hittables->cylinders[j]);
+			error = init_values(split, &parser->hittables->cylinders[j]);
 			free_arr(split);
 			j++;
 		}
@@ -62,16 +63,16 @@ static int	search_file(t_master *master, char **file)
 	return (error);
 }
 
-int	init_cylinder(t_master *master, char **file)
+int	init_cylinder(t_parser *parser, char **file)
 {
 	t_cylinder	*cylinders;
 	int			error;
 
 	error = 0;
-	cylinders = malloc(master->hittables->cylinder_count * sizeof(t_cylinder));
+	cylinders = malloc(parser->hittables->cylinder_count * sizeof(t_cylinder));
 	if (!cylinders)
 		return (print_error("error: malloc fail\n"));
-	master->hittables->cylinders = cylinders;
-	error = search_file(master, file);
+	parser->hittables->cylinders = cylinders;
+	error = search_file(parser, file);
 	return (error);
 }

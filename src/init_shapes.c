@@ -2,24 +2,24 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static int	init_line(t_master *master, char **file)
+static int	init_line(t_parser *parser, char **file)
 {
-	if (init_ambient(master, file))
+	if (init_ambient(parser, file))
 		return (1);
-	if (init_camera(master, file))
+	if (init_camera(parser, file))
 		return (1);
-	if (init_light(master, file))
+	if (init_light(parser, file))
 		return (1);
-	if (init_plane(master, file))
+	if (init_plane(parser, file))
 		return (1);
-	if (init_sphere(master, file))
+	if (init_sphere(parser, file))
 		return (1);
-	if (init_cylinder(master, file))
+	if (init_cylinder(parser, file))
 		return (1);
 	return (0);
 }
 
-int	init_shapes(char *filename, t_master *master)
+int	init_shapes(char *filename, t_parser *parser)
 {
 	char	**file;
 	int		error;
@@ -31,7 +31,7 @@ int	init_shapes(char *filename, t_master *master)
 		free_arr(file);
 		return (1);
 	}
-	error = init_line(master, file);
+	error = init_line(parser, file);
 	free_arr(file);
 	return (error);
 }

@@ -79,7 +79,7 @@ typedef struct s_hit_record
 	int8_t		face;
 }	t_hit_record;
 
-typedef struct s_master
+typedef struct s_parser
 {
 	t_hittables	*hittables;
 	t_lights	*lights;
@@ -87,36 +87,28 @@ typedef struct s_master
 	uint8_t		amb_count;
 	uint8_t		cam_count;
 	uint8_t		lig_count;
-}	t_master;
-
-t_vec3f	at(t_ray r, float t);
-void	render(const t_hittables *htbl, const t_camera *cam,
-		const t_image *img, const t_lights *light);
-void	update_hr(const t_hittables *htbl, t_hit_record *hr,
-		const t_ray r, const float t);
-void	setup_camera(t_camera *cam, const t_image *img);
-void	init_image(t_image *img);
+}	t_parser;
 
 /* PARSING */
-int		parse_file(char *filename, t_master *master);
+int		parse_file(char *filename, t_parser *parser);
 bool	line_first(char *line, char *value, int len);
 int		print_error(char *error_msg);
 
 /* INIT SHAPES */
-int		init_shapes(char *filename, t_master *master);
-int		init_ambient(t_master *master, char **file);
-int		init_camera(t_master *master, char **file);
-int		init_light(t_master *master, char **file);
-int		init_plane(t_master *master, char **file);
-int		init_sphere(t_master *master, char **file);
-int		init_cylinder(t_master *master, char **file);
+int		init_shapes(char *filename, t_parser *parser);
+int		init_ambient(t_parser *parser, char **file);
+int		init_camera(t_parser *parser, char **file);
+int		init_light(t_parser *parser, char **file);
+int		init_plane(t_parser *parser, char **file);
+int		init_sphere(t_parser *parser, char **file);
+int		init_cylinder(t_parser *parser, char **file);
 int		init_color(char *str, t_vec3f *color);
 int		init_brightness(char *str, float *brightness);
 int		init_vector(char *str, t_vec3f *vector, bool limit);
 int		init_radius(char *str, float *radius);
 
 /* UTILS */
-void	rt_cleanup(t_master *master);
+void	rt_cleanup(t_parser *master);
 char	*wrap_join(char *s1, char *s2);
 int		is_float(char *str);
 int		string_to_color(char *str);
@@ -126,6 +118,7 @@ char	**file_to_array(char *filename);
 void	set_colors(char *str, int i, t_vec3f *colors);
 int		set_vector(t_vec3f *vec, char **values, bool limit);
 int		count_values(char **split);
+
 t_vec3f		at(t_ray r, float t);
 void		render(t_master *master, mlx_image_t *mlx_img);
 void		update_hr(const t_hittables *htbl, t_hit_record *hr,

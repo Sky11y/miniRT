@@ -29,7 +29,7 @@ all:		$(NAME)
 
 
 $(NAME):	$(LIBMLX) $(OBJ_PATH) $(OBJ) $(LIBFT) $(SRC_HEADER)
-			cc $(OBJ) $(MLX42) -o $@ -lm
+			cc $(OBJ) $(MLX42) $(LIBFT) -o $@ -lm
 
 $(LIBMLX):
 			cmake $(MLX_PATH) -B $(MLX_PATH)/build

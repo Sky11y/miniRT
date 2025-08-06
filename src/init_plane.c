@@ -15,7 +15,7 @@ static int	init_values(char **split, t_plane *plane)
 	return (0);
 }
 
-static int	search_file(t_master *master, char **file)
+static int	search_file(t_parser *parser, char **file)
 {
 	int		i;
 	int		j;
@@ -32,7 +32,7 @@ static int	search_file(t_master *master, char **file)
 			split = ft_multi_split(file[i], " \t");
 			if (!split)
 				return (print_error("error: malloc fail\n"));
-			error = init_values(split, &master->hittables->planes[j]);
+			error = init_values(split, &parser->hittables->planes[j]);
 			free_arr(split);
 			j++;
 		}
@@ -41,16 +41,16 @@ static int	search_file(t_master *master, char **file)
 	return (error);
 }
 
-int	init_plane(t_master *master, char **file)
+int	init_plane(t_parser *parser, char **file)
 {
 	t_plane	*planes;
 	int		error;
 
 	error = 0;
-	planes = malloc(master->hittables->plane_count * sizeof(t_plane));
+	planes = malloc(parser->hittables->plane_count * sizeof(t_plane));
 	if (!planes)
 		return (print_error("error: malloc fail\n"));
-	master->hittables->planes = planes;
-	error = search_file(master, file);
+	parser->hittables->planes = planes;
+	error = search_file(parser, file);
 	return (error);
 }
