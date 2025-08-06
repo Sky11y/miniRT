@@ -10,10 +10,10 @@ MLX_PATH	= ../lib/MLX42/
 
 HEADERS		= -I./inc_bonus -I./$(MLX_PATH)/include
 
-SRC			= main.c utils.c init.c render.c color.c update_hit.c\
+SRC			= main.c utils.c init.c setup.c render.c color.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
 			  vector_math1.c vector_math2.c vector_math3.c \
-			  random.c events.c
+			  random.c input.c
 OBJ			= $(SRC:%.c=$(OBJ_PATH)%.o)
 
 SRC_HEADER	= ./inc_bonus/mini_rt.h \

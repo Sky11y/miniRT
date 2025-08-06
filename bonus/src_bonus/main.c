@@ -14,25 +14,6 @@ inline static bool is_window_size_changed(mlx_t *mlx)
 	return (true);
 }
 
-static t_renderer	*init_renderer(t_renderer *r, t_image *i)
-{
-	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width * i->image_height);
-	if (!r->image_buffer)
-		exit(1);
-	r->rendering = false;
-	r->rendering_done = false;
-	return (r);
-}
-
-static t_renderer	*setup_renderer(t_renderer *r, t_image *i)
-{
-	free(r->image_buffer);
-	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width * i->image_height);
-	if (!r->image_buffer)
-		exit(1);
-	return (r);
-}
-
 inline static void	minirt(void *param)
 {
 	t_master	*m = (t_master *)param;

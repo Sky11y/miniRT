@@ -113,9 +113,11 @@ void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray *r, const float t);
 t_ray	get_ray(const t_camera *cam, float x, float y);
 t_camera	*init_camera(t_camera *cam);
+t_renderer	*init_renderer(t_renderer *r, t_image *i);
+t_lights	*init_lights(t_lights *l);
 t_camera	*setup_camera(t_camera *cam, const t_image *img);
 t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
-t_lights	*init_lights(t_lights *l);
+t_renderer	*setup_renderer(t_renderer *r, t_image *i);
 
 /* HIT OBJECTS */
 void	hit_all_cylinders(const t_ray *r, float *closest_t,
