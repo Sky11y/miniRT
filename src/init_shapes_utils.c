@@ -54,17 +54,17 @@ int	set_vector(t_vec3f *vec, char **values, bool limit)
 	vec->z = rt_atof(values[2]);
 	if (limit)
 	{
-		if (vec->x > 1.0 || vec->x < -1.0)
+		if (vec->x > 1.0f || vec->x < -1.0f)
 		{
 			free_arr(values);
 			return (1);
 		}
-		if (vec->y > 1.0 || vec->y < -1.0)
+		if (vec->y > 1.0f || vec->y < -1.0f)
 		{
 			free_arr(values);
 			return (1);
 		}
-		if (vec->z > 1.0 || vec->z < -1.0)
+		if (vec->z > 1.0f || vec->z < -1.0f)
 		{
 			free_arr(values);
 			return (1);
@@ -100,9 +100,9 @@ void	set_colors(char *str, int i, t_vec3f *colors)
 	if (i < 3)
 		color_value = string_to_color(str);
 	if (i == 0)
-		colors->x = (float)color_value;
+		colors->x = (float)color_value / 255.0f;
 	else if (i == 1)
-		colors->y = (float)color_value;
+		colors->y = (float)color_value / 255.0f;
 	else if (i == 2)
-		colors->z = (float)color_value;
+		colors->z = (float)color_value / 255.0f;
 }

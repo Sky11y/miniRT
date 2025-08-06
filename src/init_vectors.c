@@ -35,7 +35,7 @@ int	init_radius(char *str, float *radius)
 {
 	if (is_float(str))
 		return (print_error("error: invalid radius\n"));
-	*radius = rt_atof(str) / 2.0;
+	*radius = rt_atof(str) / 2.0f;
 	return (0);
 }
 
@@ -44,7 +44,7 @@ int	init_brightness(char *str, float *brightness)
 	if (is_float(str))
 		return (print_error("error: invalid brightness value\n"));
 	*brightness = rt_atof(str);
-	if (*brightness < 0.0 || *brightness > 1.0)
+	if (*brightness < 0.0f || *brightness > 1.0f)
 		return (print_error("error: invalid brightness value\n"));
 	return (0);
 }
@@ -66,9 +66,9 @@ int	init_color(char *str, t_vec3f *color)
 		i++;
 	}
 	free_arr(split);
-	if (color->x == -1
-		|| color->y == -1
-		|| color->z == -1
+	if (color->x < 0.0f
+		|| color->y < 0.0f
+		|| color->z < 0.0f
 		|| i != 3)
 	{
 		print_error("error: invalid colors\n");

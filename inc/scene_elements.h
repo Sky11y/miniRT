@@ -116,6 +116,8 @@ int		init_ambient(t_master *master, char **file);
 int		init_camera(t_master *master, char **file);
 int		init_light(t_master *master, char **file);
 int		init_plane(t_master *master, char **file);
+int		init_sphere(t_master *master, char **file);
+int		init_cylinder(t_master *master, char **file);
 int		init_color(char *str, t_vec3f *color);
 int		init_brightness(char *str, float *brightness);
 int		init_vector(char *str, t_vec3f *vector, bool limit);

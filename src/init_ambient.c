@@ -16,7 +16,7 @@ static int	init_values(char **split, t_master *master)
 		return (1);
 	color = master->lights->ambient_color;
 	brightness = master->lights->ambient_brightness;
-	tint = vt_mul(color,brightness);
+	tint = vt_mul(color, brightness);
 	master->lights->ambient_tint = tint;
 	return (0);
 }

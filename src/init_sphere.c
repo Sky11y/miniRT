@@ -46,7 +46,6 @@ int	init_sphere(t_master *master, char **file)
 	t_sphere	*spheres;
 	int			error;
 
-	// SEG FAULT
 	error = 0;
 	spheres = malloc(master->hittables->sphere_count * sizeof(t_sphere));
 	if (!spheres)

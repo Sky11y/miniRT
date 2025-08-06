@@ -12,6 +12,10 @@ static int	init_line(t_master *master, char **file)
 		return (1);
 	if (init_plane(master, file))
 		return (1);
+	if (init_sphere(master, file))
+		return (1);
+	if (init_cylinder(master, file))
+		return (1);
 	return (0);
 }
 
