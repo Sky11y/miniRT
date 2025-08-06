@@ -21,8 +21,6 @@ typedef struct s_camera
 	float	fov;
 	float	viewport_height;
 	float	viewport_width;
-	uint16_t	samples_per_pixel;
-	uint8_t	max_rays;
 }	t_camera;
 
 typedef struct s_image
@@ -52,6 +50,38 @@ typedef struct s_lights
 	float	ambient_brightness;
 }	t_lights;
 
+typedef struct s_thread
+{
+	mlx_image_t	*mlx_img;
+	uint32_t	*pixels;
+	t_camera	*cam;
+	t_lights	*light;
+	t_hittables	*htbl;
+	uint16_t	width;
+	uint16_t	height;
+	uint16_t	id;
+}	t_thread;
+
+typedef struct s_renderer
+{
+	uint32_t	*image_buffer;
+	pthread_t	threads[THREAD_COUNT];
+	t_thread	args[THREAD_COUNT];
+	bool		rendering;
+	bool		rendering_done;
+}	t_renderer;
+
+typedef struct s_master
+{
+	t_renderer	*renderer;
+	mlx_t		*mlx;
+	mlx_image_t	*mlx_img;
+	t_camera	*cam;
+	t_image		*img;
+	t_hittables	*htbl;
+	t_lights	*light;
+}	t_master;
+
 typedef struct s_ray
 {
 	t_vec3f	origin;
@@ -63,38 +93,38 @@ typedef struct s_hit_record
 	t_vec3f	normal;
 	t_vec3f	hitpoint;
 	t_vec3f	albedo;
-	t_mat_type	mat;
 	t_shape	type;
-	float	fuzz;
+	float	kr;
 	float	reflect;
+	float	transparency;
 	uint8_t	index;
 	int8_t	face;
 }	t_hit_record;
 
-t_vec3f	at(t_ray r, float t);
-t_vec3f	ray_color(const t_ray r, const t_hittables *htbl,
+t_vec3f	at(const t_ray *r, float t);
+t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 		const t_lights *light, uint8_t depth);
 t_vec3f	get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
 		int *idx, const t_lights *light);
-void	render(const t_hittables *htbl, const t_camera *cam,
-		const t_image *img, const t_lights *light);
+void	*render_thread(void *param);
+bool	check_mouse(t_master *master);
+bool	check_keys(t_master *master);
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
-		const t_ray r, const float t);
-t_ray	get_ray(const t_camera *cam, int *idx);
-t_vec3f	new_ray_dir(const t_vec3f v, const t_vec3f n,
-		const t_hit_record *hr, t_scatter_type *type);
-void	init_camera(t_camera *cam, const t_image *img);
-void	init_image(t_image *img);
-void	init_lights(t_lights *l);
+		const t_ray *r, const float t);
+t_ray	get_ray(const t_camera *cam, float x, float y);
+t_camera	*init_camera(t_camera *cam);
+t_camera	*setup_camera(t_camera *cam, const t_image *img);
+t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
+t_lights	*init_lights(t_lights *l);
 
 /* HIT OBJECTS */
-void	hit_all_cylinders(const t_ray r, float *closest_t,
+void	hit_all_cylinders(const t_ray *r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_cylinder_caps(const t_ray r, float *closest_t,
+void	hit_all_cylinder_caps(const t_ray *r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_spheres(const t_ray r, float *closest_t,
+void	hit_all_spheres(const t_ray *r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_planes(const t_ray r, float *closest_t,
+void	hit_all_planes(const t_ray *r, float *closest_t,
 		const t_hittables *htbl, t_hit_record *hr);
 float	count_light(const t_vec3f normal, const t_vec3f hp,
 		const t_lights *light, const t_hittables *htbl);

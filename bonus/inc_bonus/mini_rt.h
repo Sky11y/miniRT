@@ -10,6 +10,18 @@
 # include <limits.h>	//INT_MAX -> math.h includes INFINITY so we migth not need this
 # include <stdbool.h>	//true and false
 # include <time.h>		
+# include <pthread.h>
+
+# include "MLX42/MLX42.h"
+# include "MLX42/MLX42_Int.h"
+//# include "libft.h"
+
+# define WIN_HEIGHT 800
+# define WIN_WIDTH 1600
+# define SAMPLES_PER_PIXEL 3
+# define MAX_RAYS 5
+# define THREAD_COUNT 30
+# define RENDER_CYCLES 3
 
 typedef enum e_shape
 {
@@ -19,23 +31,9 @@ typedef enum e_shape
 	plane,
 }	t_shape;
 
-typedef enum e_scatter_type
-{
-	REFLECT,
-	REFRACT,
-}	t_scatter_type;
-
-typedef enum e_mat_type {
-	DIFFUSE,
-	GLASS,
-	METAL,
-
-}	t_mat_type;
-
 typedef struct s_material {
 	float	reflect;
-	float	fuzz;
-	float	ior;
+	float	transparency;
 }	t_material;
 
 typedef struct t_vec4
@@ -62,12 +60,12 @@ typedef struct t_vec2
 float	inverse_sqrt(float nbr);
 
 /* VECTOR CALCULATIONS */
-float	dot(const t_vec3f u, const t_vec3f v);
+float	dot(const t_vec3f *u, const t_vec3f *v);
 t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
 t_vec3f rotate_v(const t_vec3f v);
-float	v_length(const t_vec3f v);
-float	v_length_squared(const t_vec3f v);
+float	v_length(const t_vec3f *v);
+float	v_length_squared(const t_vec3f *v);
 
 t_vec3f	vt_mul(const t_vec3f v, float t);
 t_vec3f	vt_div(const t_vec3f v, float t);
@@ -87,9 +85,8 @@ t_vec3f	random_v(void);
 t_vec3f	random_v_range(float min, float max);
 t_vec3f	random_unit_vector(void);
 
-
 /* RENDER */
-void	write_color(const t_vec3f pixel_color);
+uint32_t	get_color(const t_vec3f pixel_color);
 
 
 

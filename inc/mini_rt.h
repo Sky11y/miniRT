@@ -5,13 +5,17 @@
 # include <fcntl.h>		//open
 # include <stdlib.h>	//malloc, free
 # include <stdio.h>		//printf, perror
-# include <string.h>	//strerror
-# include <math.h>		//all the math
-# include <stdint.h>	//explicit int values
-# include <limits.h>	//INT_MAX
+# include <string.h> 	//strerror
+# include <math.h> 		//all the math
+# include <stdint.h> 	//explicit int values
 # include <stdbool.h>	//true and false
-# include <time.h>		//REMOVE THIS!!!! only used for randomness
-# include <libft.h>		//libft
+
+# include "MLX42/MLX42.h"
+# include "MLX42/MLX42_Int.h"
+# include "libft.h"
+
+# define WIN_HEIGHT 800
+# define WIN_WIDTH 1600
 
 typedef enum e_shape
 {
@@ -48,7 +52,7 @@ float	inverse_sqrt(float nbr);
 float	dot(const t_vec3f u, const t_vec3f v);
 t_vec3f	cross(const t_vec3f u, const t_vec3f v);
 t_vec3f	unit_vector(const t_vec3f v);
-t_vec3f rotate_v(const t_vec3f v);
+t_vec3f	rotate_v(const t_vec3f v);
 float	v_length(const t_vec3f v);
 float	v_length_squared(const t_vec3f v);
 
@@ -57,6 +61,9 @@ t_vec3f	vt_div(const t_vec3f v, float t);
 t_vec3f	vv_add(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_sub(const t_vec3f u, const t_vec3f v);
 t_vec3f	vv_mul(const t_vec3f v, const t_vec3f u);
+
+/* MLX RELATED */
+void	check_events(mlx_key_data_t keydata, void *param);
 
 /* HELPERS */
 float	clamp(const float x, const float min, const float max);

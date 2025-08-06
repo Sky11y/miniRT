@@ -8,9 +8,11 @@ typedef struct s_camera
 {
 	t_vec3f	center;
 	t_vec3f	orientation;
-	t_vec3f lookat;
-	t_vec3f vup;
-	t_vec3f	u, v, w;
+	t_vec3f	lookat;
+	t_vec3f	vup;
+	t_vec3f	u;
+	t_vec3f	v;
+	t_vec3f	w;
 	t_vec3f	viewport_u;
 	t_vec3f	viewport_v;
 	t_vec3f	pixel_delta_u;
@@ -51,6 +53,16 @@ typedef struct s_lights
 	float	ambient_brightness;
 }	t_lights;
 
+typedef struct s_master
+{
+	mlx_t		*mlx;
+	mlx_image_t	*mlx_img;
+	t_camera	*cam;
+	t_image		*img;
+	t_hittables	*htbl;
+	t_lights	*light;
+}	t_master;
+
 typedef struct s_ray
 {
 	t_vec3f	origin;
@@ -84,26 +96,6 @@ void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray r, const float t);
 void	setup_camera(t_camera *cam, const t_image *img);
 void	init_image(t_image *img);
-//void	init_lights(t_lights *l);
-
-/* HIT OBJECTS */
-void	hit_all_cylinders(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_cylinder_caps(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_spheres(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-void	hit_all_planes(const t_ray r, float *closest_t,
-		const t_hittables *htbl, t_hit_record *hr);
-float	count_light(const t_vec3f normal, const t_vec3f hp,
-		const t_lights *light, const t_hittables *htbl);
-/*
-t_vec3f		at(t_ray r, float t);
-t_vec3f		ray_color(const t_ray r, const t_hittables *htbl, uint8_t depth);
-void		render(const t_hittables *htbl, const t_camera cam, const t_image img);
-float		hit_sphere(const t_sphere s, const t_ray r);
-t_camera	init_camera(const t_image *img);
-*/
 
 /* PARSING */
 int		parse_file(char *filename, t_master *master);
@@ -134,5 +126,24 @@ char	**file_to_array(char *filename);
 void	set_colors(char *str, int i, t_vec3f *colors);
 int		set_vector(t_vec3f *vec, char **values, bool limit);
 int		count_values(char **split);
+t_vec3f		at(t_ray r, float t);
+void		render(t_master *master, mlx_image_t *mlx_img);
+void		update_hr(const t_hittables *htbl, t_hit_record *hr,
+				const t_ray r, const float t);
+t_camera	*setup_camera(t_camera *cam, const t_image *img);
+t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
+t_lights	*init_lights(t_lights *l);
+
+/* HIT OBJECTS */
+void		hit_all_cylinders(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+void		hit_all_cylinder_caps(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+void		hit_all_spheres(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+void		hit_all_planes(const t_ray r, float *closest_t,
+				const t_hittables *htbl, t_hit_record *hr);
+float		count_light(const t_vec3f normal, const t_vec3f hp,
+				const t_lights *light, const t_hittables *htbl);
 
 #endif
