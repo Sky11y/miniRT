@@ -14,22 +14,6 @@ inline static bool is_window_size_changed(mlx_t *mlx)
 	return (true);
 }
 
-inline static bool is_cam_moved(t_camera *c)
-{
-	static int32_t	center = 1;
-	int32_t			cmp_center;
-	static int32_t	orientation = 1;
-	int32_t			cmp_orientation;
-	
-	cmp_center = dot(&c->center, &c->center);
-	cmp_orientation = dot(&c->orientation, &c->orientation);
-	if (cmp_center == center && cmp_orientation == orientation)
-		return (false);
-	center = cmp_center;
-	orientation = cmp_orientation;
-	return (true);
-}
-
 static t_renderer	*init_renderer(t_renderer *r, t_image *i)
 {
 	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width * i->image_height);
@@ -55,19 +39,25 @@ inline static void	minirt(void *param)
 	t_renderer	*r = m->renderer;
 	uint16_t	starting_row;
 	static int	frame = 0;
-	static int	cycle = 0;
+	//static int	cycle = 0;
 	static double previous = 0;
+	bool			window_size_changed;
 
-	if (check_keys(m) || check_mouse(m))
+	window_size_changed = false;
+	if (is_window_size_changed(m->mlx))
 	{
 		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
-		m->cam = setup_camera(m->cam, m->img);
 		m->renderer = setup_renderer(m->renderer, m->img);
 		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
+		window_size_changed = true;
+	}
+	if (window_size_changed || check_keys(m) || check_mouse(m))
+	{
+		m->cam = setup_camera(m->cam, m->img);
 		r->rendering_done = false;
 		//frame = 0;
 	}
-	if (!r->rendering && !r->rendering_done)
+	if (!r->rendering)// && !r->rendering_done)
 	{
 		r->rendering = true;
 		starting_row = THREAD_COUNT * THREAD_COUNT * frame;
@@ -87,7 +77,7 @@ inline static void	minirt(void *param)
 			//handle errors
 		}
 	}
-	if (r->rendering && !r->rendering_done)
+	if (r->rendering)
 	{
 		int count = 0;
 		while (count < THREAD_COUNT)
@@ -96,22 +86,21 @@ inline static void	minirt(void *param)
 				exit(1);
 		}
 		r->rendering = false;
-		//memcpy(m->mlx_img->pixels, r->image_buffer, sizeof(uint32_t) * m->mlx->width * m->mlx->height);
 	}
 	frame++;
-	if (!r->rendering_done && frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
+	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
 	{
 		frame = 0;
-		cycle++;
-		if (cycle == RENDER_CYCLES) // this is only needed if I make a feature that sharpens the image
+		r->rendering_done = true;
+		double now = mlx_get_time();
+
+		printf("render time = %lf\n", now - previous);
+		previous = now;
+		/*cycle++;
+		if (cycle == RENDER_CYCLES) // this is needed wh
 		{
 			cycle = 0;
-			r->rendering_done = true;
-			double now = mlx_get_time();
-
-			printf("render time = %lf\n", now - previous);
-			previous = now;
-		}
+		}*/
 	}
 
 	//printf("delta time %lf\n", m->mlx->delta_time);
