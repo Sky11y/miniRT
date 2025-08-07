@@ -20,9 +20,6 @@ t_camera	*setup_camera(t_camera *cam, const t_image *img)
 {
 	float	half_w;
 
-	cam->center = (t_vec3f){-30.0f, 20.0f, 40.0f};
-	cam->orientation = (t_vec3f){0.5f, -0.3, -1.0};
-	cam->fov = 70;
 	cam->lookat = vv_add(cam->center, cam->orientation);
 	cam->vup = (t_vec3f){0, 1.0f, 0};
 	cam->focal_length = v_length(vv_sub(cam->center, cam->lookat));

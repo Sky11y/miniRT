@@ -1,5 +1,5 @@
 #include "scene_elements.h"
-
+/*
 t_camera	*init_camera(t_camera *cam)
 {
 	cam->center = (t_vec3f){-30.0f, 10.0f, 100.0f};
@@ -9,6 +9,7 @@ t_camera	*init_camera(t_camera *cam)
 	cam->vup = (t_vec3f){0, 1.0f, 0};
 	return (cam);
 }
+*/
 
 t_renderer	*init_renderer(t_renderer *r, t_image *i)
 {
@@ -20,6 +21,7 @@ t_renderer	*init_renderer(t_renderer *r, t_image *i)
 	return (r);
 }
 
+/*
 t_lights	*init_lights(t_lights *l)
 {
 	l->ambient_color = (t_vec3f){0.98f, 0.8f, 1.0f};
@@ -30,3 +32,4 @@ t_lights	*init_lights(t_lights *l)
 	l->point_color = (t_vec3f){1, 1, 1};
 	return (l);
 }
+*/
