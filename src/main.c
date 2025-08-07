@@ -1,7 +1,7 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 #include "shapes.h"
-
+	
 inline static bool is_window_size_changed(mlx_t *mlx)
 {
 	static int32_t width = WIN_WIDTH;
@@ -28,100 +28,34 @@ inline static void	minirt(void *param)
 	render(master, master->mlx_img);
 }
 
-int main()
+int main(int argc, char **argv)
 {
 	t_master	master;
-	t_camera	cam;
+	t_hittables	hittables;
+	t_camera	*cam;
 	t_image		img;
-	t_lights	light;
-	t_hittables hittables;
+	t_parser	parser;
 
-	master.light = init_lights(&light);
+	if (argc != 2)
+	{
+		ft_putstr_fd("error: usage: ./miniRT [maps/mapname]", 2);
+		return (1);
+	}
+	ft_memset(&parser, 0, sizeof(t_parser));
+	ft_memset(&hittables, 0, sizeof(t_hittables));
+	parser.hittables = &hittables;
+	if (parse_file(argv[1], &parser))
+		return (1);
+	if (init_shapes(argv[1], &parser))
+	{
+		rt_cleanup(&parser);
+		return (1);
+	}
+	master.light = parser.lights;
 	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
-	master.cam = setup_camera(&cam, &img);
-	
-	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
-
-	//TESTING THE SCHOOL SUBJECT EXAMPLE
-	hittables.cylinder_count = 1;
-	hittables.sphere_count = 1;
-	hittables.plane_count = 2;
-
-	t_cylinder c1 = {
-		{15.0f, 0.0f, -10.6f},		//position
-		{0.0f, 1.0f, 1.0f},	//orientation
-		{0, 0, 0},			//base point -> initialised to zero and calculated later
-		{10.0 / 255, 0.0f, 1},		//color
-		14.2 / 2.0f,				//radius
-		7.1f * 7.1f,		//radius squared
-		21.42f,				//height
-	};
-	t_cylinder c2 = {
-		{-1.2, 0.0, 3},		
-		{0.2, 1.0, 0.6},	
-		{0, 0, 0},			
-		{1.0, 0, 0},		
-		0.5f,				
-		0.5f * 0.5f,		
-		0.5f,				
-	};
-	t_cylinder c3 = {
-		{0.0, 0.0, 1},		
-		{0.0, 0.0, 1.0},	
-		{0, 0, 0},			
-		{1.0, 0, 0},		
-		0.5f,				
-		0.5f * 0.5f,		
-		0.5f,				
-	};
-	c1.axis_v = unit_vector(c1.axis_v);
-	c1.base  = vv_sub(c1.center, vt_mul(c1.axis_v, c1.height / 2));
-	c2.axis_v = unit_vector(c2.axis_v);
-	c2.base  = vv_sub(c2.center, vt_mul(c2.axis_v, c2.height / 2));
-	c3.axis_v = unit_vector(c3.axis_v);
-	c3.base  = vv_sub(c3.center, vt_mul(c3.axis_v, c3.height / 2));
-	t_cylinder *cylinders = malloc(sizeof(t_cylinder) * hittables.cylinder_count);	
-	cylinders[0] = c1;
-	//cylinders[1] = c2;
-	//cylinders[2] = c3;
-	//
-	t_plane p1 = {
-		{0, -25.2, 0},			//position
-		{0.0f, 1.0f, 0.0f},	//orientation
-		{1.0f, 0.0f, 1.0f},	//color
-	};
-	t_plane p2 = {
-		{0, -2.1f, -50.0f},
-		{0.0, 0.0, 1.0},
-		{0.6, 0.6, 0.85},
-	};
-	p1.orientation = unit_vector(p1.orientation);
-	p2.orientation = unit_vector(p2.orientation);
-	t_plane	*planes = malloc(sizeof(t_plane) * hittables.plane_count);	
-	planes[0] = p1;
-	planes[1] = p2;
-
-	t_sphere s1 = {
-		{0.0f, 0.0f, -40.0f},	//position
-		{1.0f, 0.0f, 0.0f},		//color
-		20.0f,			//radius
-	};
-	t_sphere s2 = {
-		{0, -2.0f, 1},
-		{0, 1.0f, 0},
-		0.8f,
-	};
-	(void)s2;
-	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
-	spheres[0] = s1;
-	//spheres[1] = s2;
-	/***** END OF TEST SETUP *****/
-
-	hittables.cylinders = cylinders;
-	hittables.planes = planes;
-	hittables.spheres = spheres;
-	
-	master.htbl = &hittables;
+	cam = parser.camera;
+	master.cam = setup_camera(cam, &img);
+	master.htbl = parser.hittables;
 	master.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
@@ -130,6 +64,6 @@ int main()
 	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
 		mlx_terminate(master.mlx);
 	mlx_loop(master.mlx);
-	
+	rt_cleanup(&parser);
 	return (0);
 }
