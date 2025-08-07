@@ -36,26 +36,12 @@ typedef struct s_material {
 	float	transparency;
 }	t_material;
 
-typedef struct t_vec4
-{
-	uint8_t	r;
-	uint8_t	g;
-	uint8_t	b;
-	uint8_t	a;
-}	t_vec4;
-
 typedef struct t_vec3f
 {
 	float	x;
 	float	y;
 	float	z;
 }	t_vec3f;
-
-typedef struct t_vec2
-{
-	uint16_t	u;
-	uint16_t	v;
-}	t_vec2;
 
 float	inverse_sqrt(float nbr);
 

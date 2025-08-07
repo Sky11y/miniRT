@@ -9,8 +9,8 @@ t_ray	get_ray(const t_camera *cam, float x, float y)
 	t_vec3f			direction;
 	float			dir_off[2];
 
-	dir_off[0] = x;// + random_range(0.0, 1.0);
-	dir_off[1] = y;// + random_range(0.0, 1.0);
+	dir_off[0] = x;
+	dir_off[1] = y;
 	offset[0] = vt_mul(cam->pixel_delta_u, dir_off[0]);
 	offset[1] = vt_mul(cam->pixel_delta_v, dir_off[1]);
 	offset[2] = vv_add(offset[0], offset[1]);
@@ -44,7 +44,7 @@ t_vec3f	get_pixel_color_simple(const t_hittables *htbl, const t_camera *cam,
 	t_ray			r;
 
 	r = get_ray(cam, idx[1], idx[0]);
-	return (ray_color(&r, htbl, light, 1));
+	return (ray_color(&r, htbl, light, 2));
 }
 
 		
@@ -54,7 +54,6 @@ void	*render_thread(void *param)
 	t_thread *thread = (t_thread *)param;
 	const uint16_t	img_height = thread->height;
 	const uint16_t	img_width = thread->width;
-	const float		pixel_samples_scale = 1.0f / SAMPLES_PER_PIXEL;
 	t_vec3f			final_pixel_color;
 	uint32_t		mixed_color = 0;
 	uint32_t		color;
@@ -70,7 +69,7 @@ void	*render_thread(void *param)
 		{
 			final_pixel_color = get_pixel_color_simple(thread->htbl,
 					thread->cam, idx, thread->light);
-			color = get_color(vt_mul(final_pixel_color, pixel_samples_scale));
+			color = get_color(final_pixel_color);
 			thread->pixels[idx[0] * img_width + idx[1]] = color;
 			if (idx[1] != 0)
 			{

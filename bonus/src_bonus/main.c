@@ -181,7 +181,7 @@ int main()
 		{0.0f, 1.0f, 1.0f},	//orientation
 		{0, 0, 0},			//base point -> initialised to zero and calculated later
 		{10.0 / 255, 0.0f, 1.0f},		//color
-		{0.3f, 0.0f},				//material {reflection, refraction}
+		{0.3f, 0.0f},				//material {reflection, transparency}
 		14.2,				//radius 
 		14.2f * 14.2f,		//radius squared
 		21.42f,				//height
