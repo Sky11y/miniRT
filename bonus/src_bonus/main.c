@@ -95,7 +95,7 @@ inline static void	minirt(void *param)
 		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
 		window_size_changed = true;
 	}
-	if (window_size_changed || check_keys(m) || check_mouse(m))
+	if (window_size_changed || m->move)
 	{
 		last_change = mlx_get_time();
 		m->cam = setup_camera(m->cam, m->img);
@@ -172,9 +172,9 @@ int main()
 	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
 
 	//TESTING THE SCHOOL SUBJECT EXAMPLE
-	hittables.cylinder_count = 1;
-	hittables.sphere_count = 3;
-	hittables.plane_count = 2;
+	hittables.cylinder_count = 0;
+	hittables.sphere_count = 1;
+	hittables.plane_count = 5;
 
 	t_cylinder c1 = {
 		{30.0f, 0.0f, -20.6f},		//position
@@ -203,37 +203,60 @@ int main()
 	c1.base  = vv_sub(c1.center, vt_mul(c1.axis_v, c1.height / 2));
 	//c2.axis_v = unit_vector(c2.axis_v);
 	//c2.base  = vv_sub(c2.center, vt_mul(c2.axis_v, c2.height / 2));
-	t_cylinder *cylinders = malloc(sizeof(t_cylinder) * hittables.cylinder_count);	
-	cylinders[0] = c1;
+	//t_cylinder *cylinders = malloc(sizeof(t_cylinder) * hittables.cylinder_count);	
+	//cylinders[0] = c1;
 	//cylinders[1] = c2;
 	//
 	t_plane p1 = {
 		{0.0f, -25.0f, 0.0f},		//position
 		{0.0f, 1.0f, 0.0f},	//orientation
-		{1.0f, 1.0f, 1.0f},		//color
-		{0.2f, 0.0f},		//material
+		{1.0f, 0.0f, 1.0f},		//color
+		{0.0f, 0.0f},		//material
 	};
 	t_plane p2 = {
-		{0.0f, 0.0f, -600.0f},
+		{0.0f, 0.0f, -100.0f},
 		{0.0f, 0.0f, 1.0f},
+		{0.5f, 0.5f, 0.5f},
+		{0.0f, 0.0f},
+	};
+	t_plane p3 = {
+		{-50.0f, 0.0f, 0.0f},		//position
+		{1.0f, 0.0f, 0.0f},	//orientation
+		{1.0f, 0.0f, 1.0f},		//color
+		{0.0f, 0.0f},		//material
+	};
+	t_plane p4 = {
+		{150.0f, 0.0f, 0.0f},
 		{1.0f, 0.0f, 0.0f},
+		{0.5f, 0.5f, 0.5f},
+		{0.0f, 0.0f},
+	};
+	t_plane p5 = {
+		{0.0f, 0.0f, 100.0f},
+		{0.0f, 0.0f, 1.0f},
+		{0.0f, 0.0f, 1.0f},
 		{0.0f, 0.0f},
 	};
 	p1.orientation = unit_vector(p1.orientation);
 	p2.orientation = unit_vector(p2.orientation);
+	p3.orientation = unit_vector(p3.orientation);
+	p4.orientation = unit_vector(p4.orientation);
 	t_plane	*planes = malloc(sizeof(t_plane) * hittables.plane_count);	
 	planes[0] = p1;
 	planes[1] = p2;
+	planes[2] = p3;
+	planes[3] = p4;
+	planes[4] = p5;
 
 	t_sphere s1 = {
-		{0.0f, 0.0f, -20.0f},	//position
-		{1.0f, 1.0f, 1.0f},	//color
-		{0.0f, 0.7f},		//material
+		{20.0f, 0.0f, -40.0f},	//position
+		{1.0f, 0.0f, 0.0f},	//color
+		{1.0f, 0.0f},		//material
 		20.0f,			//radius
 		20.0f * 20.f,	//radius_squared
 	};
 	
-	t_sphere s2 = {
+	/*t_sphere s2 = {
 		{0.0f, 0.0f, -20.0f},
 		{0.0f, 1.0f, 0.0f},
 		{0.3f, 0.0f},
@@ -246,14 +269,15 @@ int main()
 		{0.3f, 0.0f},
 		5.00f,
 		5.0f * 5.0f,
-	};
+	};*/
 	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
 	spheres[0] = s1;
-	spheres[1] = s2;
-	spheres[2] = s3;
+	//spheres[1] = s2;
+	//spheres[2] = s3;
 	/***** END OF TEST SETUP *****/
 
-	hittables.cylinders = cylinders;
+	//hittables.cylinders = cylinders;
+	hittables.cylinders = NULL;
 	hittables.planes = planes;
 	hittables.spheres = spheres;
 
@@ -262,7 +286,11 @@ int main()
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
 		exit(1);
-	//mlx_key_hook(master.mlx, &check_events, &master);
+	mlx_key_hook(master.mlx, &input_keys, &master);
+	//if (mlx_loop_hook(master.mlx, &check_keys, &master))
+	//	mlx_terminate(master.mlx);
+	mlx_cursor_hook(master.mlx, &input_mouse, &master);
+	//mlx_scroll_hook(master.mlx, &input_scroll, &master);
 	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
 		mlx_terminate(master.mlx);
 	mlx_loop(master.mlx);

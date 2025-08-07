@@ -59,8 +59,9 @@ static inline void	plane_hr(const t_hittables *htbl, t_hit_record *hr,
 	hr->reflect = final_p.mat.reflect;
 	hr->transparency = final_p.mat.transparency;
 	hr->normal = unit_vector(final_p.orientation);
-	if (dot(&r->direction, &hr->normal) > 0.0f)
-		hr->normal = rotate_v(hr->normal);
+	hr->face = dot(&r->direction, &hr->normal) < 0.0f;
+	if (!hr->face)
+		hr->normal = vt_mul(hr->normal, -1.0f);
 }
 
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,

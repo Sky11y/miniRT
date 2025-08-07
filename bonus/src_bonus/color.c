@@ -120,8 +120,7 @@ t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 			refractionColor = ray_color(&new_ray, htbl, light, depth - 1);
 		}
 	}
-	new_ray.direction = reflect(r->direction, hr.normal);
-	new_ray.origin = vv_add(hr.hitpoint, bias);
+	reflect_ray(&new_ray, r->direction, &hr);
 	t_vec3f reflectionColor = ray_color(&new_ray, htbl, light, depth - 1);
 	color = vv_add(vt_mul(reflectionColor, hr.kr), vt_mul(refractionColor, 1 - hr.kr));
 	color = vt_mul(color, hr.transparency);

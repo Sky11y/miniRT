@@ -80,6 +80,7 @@ typedef struct s_master
 	t_image		*img;
 	t_hittables	*htbl;
 	t_lights	*light;
+	bool		move;
 }	t_master;
 
 typedef struct s_ray
@@ -107,8 +108,12 @@ t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 t_vec3f	get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
 		int *idx, const t_lights *light);
 void	*render_thread(void *param);
-bool	check_mouse(t_master *master);
-bool	check_keys(t_master *master);
+//bool	check_mouse(t_master *master);
+//bool	check_keys(t_master *master);
+void	check_keys(void *param);
+void	input_keys(mlx_key_data_t kd, void *param);
+void	input_mouse(double xpos, double ypos, void *param);
+void	input_scroll(double xdelta, double ydelta, void *param);
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray *r, const float t);
 t_ray	get_ray(const t_camera *cam, float x, float y);
