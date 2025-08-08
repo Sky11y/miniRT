@@ -2,6 +2,7 @@
 # define MINI_RT_H
 
 # include <unistd.h>	//open, close, read, write, exit
+# include <fcntl.h>		//open
 # include <stdlib.h>	//malloc, free
 # include <stdio.h>		//printf, perror
 # include <string.h> 	//strerror
@@ -14,7 +15,7 @@
 
 # include "MLX42/MLX42.h"
 # include "MLX42/MLX42_Int.h"
-//# include "libft.h"
+# include "libft.h"
 
 # define WIN_HEIGHT 800
 # define WIN_WIDTH 1600
@@ -34,6 +35,7 @@ typedef enum e_shape
 typedef struct s_material {
 	float	reflect;
 	float	transparency;
+	float	ior;
 }	t_material;
 
 typedef struct t_vec3f

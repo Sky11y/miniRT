@@ -101,6 +101,16 @@ typedef struct s_hit_record
 	int8_t	face;
 }	t_hit_record;
 
+typedef struct s_parser
+{
+	t_hittables	*hittables;
+	t_lights	*lights;
+	t_camera	*camera;
+	uint8_t		amb_count;
+	uint8_t		cam_count;
+	uint8_t		lig_count;
+}	t_parser;
+
 t_vec3f	at(const t_ray *r, float t);
 t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 		const t_lights *light, uint8_t depth);
@@ -112,9 +122,9 @@ bool	check_keys(t_master *master);
 void	update_hr(const t_hittables *htbl, t_hit_record *hr,
 		const t_ray *r, const float t);
 t_ray	get_ray(const t_camera *cam, float x, float y);
-t_camera	*init_camera(t_camera *cam);
+//t_camera	*init_camera(t_camera *cam);
 t_renderer	*init_renderer(t_renderer *r, t_image *i);
-t_lights	*init_lights(t_lights *l);
+//t_lights	*init_lights(t_lights *l);
 t_camera	*setup_camera(t_camera *cam, const t_image *img);
 t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
 t_renderer	*setup_renderer(t_renderer *r, t_image *i);
@@ -133,5 +143,37 @@ float	count_light(const t_vec3f normal, const t_vec3f hp,
 t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
 t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
 		const float cos_theta);
+
+/* PARSING */
+int		parse_file(char *filename, t_parser *parser);
+bool	line_first(char *line, char *value, int len);
+int		print_error(char *error_msg);
+
+/* INIT SHAPES */
+int		init_shapes(char *filename, t_parser *parser);
+int		init_ambient(t_parser *parser, char **file);
+int		init_camera(t_parser *parser, char **file);
+int		init_light(t_parser *parser, char **file);
+int		init_plane(t_parser *parser, char **file);
+int		init_sphere(t_parser *parser, char **file);
+int		init_cylinder(t_parser *parser, char **file);
+int		init_color(char *str, t_vec3f *color);
+int		init_brightness(char *str, float *brightness);
+int		init_vector(char *str, t_vec3f *vector, bool limit);
+int		init_radius(char *str, float *radius);
+int		init_material(char *str, t_material *mat);
+
+/* UTILS */
+void	rt_cleanup(t_parser *master);
+char	*wrap_join(char *s1, char *s2);
+int		is_float(char *str);
+int		string_to_color(char *str);
+float	rt_atof(char *str);
+char	*get_line(char *type, char **file, int size);
+char	**file_to_array(char *filename);
+void	set_colors(char *str, int i, t_vec3f *colors);
+int		set_vector(t_vec3f *vec, char **values, bool limit);
+int		count_values(char **split);
+void	set_material(t_material *mat, float ref, float tran, float ior);
 
 #endif
