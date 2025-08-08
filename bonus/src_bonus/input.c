@@ -13,7 +13,7 @@ void	input_keys(mlx_key_data_t kd, void *param)
 void	check_keys(void *param)
 {
 	t_master	*m;
-	static const float	cam_speed = 50.0f;
+	static const float	cam_speed = 100.0f;
 	float			delta_move;
 
 	m = (t_master *)param;
@@ -32,59 +32,52 @@ void	check_keys(void *param)
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 }
 
-/*inline bool	check_keys(t_master *m)
+void	update_orientation(t_camera *cam, double *prev_pos, double xpos,
+		double ypos)
 {
-	static const float	cam_speed = 50.0f;
-	const float			delta_move = cam_speed * (float)m->mlx->delta_time;
+	static const float	sensitivity = 0.0005f;
+	static const float	max_pitch = M_PI / 2.0f - 0.01f;
+	double				delta_pos[2];
 
-	if (mlx_is_key_down(m->mlx, MLX_KEY_ESCAPE))
-		mlx_close_window(m->mlx);
-	else if (mlx_is_key_down(m->mlx, MLX_KEY_W)) 
-		m->cam->center = vv_add(m->cam->center,	vt_mul(m->cam->v, delta_move));
-	else if (mlx_is_key_down(m->mlx, MLX_KEY_S))
-		m->cam->center = vv_sub(m->cam->center,	vt_mul(m->cam->v, delta_move)); 
-	else if (mlx_is_key_down(m->mlx, MLX_KEY_A))
-		m->cam->center = vv_sub(m->cam->center,	vt_mul(m->cam->u, delta_move));
-	else if (mlx_is_key_down(m->mlx, MLX_KEY_D))
-		m->cam->center = vv_add(m->cam->center,	vt_mul(m->cam->u, delta_move));
-	else if (mlx_is_key_down(m->mlx, MLX_KEY_E))
-		m->cam->center = vv_sub(m->cam->center,	vt_mul(m->cam->w, delta_move));
-	else if (mlx_is_key_down(m->mlx, MLX_KEY_C))
-		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
-	else
-		return (false);
-	return (true);
-}*/
+	delta_pos[0] = xpos - prev_pos[0];
+	delta_pos[1] = ypos - prev_pos[1];
+	cam->yaw -= delta_pos[0] * sensitivity;
+	cam->pitch += delta_pos[1] * sensitivity;
+	if (cam->pitch > max_pitch)
+		cam->pitch = max_pitch;
+	if (cam->pitch < -max_pitch)
+		cam->pitch = -max_pitch;
+	cam->orientation.x = cosf(cam->pitch) * cosf(cam->yaw);
+	cam->orientation.y = sinf(cam->pitch);
+	cam->orientation.z = cosf(cam->pitch) * sin(cam->yaw);
+	cam->orientation = unit_vector(cam->orientation);
+	
+}
+
 //pos[0], prev_pos[0], delta_pos[0] are x positions
 //pos[1], prev_pos[1], delta_pos[1] are y positions
 void	input_mouse(double xpos, double ypos, void *param)
 {
 	t_master		*m;
 	static double	prev_pos[2];
-	double			delta_pos[2];
 	static bool		first_frame = true;
-	float			delta_rotate;
 
 	m = (t_master *)param;
 	if (mlx_is_mouse_down(m->mlx, MLX_MOUSE_BUTTON_LEFT))
 	{
-		delta_rotate = 0.005f * m->mlx->delta_time;
 		if (first_frame)
 		{
 			prev_pos[0] = xpos;
 			prev_pos[1] = ypos;
 			first_frame = false;
+			return ;
 		}
-		delta_pos[0] = xpos - prev_pos[0];
-		delta_pos[1] = ypos - prev_pos[1];
-		m->cam->orientation.x -= delta_pos[0] * delta_rotate;
-		m->cam->orientation.y += delta_pos[1] * delta_rotate;
-		m->cam->orientation = unit_vector(m->cam->orientation);
+		update_orientation(m->cam, prev_pos, xpos, ypos);
 		prev_pos[0] = xpos;
 		prev_pos[1] = ypos;
-		return ;
 	}
-	first_frame = true;
+	else
+		first_frame = true;
 }
 
 void	input_scroll(double xdelta, double ydelta, void *param)
@@ -94,7 +87,7 @@ void	input_scroll(double xdelta, double ydelta, void *param)
 
 	m = (t_master *)param;
 	(void)xdelta;
-	delta_move = 50.0f * (float)m->mlx->delta_time;
+	delta_move = 100.0f * (float)m->mlx->delta_time;
 	if (ydelta < 0)
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 	else if (ydelta > 0)
@@ -104,38 +97,4 @@ void	input_scroll(double xdelta, double ydelta, void *param)
 		return ;
 	}
 	m->move = true;
-}
-
-//pos[0], prev_pos[0], delta_pos[0] are x positions
-//pos[1], prev_pos[1], delta_pos[1] are y positions
-void	check_mouse(void *param)
-{
-	int32_t			pos[2];
-	static int32_t	prev_pos[2];
-	int32_t			delta_pos[2];
-	static bool		first_frame = true;
-	float			delta_rotate;
-	t_master		*m;
-
-	m = (t_master *)param;
-	if (mlx_is_mouse_down(m->mlx, MLX_MOUSE_BUTTON_LEFT))
-	{
-		delta_rotate = 0.01f * m->mlx->delta_time;
-		mlx_get_mouse_pos(m->mlx, &pos[0], &pos[1]);
-		if (first_frame)
-		{
-			prev_pos[0] = pos[0];
-			prev_pos[1] = pos[1];
-			first_frame = false;
-		}
-		delta_pos[0] = pos[0] - prev_pos[0];
-		delta_pos[1] = pos[1] - prev_pos[1];
-		m->cam->orientation.x -= delta_pos[0] * delta_rotate;
-		m->cam->orientation.y += delta_pos[1] * delta_rotate;
-		m->cam->orientation = unit_vector(m->cam->orientation);
-		prev_pos[0] = pos[0];
-		prev_pos[1] = pos[1];
-		return ;
-	}
-	first_frame = true;
 }

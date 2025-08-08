@@ -21,6 +21,8 @@ typedef struct s_camera
 	float	fov;
 	float	viewport_height;
 	float	viewport_width;
+	float	yaw;
+	float	pitch;
 }	t_camera;
 
 typedef struct s_image

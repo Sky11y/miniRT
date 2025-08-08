@@ -166,7 +166,7 @@ static void	minirt(void *param)
 		//}
 	}
 
-	printf("delta time %lf\n", m->mlx->delta_time);
+//	printf("delta time %lf\n", m->mlx->delta_time);
 }
 
 /*
@@ -300,9 +300,9 @@ int main(int argc, char **argv)
 	mlx_key_hook(master.mlx, &input_keys, &master);
 	if (!mlx_loop_hook(master.mlx, &check_keys, &master))
 		mlx_terminate(master.mlx);
-	//mlx_cursor_hook(master.mlx, &input_mouse, &master);
-	if (!mlx_loop_hook(master.mlx, &check_mouse, &master))
-		mlx_terminate(master.mlx);
+	mlx_cursor_hook(master.mlx, &input_mouse, &master);
+	//if (!mlx_loop_hook(master.mlx, &check_mouse, &master))
+	//	mlx_terminate(master.mlx);
 	mlx_scroll_hook(master.mlx, &input_scroll, &master);
 	if (!mlx_loop_hook(master.mlx, &check_changes, &master))
 		mlx_terminate(master.mlx);
