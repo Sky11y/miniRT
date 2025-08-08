@@ -32,7 +32,6 @@ int main(int argc, char **argv)
 {
 	t_master	master;
 	t_hittables	hittables;
-	//t_camera	*cam;
 	t_image		img;
 	t_parser	parser;
 

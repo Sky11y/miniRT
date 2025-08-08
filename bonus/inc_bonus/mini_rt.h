@@ -19,7 +19,6 @@
 
 # define WIN_HEIGHT 800
 # define WIN_WIDTH 1600
-# define SAMPLES_PER_PIXEL 3
 # define MAX_RAYS 5
 # define THREAD_COUNT 30
 # define RENDER_CYCLES 3

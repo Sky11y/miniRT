@@ -132,21 +132,10 @@ t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
 		int *idx, const t_lights *light)
 {
 	t_vec3f			pixel_color;
-	t_vec3f			ret_color;
-	uint16_t		sample_no;
 	t_ray			r;
 
-	pixel_color.x = 0;
-	pixel_color.y = 0;
-	pixel_color.z = 0;
-	sample_no = 0;
-	while (sample_no < SAMPLES_PER_PIXEL)
-	{
-		r = get_ray(cam, idx[1], idx[0]);
-		ret_color = ray_color(&r, htbl, light, MAX_RAYS);
-		pixel_color = vv_add(pixel_color, ret_color);
-		sample_no += 1;
-	}
+	r = get_ray(cam, idx[1], idx[0]);
+	pixel_color = ray_color(&r, htbl, light, MAX_RAYS);
 	return (pixel_color);
 }
 
