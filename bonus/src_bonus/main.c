@@ -65,7 +65,6 @@ void	*render_sharp(void *param)
 	t_thread *thread = (t_thread *)param;
 	const uint16_t	img_height = thread->height;
 	const uint16_t	img_width = thread->width;
-	const float		pixel_samples_scale = 1.0f / SAMPLES_PER_PIXEL;
 	t_vec3f			final_pixel_color;
 	uint32_t		color;
 	int				idx[2];
@@ -79,7 +78,7 @@ void	*render_sharp(void *param)
 		{
 			final_pixel_color = get_pixel_color(thread->htbl,
 					thread->cam, idx, thread->light);
-			color = get_color(vt_mul(final_pixel_color, pixel_samples_scale));
+			color = get_color(final_pixel_color);
 			thread->pixels[idx[0] * img_width + idx[1]] = color;
 			idx[1] += 1;
 		}

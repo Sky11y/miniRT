@@ -21,7 +21,6 @@
 # define WIN_WIDTH 1600
 # define MAX_RAYS 5
 # define THREAD_COUNT 30
-# define RENDER_CYCLES 3
 
 typedef enum e_shape
 {
