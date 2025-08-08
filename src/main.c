@@ -32,7 +32,7 @@ int main(int argc, char **argv)
 {
 	t_master	master;
 	t_hittables	hittables;
-	t_camera	*cam;
+	//t_camera	*cam;
 	t_image		img;
 	t_parser	parser;
 
@@ -53,8 +53,8 @@ int main(int argc, char **argv)
 	}
 	master.light = parser.lights;
 	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
-	cam = parser.camera;
-	master.cam = setup_camera(cam, &img);
+	master.cam = parser.camera;
+	master.cam = setup_camera(master.cam, &img);
 	master.htbl = parser.hittables;
 	master.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);

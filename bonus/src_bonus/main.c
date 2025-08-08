@@ -169,134 +169,130 @@ static void	minirt(void *param)
 	printf("delta time %lf\n", m->mlx->delta_time);
 }
 
-int main()
+/*
+static void	print_values(t_parser master)
+{
+	float bright = master.lights->ambient_brightness;
+	float r = master.lights->ambient_color.x;
+	float g = master.lights->ambient_color.y;
+	float b = master.lights->ambient_color.z;
+	float tx = master.lights->ambient_tint.x;
+	float ty = master.lights->ambient_tint.y;
+	float tz = master.lights->ambient_tint.z;
+	printf("A - brightness: %f - colors: %f, %f, %f ", bright, r, g, b);
+	printf("- tint: %f %f %f\n", tx, ty, tz);
+
+	float cx = master.camera->center.x;
+	float cy = master.camera->center.y;
+	float cz = master.camera->center.z;
+	printf("C - center: %f %f %f ", cx, cy, cz);
+	float ox = master.camera->orientation.x;
+	float oy = master.camera->orientation.y;
+	float oz = master.camera->orientation.z;
+	float fov = master.camera->fov;
+	printf("- orientation: %f %f %f - fov: %f\n", ox, oy, oz, fov);
+
+	float lx = master.lights->point_center.x;
+	float ly = master.lights->point_center.y;
+	float lz = master.lights->point_center.z;
+	float lr = master.lights->point_color.x;
+	float lg = master.lights->point_color.y;
+	float lb = master.lights->point_color.z;
+	float lbright = master.lights->point_brightness;
+	printf("L - center: %f %f %f ", lx, ly, lz);
+	printf("- brightness: %f - colors: %f, %f, %f\n", lbright, lr, lg, lb);
+
+	int	i = 0;
+	while (i < master.hittables->plane_count)
+	{
+		float ppx = master.hittables->planes[i].pos.x;
+		float ppy = master.hittables->planes[i].pos.y;
+		float ppz = master.hittables->planes[i].pos.z;
+		float pox = master.hittables->planes[i].orientation.x;
+		float poy = master.hittables->planes[i].orientation.y;
+		float poz = master.hittables->planes[i].orientation.z;
+		float plr = master.hittables->planes[i].color.x;
+		float plg = master.hittables->planes[i].color.y;
+		float plb = master.hittables->planes[i].color.z;
+		printf("pl[%d] - pos: %f %f %f ",i,  ppx, ppy, ppz);
+		printf("- orientation: %f %f %f ", pox, poy, poz);
+		printf("- color: %f %f %f\n", plr, plg, plb);
+		i++;
+	}
+
+	i = 0;
+	while (i < master.hittables->sphere_count)
+	{
+		float spx = master.hittables->spheres[i].center.x;
+		float spy = master.hittables->spheres[i].center.y;
+		float spz = master.hittables->spheres[i].center.z;
+		float spr = master.hittables->spheres[i].color.x;
+		float spg = master.hittables->spheres[i].color.y;
+		float spb = master.hittables->spheres[i].color.z;
+		float sprad = master.hittables->spheres[i].radius;
+		printf("sp[%d] - pos: %f %f %f ",i,  spx, spy, spz);
+		printf("- radius: %f ", sprad);
+		printf("- color: %f %f %f\n", spr, spg, spb);
+		i++;
+	}
+
+	i = 0;
+	while (i < master.hittables->cylinder_count)
+	{
+		float cyx = master.hittables->cylinders[i].center.x;
+		float cyy = master.hittables->cylinders[i].center.y;
+		float cyz = master.hittables->cylinders[i].center.z;
+		float cyaxx = master.hittables->cylinders[i].axis_v.x;
+		float cyaxy = master.hittables->cylinders[i].axis_v.y;
+		float cyaxz = master.hittables->cylinders[i].axis_v.z;
+		float cyr = master.hittables->cylinders[i].color.x;
+		float cyg = master.hittables->cylinders[i].color.y;
+		float cyb = master.hittables->cylinders[i].color.z;
+		float cyrad = master.hittables->cylinders[i].radius;
+		float cyh = master.hittables->cylinders[i].height;
+		float cyradsq = master.hittables->cylinders[i].radius_squared;
+		printf("cy[%d] - pos: %f %f %f ",i,  cyx, cyy, cyz);
+		printf("cy[%d] - axis_v: %f %f %f ",i,  cyaxx, cyaxy, cyaxz);
+		printf("- radius: %f ", cyrad);
+		printf("- height: %f ", cyh);
+		printf("- radius squared: %f ", cyradsq);
+		printf("- color: %f %f %f\n", cyr, cyg, cyb);
+		i++;
+	}
+}
+*/
+
+int main(int argc, char **argv)
 {
 	t_master	master;
-	t_camera	cam;
 	t_image		img;
 	t_renderer	r;
-	t_lights	light;
 	t_hittables	hittables;
+	t_parser	parser;
 
-	master.light = init_lights(&light);
+	if (argc != 2)
+	{
+		ft_putstr_fd("error: usage: ./miniRT [maps/mapname]", 2);
+		return (1);
+	}
+	ft_memset(&parser, 0, sizeof(t_parser));
+	ft_memset(&hittables, 0, sizeof(t_hittables));
+	parser.hittables = &hittables;
+	if (parse_file(argv[1], &parser))
+		return (1);
+	if (init_shapes(argv[1], &parser))
+	{
+		rt_cleanup(&parser);
+		return (1);
+	}
+	master.light = parser.lights;
 	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
-	master.cam = init_camera(&cam);
-	master.cam = setup_camera(&cam, &img);
+	master.cam = parser.camera;
+	master.cam = setup_camera(master.cam, &img);
 	master.renderer = init_renderer(&r, &img);
-	
-	/***** HERE IS THE TESTS FOR DIFFERENT HITTABLE OBJECTS *****/
-
-	//TESTING THE SCHOOL SUBJECT EXAMPLE
-	hittables.cylinder_count = 0;
-	hittables.sphere_count = 1;
-	hittables.plane_count = 5;
-
-	t_cylinder c1 = {
-		{30.0f, 0.0f, -20.6f},		//position
-		{0.0f, 1.0f, 1.0f},	//orientation
-		{0, 0, 0},			//base point -> initialised to zero and calculated later
-		{10.0 / 255, 0.0f, 1.0f},		//color
-		{0.3f, 0.0f},				//material {reflection, transparency}
-		14.2,				//radius 
-		14.2f * 14.2f,		//radius squared
-		21.42f,				//height
-	};
-	/*
-	t_cylinder c2 = {
-		{-1.2, 0.0, 3},
-		{0.2, 1.0, 0.6},
-		{0, 0, 0},
-		{1.0, 0, 0},
-		{{1.0f, 0.0f}},
-		0.5f,
-		0.5f * 0.5f,
-		0.5f,
-		0.4f,
-		METAL,
-	};*/
-	c1.axis_v = unit_vector(c1.axis_v);
-	c1.base  = vv_sub(c1.center, vt_mul(c1.axis_v, c1.height / 2));
-	//c2.axis_v = unit_vector(c2.axis_v);
-	//c2.base  = vv_sub(c2.center, vt_mul(c2.axis_v, c2.height / 2));
-	//t_cylinder *cylinders = malloc(sizeof(t_cylinder) * hittables.cylinder_count);	
-	//cylinders[0] = c1;
-	//cylinders[1] = c2;
-	//
-	t_plane p1 = {
-		{0.0f, -25.0f, 0.0f},		//position
-		{0.0f, 1.0f, 0.0f},	//orientation
-		{1.0f, 0.0f, 1.0f},		//color
-		{0.0f, 0.0f},		//material
-	};
-	t_plane p2 = {
-		{0.0f, 0.0f, -200.0f},
-		{0.0f, 0.0f, 1.0f},
-		{0.5f, 0.5f, 0.5f},
-		{1.0f, 0.0f},
-	};
-	t_plane p3 = {
-		{-50.0f, 0.0f, 0.0f},		//position
-		{1.0f, 0.0f, 0.0f},	//orientation
-		{1.0f, 0.0f, 1.0f},		//color
-		{0.0f, 0.0f},		//material
-	};
-	t_plane p4 = {
-		{150.0f, 0.0f, 0.0f},
-		{1.0f, 0.0f, 0.0f},
-		{0.5f, 0.5f, 0.5f},
-		{0.0f, 0.0f},
-	};
-	t_plane p5 = {
-		{0.0f, 0.0f, 200.0f},
-		{0.0f, 0.0f, 1.0f},
-		{0.0f, 0.0f, 1.0f},
-		{0.0f, 0.0f},
-	};
-	p1.orientation = unit_vector(p1.orientation);
-	p2.orientation = unit_vector(p2.orientation);
-	p3.orientation = unit_vector(p3.orientation);
-	p4.orientation = unit_vector(p4.orientation);
-	t_plane	*planes = malloc(sizeof(t_plane) * hittables.plane_count);	
-	planes[0] = p1;
-	planes[1] = p2;
-	planes[2] = p3;
-	planes[3] = p4;
-	planes[4] = p5;
-
-	t_sphere s1 = {
-		{20.0f, 0.0f, -40.0f},	//position
-		{1.0f, 0.0f, 0.0f},	//color
-		{0.0f, 0.0f},		//material
-		20.0f,			//radius
-		20.0f * 20.f,	//radius_squared
-	};
-	
-	/*t_sphere s2 = {
-		{0.0f, 0.0f, -20.0f},
-		{0.0f, 1.0f, 0.0f},
-		{0.3f, 0.0f},
-		5.00f,
-		5.0f * 5.0f,
-	};
-	t_sphere s3 = {
-		{55.0f, 2.0f, -10.0f},
-		{1.0f, 1.0f, 0.0f},
-		{0.3f, 0.0f},
-		5.00f,
-		5.0f * 5.0f,
-	};*/
-	t_sphere	*spheres = malloc(sizeof(t_sphere) * hittables.sphere_count);
-	spheres[0] = s1;
-	//spheres[1] = s2;
-	//spheres[2] = s3;
-	/***** END OF TEST SETUP *****/
-
-	//hittables.cylinders = cylinders;
-	hittables.cylinders = NULL;
-	hittables.planes = planes;
-	hittables.spheres = spheres;
-
-	master.htbl = &hittables;
+	master.htbl = parser.hittables;
+	//print_values(parser);
+	//return (0);
 	master.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
 	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
