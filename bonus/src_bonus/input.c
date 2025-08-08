@@ -17,7 +17,7 @@ void	check_keys(void *param)
 	float			delta_move;
 
 	m = (t_master *)param;
-	delta_move = cam_speed * (float)m->mlx->delta_time;
+	delta_move = cam_speed * m->mlx->delta_time;
 	if (mlx_is_key_down(m->mlx, MLX_KEY_W)) 
 		m->cam->center = vv_add(m->cam->center,	vt_mul(m->cam->v, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_S))
@@ -30,12 +30,6 @@ void	check_keys(void *param)
 		m->cam->center = vv_sub(m->cam->center,	vt_mul(m->cam->w, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_C))
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
-	else
-	{
-		m->move = false;
-		return ;
-	}
-	m->move = true;
 }
 
 /*inline bool	check_keys(t_master *m)
@@ -74,7 +68,7 @@ void	input_mouse(double xpos, double ypos, void *param)
 	m = (t_master *)param;
 	if (mlx_is_mouse_down(m->mlx, MLX_MOUSE_BUTTON_LEFT))
 	{
-		delta_rotate = 0.005f * (float)m->mlx->delta_time;
+		delta_rotate = 0.005f * m->mlx->delta_time;
 		if (first_frame)
 		{
 			prev_pos[0] = xpos;
@@ -88,17 +82,15 @@ void	input_mouse(double xpos, double ypos, void *param)
 		m->cam->orientation = unit_vector(m->cam->orientation);
 		prev_pos[0] = xpos;
 		prev_pos[1] = ypos;
-		m->move = true;
 		return ;
 	}
 	first_frame = true;
-	m->move = false;
 }
 
 void	input_scroll(double xdelta, double ydelta, void *param)
 {
-	t_master		*m;
-	float			delta_move;
+	t_master	*m;
+	float		delta_move;
 
 	m = (t_master *)param;
 	(void)xdelta;
@@ -107,24 +99,28 @@ void	input_scroll(double xdelta, double ydelta, void *param)
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 	else if (ydelta > 0)
 		m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->w, delta_move));
-	else
+	else {
 		m->move = false;
+		return ;
+	}
 	m->move = true;
 }
-/*
+
 //pos[0], prev_pos[0], delta_pos[0] are x positions
 //pos[1], prev_pos[1], delta_pos[1] are y positions
-bool	check_mouse(t_master *m)
+void	check_mouse(void *param)
 {
 	int32_t			pos[2];
 	static int32_t	prev_pos[2];
 	int32_t			delta_pos[2];
 	static bool		first_frame = true;
 	float			delta_rotate;
+	t_master		*m;
 
+	m = (t_master *)param;
 	if (mlx_is_mouse_down(m->mlx, MLX_MOUSE_BUTTON_LEFT))
 	{
-		delta_rotate = 0.005f * (float)m->mlx->delta_time;
+		delta_rotate = 0.01f * m->mlx->delta_time;
 		mlx_get_mouse_pos(m->mlx, &pos[0], &pos[1]);
 		if (first_frame)
 		{
@@ -139,8 +135,7 @@ bool	check_mouse(t_master *m)
 		m->cam->orientation = unit_vector(m->cam->orientation);
 		prev_pos[0] = pos[0];
 		prev_pos[1] = pos[1];
-		return (true);
+		return ;
 	}
 	first_frame = true;
-	return (false);
-}*/
+}

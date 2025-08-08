@@ -14,6 +14,19 @@ inline static bool is_window_size_changed(mlx_t *mlx)
 	return (true);
 }
 
+inline static bool is_camera_moved(t_camera *cam)
+{
+	static t_vec3f	prev_pos; 
+
+	if (prev_pos.x == cam->center.x && prev_pos.y == cam->center.y
+		&& prev_pos.z != cam->center.z)
+		return (false);
+	prev_pos.x = cam->center.x;
+	prev_pos.y = cam->center.y;
+	prev_pos.z = cam->center.z;
+	return (true);
+}
+
 void	*render_sharp(void *param);
 
 void	sharpen_image(t_master *m, t_renderer *r)
@@ -42,6 +55,8 @@ void	sharpen_image(t_master *m, t_renderer *r)
 		if (pthread_join(r->threads[count++], NULL))
 			exit(1);
 	}
+	if (frame * THREAD_COUNT * THREAD_COUNT > m->mlx->height)
+		frame = 0;
 	r->rendering = false;
 }
 
@@ -77,17 +92,14 @@ void	*render_sharp(void *param)
 	return (NULL);
 }
 
-inline static void	minirt(void *param)
+void	check_changes(void *param)
 {
-	t_master	*m = (t_master *)param;
-	t_renderer	*r = m->renderer;
-	uint16_t	starting_row;
-	static int	frame = 0;
-	static double	last_change;
-	//static int	cycle = 0;
+	t_master	*m;
 	bool		window_size_changed;
 
+	m = (t_master *)param;
 	window_size_changed = false;
+	m->renderer->rendering = false;
 	if (is_window_size_changed(m->mlx))
 	{
 		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
@@ -95,13 +107,23 @@ inline static void	minirt(void *param)
 		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
 		window_size_changed = true;
 	}
-	if (window_size_changed || m->move)
+	if (window_size_changed || is_camera_moved(m->cam)) //m->move)
 	{
-		last_change = mlx_get_time();
+		//last_change = mlx_get_time();
 		m->cam = setup_camera(m->cam, m->img);
-		r->rendering_done = false;
-				//frame = 0;
+		m->renderer->rendering_done = false;
 	}
+
+}
+
+static void	minirt(void *param)
+{
+	t_master	*m = (t_master *)param;
+	t_renderer	*r = m->renderer;
+	uint16_t	starting_row;
+	static int	frame = 0;
+	//static double	last_change;
+
 	if (!r->rendering && !r->rendering_done)
 	{
 		r->rendering = true;
@@ -133,22 +155,15 @@ inline static void	minirt(void *param)
 		r->rendering = false;
 	}
 	if (!r->rendering && r->rendering_done)
-	{
 		sharpen_image(m, r);
-	}
 	frame++;
 	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
 	{
 		frame = 0;
-		if (mlx_get_time() - last_change > m->mlx->delta_time * 10) {
-			r->rendering_done = true;
-			printf("I'm done with moving\n");
-		}
-		/*cycle++;
-		if (cycle == RENDER_CYCLES) // this is needed wh
-		{
-			cycle = 0;
-		}*/
+		//if (mlx_get_time() - last_change > m->mlx->delta_time * 10) {
+		r->rendering_done = true;
+		//	printf("I'm done with moving\n");
+		//}
 	}
 
 	printf("delta time %lf\n", m->mlx->delta_time);
@@ -214,10 +229,10 @@ int main()
 		{0.0f, 0.0f},		//material
 	};
 	t_plane p2 = {
-		{0.0f, 0.0f, -100.0f},
+		{0.0f, 0.0f, -200.0f},
 		{0.0f, 0.0f, 1.0f},
 		{0.5f, 0.5f, 0.5f},
-		{0.0f, 0.0f},
+		{1.0f, 0.0f},
 	};
 	t_plane p3 = {
 		{-50.0f, 0.0f, 0.0f},		//position
@@ -232,7 +247,7 @@ int main()
 		{0.0f, 0.0f},
 	};
 	t_plane p5 = {
-		{0.0f, 0.0f, 100.0f},
+		{0.0f, 0.0f, 200.0f},
 		{0.0f, 0.0f, 1.0f},
 		{0.0f, 0.0f, 1.0f},
 		{0.0f, 0.0f},
@@ -251,7 +266,7 @@ int main()
 	t_sphere s1 = {
 		{20.0f, 0.0f, -40.0f},	//position
 		{1.0f, 0.0f, 0.0f},	//color
-		{1.0f, 0.0f},		//material
+		{0.0f, 0.0f},		//material
 		20.0f,			//radius
 		20.0f * 20.f,	//radius_squared
 	};
@@ -287,10 +302,14 @@ int main()
 	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
 		exit(1);
 	mlx_key_hook(master.mlx, &input_keys, &master);
-	//if (mlx_loop_hook(master.mlx, &check_keys, &master))
-	//	mlx_terminate(master.mlx);
-	mlx_cursor_hook(master.mlx, &input_mouse, &master);
-	//mlx_scroll_hook(master.mlx, &input_scroll, &master);
+	if (!mlx_loop_hook(master.mlx, &check_keys, &master))
+		mlx_terminate(master.mlx);
+	//mlx_cursor_hook(master.mlx, &input_mouse, &master);
+	if (!mlx_loop_hook(master.mlx, &check_mouse, &master))
+		mlx_terminate(master.mlx);
+	mlx_scroll_hook(master.mlx, &input_scroll, &master);
+	if (!mlx_loop_hook(master.mlx, &check_changes, &master))
+		mlx_terminate(master.mlx);
 	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
 		mlx_terminate(master.mlx);
 	mlx_loop(master.mlx);

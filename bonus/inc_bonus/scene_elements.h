@@ -108,7 +108,7 @@ t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 t_vec3f	get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
 		int *idx, const t_lights *light);
 void	*render_thread(void *param);
-//bool	check_mouse(t_master *master);
+void	check_mouse(void *param);
 //bool	check_keys(t_master *master);
 void	check_keys(void *param);
 void	input_keys(mlx_key_data_t kd, void *param);
