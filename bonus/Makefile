@@ -13,7 +13,7 @@ HEADERS		= -I./inc_bonus -I./$(MLX_PATH)/include -I../libft
 SRC			= main.c utils.c init.c setup.c render.c color.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
 			  vector_math1.c vector_math2.c vector_math3.c \
-			  random.c input.c thread.c \
+			  random.c input.c thread.c reflect_refract.c \
 			  parsing.c parsing_utils.c init_shapes.c \
 			  init_ambient.c init_camera.c init_light.c \
 			  init_plane.c init_sphere.c init_vectors.c init_cylinder.c \
@@ -39,7 +39,7 @@ $(LIBMLX):
 			make -C $(MLX_PATH)/build -j4
 
 $(LIBFT):
-			make --no-print-directory -C $(LIBFT_DIR)
+			@make --no-print-directory -C $(LIBFT_DIR)
 			
 $(OBJ):		$(OBJ_PATH)%.o: $(SRC_PATH)%.c $(LIBFT_DIR)/libft.h
 			cc $(FLAGS) -c $< -o $@ $(HEADERS)

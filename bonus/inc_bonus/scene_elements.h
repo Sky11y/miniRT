@@ -118,11 +118,9 @@ typedef struct s_parser
 t_renderer	*init_renderer(t_renderer *r, t_image *i);
 void		*render_thread(void *param);
 void		*render_sharp(void *param);
-t_vec3f		get_pixel_color(const t_hittables  *htbl, const t_camera *cam,
-			int *idx, const t_lights *light);
+t_vec3f		get_pixel_color(const t_thread *t, int *idx);
 t_ray		get_ray(const t_camera *cam, float x, float y);
-t_vec3f		ray_color(const t_ray *r, const t_hittables *htbl,
-			const t_lights *light, uint8_t depth);
+t_vec3f		ray_color(const t_ray *r, const t_thread *t, uint8_t depth);
 t_vec3f		at(const t_ray *r, float t);
 
 /* INPUT HANDLING */
@@ -159,8 +157,13 @@ float	count_light(const t_vec3f normal, const t_vec3f hp,
 
 /* NEW RAYS */
 t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
+void reflect_ray(t_ray *new_ray, t_vec3f dir, t_hit_record *hr);
 t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
 		const float cos_theta);
+t_vec3f refractDir(const t_vec3f v, const t_vec3f n, const float ior,
+		const int front_face);
+float	schlick_prob(const t_vec3f v, const t_vec3f n, const float ior);
+void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr);
 
 /* PARSING */
 int		parse_file(char *filename, t_parser *parser);

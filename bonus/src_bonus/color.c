@@ -2,89 +2,63 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static void reflect_ray(t_ray *new_ray, t_vec3f dir, t_hit_record *hr)
+static t_vec3f	reflection(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth)
 {
-	new_ray->direction = unit_vector(reflect(dir, hr->normal));
-	new_ray->origin = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4f));
+	t_ray	reflected_ray;
+	t_vec3f	reflected_color;
+	t_vec3f	return_color;
+
+	reflected_ray.direction = unit_vector(reflect(r->direction, hr->normal));
+	reflected_ray.origin = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4f));
+	reflected_color = ray_color(&reflected_ray, t, depth - 1);
+	return_color = vt_mul(reflected_color, hr->reflect);
+	return (return_color);
 }
 
-void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr)
+static t_vec3f	refraction(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth)
 {
-	float cosi = clamp(dot(&v, &n), -1.0, 1.0);
-	float etai = 1.0f;
-	float etat = ior;
+	t_ray	refracted_ray;
+	t_vec3f	refracted_color;
 
-	if (cosi > 0) {
-		float temp = etai;
-		etai = etat;
-		etat = temp;
-	}
-	float sint = etai / etat * sqrtf(fmaxf(0.0f, 1 - cosi * cosi));
-	if (sint >= 1)
-		*kr = 1;
-	else
-	{
-		float cost = sqrtf(fmaxf(0.0f, 1 - sint * sint));
-		cosi = fabsf(cosi);
-		float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
-		float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
-		*kr = (Rs * Rs + Rp * Rp) / 2;
-	}
+	refracted_ray.direction = refractDir(r->direction, hr->normal, 1.5f, hr->face);
+	if (v_length(&refracted_ray.direction) <= 0.0f)
+		return ((t_vec3f){0, 0, 0});
+	refracted_ray.direction = unit_vector(refracted_ray.direction);
+	refracted_ray.origin = vv_sub(hr->hitpoint, vt_mul(hr->normal, 1e-4f));
+	refracted_color = ray_color(&refracted_ray, t, depth - 1);
+	return (refracted_color);
 }
 
-static t_vec3f refractDir(const t_vec3f v, const t_vec3f n, const float ior,
-		const int front_face)
+static t_vec3f reflect_and_refract(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth)
 {
-	float cosi = clamp(dot(&n, &v), -1.0f, 1.0f);
-	float etai = 1.0f;
-	float etat = ior;
-	t_vec3f normal = n;
+	t_vec3f	reflected_color;
+	t_vec3f	refracted_color;
+	t_vec3f	combined_color;
+	t_vec3f	transparent_color;
 
-	if (front_face == -1)
-	{
-		cosi = -cosi;
-		float temp = etai;
-		etai = etat;
-		etat = temp;
-		normal = rotate_v(normal);
-	}
-	float eta = etai / etat;
-	float k = 1 - eta * eta * (1 - cosi * cosi);
-	if (k < 0.0)
-		return (t_vec3f){0, 0, 0};
-	return (vv_add(vt_mul(v, eta), vt_mul(n, eta * cosi - sqrt(k))));
+	reflected_color = reflection(r, t, hr, depth);
+	refracted_color = refraction(r, t, hr, depth);
+	combined_color = vv_add(vt_mul(reflected_color, hr->kr),
+			vt_mul(refracted_color, 1 - hr->kr));
+	transparent_color = vt_mul(combined_color, hr->transparency);
+	return (transparent_color); 
 }
 
-inline static float	schlick_prob(const t_vec3f v, const t_vec3f n, const float ior)
+
+t_vec3f	ray_color(const t_ray *r, const t_thread *t, uint8_t depth)
 {
-	float	r0;
-	float	cosi = clamp(dot(&v, &n), -1.0f, 1.0f);
-	float	etai = 1.0f;
-	float	etat = ior;
+	const t_hittables	*htbl = t->htbl;
+	t_hit_record		hr;
+	t_vec3f				color;
+	float				closest_t;
+	float				light_intensity;
 
-	if (cosi > 0.0f)
-	{
-		float temp = etai;
-		etai = etat;
-		etat = temp;
-		cosi = -cosi;
-	}
-	r0 = (etai - etat) / (etai + etat);
-	r0 = r0 * r0;
-	return r0 + (1.0f - r0) * powf(1.0f - fabsf(cosi), 5.0f);
-}
-
-t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
-		const t_lights *light, uint8_t depth)
-{
-	t_hit_record	hr;
-	t_vec3f			color;
-	float			closest_t;
-	float			light_intensity;
-	t_ray			new_ray;
-
+	if (depth == 0)
+		return ((t_vec3f){0, 0, 0});
 	closest_t = INFINITY;
-	light_intensity = 0;
 	if (htbl->sphere_count)
 		hit_all_spheres(r, &closest_t, htbl, &hr);
 	if (htbl->cylinder_count)
@@ -95,47 +69,28 @@ t_vec3f	ray_color(const t_ray *r, const t_hittables *htbl,
 	if (htbl->plane_count)
 		hit_all_planes(r, &closest_t, htbl, &hr);
 	if (closest_t == INFINITY)
-		return (light->ambient_tint);
+		return (t->light->ambient_tint);
 	update_hr(htbl, &hr, r, closest_t);
-	light_intensity = count_light(hr.normal, hr.hitpoint, light, htbl);
-	if (depth == 0 || (hr.transparency == 0 && hr.reflect == 0))
+	light_intensity = count_light(hr.normal, hr.hitpoint, t->light, htbl);
+	if (hr.transparency == 0 && hr.reflect == 0)
 		return (vt_mul(hr.albedo, light_intensity));
 	if (hr.transparency == 0.0f && hr.reflect > 0.0f)
-	{
-		reflect_ray(&new_ray, r->direction, &hr);
-		color = vt_mul(ray_color(&new_ray, htbl, light, depth - 1), hr.reflect);
-		return (vv_add(color, vt_mul(hr.albedo, light_intensity)));
-	}
-	t_vec3f refractionColor = (t_vec3f){0, 0, 0};
+		return (vv_add(reflection(r, t, &hr, depth), vt_mul(hr.albedo, light_intensity)));
 	//fresnel(r.direction, hr.normal, 1.5f, &hr.kr);
 	hr.kr = schlick_prob(r->direction, hr.normal, 1.5f);
-	t_vec3f bias = vt_mul(hr.normal, 1e-4f);
 	if (hr.kr < 1)
-	{
-		new_ray.direction = refractDir(r->direction, hr.normal, 1.5f, hr.face);
-		if (v_length(&new_ray.direction) > 0.0f)
-		{
-			new_ray.direction = unit_vector(new_ray.direction);
-			new_ray.origin = vv_sub(hr.hitpoint, bias);
-			refractionColor = ray_color(&new_ray, htbl, light, depth - 1);
-		}
-	}
-	reflect_ray(&new_ray, r->direction, &hr);
-	t_vec3f reflectionColor = ray_color(&new_ray, htbl, light, depth - 1);
-	color = vv_add(vt_mul(reflectionColor, hr.kr), vt_mul(refractionColor, 1 - hr.kr));
-	color = vt_mul(color, hr.transparency);
+		color = reflect_and_refract(r, t, &hr, depth);
 	t_vec3f diffuse = vt_mul(hr.albedo, light_intensity * (1.0f - hr.transparency));
 	return (vv_add(color, diffuse));
 }
 
-t_vec3f	get_pixel_color(const t_hittables *htbl, const t_camera *cam,
-		int *idx, const t_lights *light)
+t_vec3f	get_pixel_color(const t_thread *t, int *idx)
 {
 	t_vec3f			pixel_color;
 	t_ray			r;
 
-	r = get_ray(cam, idx[1], idx[0]);
-	pixel_color = ray_color(&r, htbl, light, MAX_RAYS);
+	r = get_ray(t->cam, idx[1], idx[0]);
+	pixel_color = ray_color(&r, t, MAX_RAYS);
 	return (pixel_color);
 }
 

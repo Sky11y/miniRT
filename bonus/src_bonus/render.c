@@ -38,51 +38,48 @@ uint32_t	mix_colors(uint32_t color, uint32_t prev_color)
 
 }
 
-t_vec3f	get_pixel_color_simple(const t_hittables *htbl, const t_camera *cam,
-		int *idx, const t_lights *light)
+t_vec3f	get_pixel_color_simple(const t_thread *t, int *idx)
 {
 	t_ray			r;
 
-	r = get_ray(cam, idx[1], idx[0]);
-	return (ray_color(&r, htbl, light, 2));
+	r = get_ray(t->cam, idx[1], idx[0]);
+	return (ray_color(&r, t, 2));
 }
-
 		
 //idx[0] = y, idx[1] = x
 void	*render_thread(void *param)
 {
-	t_thread *thread = (t_thread *)param;
-	const uint16_t	img_height = thread->height;
-	const uint16_t	img_width = thread->width;
+	t_thread *t = (t_thread *)param;
+	const uint16_t	img_height = t->height;
+	const uint16_t	img_width = t->width;
 	t_vec3f			final_pixel_color;
 	uint32_t		mixed_color = 0;
 	uint32_t		color;
 	uint32_t		prev_color = 0;
 	int				idx[2];
 
-	idx[0] = thread->id;
+	idx[0] = t->id;
 	int i = 0;
 	while (i < THREAD_COUNT && idx[0] < img_height)
 	{
 		idx[1] = 0;
 		while (idx[1] < img_width)
 		{
-			final_pixel_color = get_pixel_color_simple(thread->htbl,
-					thread->cam, idx, thread->light);
+			final_pixel_color = get_pixel_color_simple(t, idx);
 			color = get_color(final_pixel_color);
-			thread->pixels[idx[0] * img_width + idx[1]] = color;
+			t->pixels[idx[0] * img_width + idx[1]] = color;
 			if (idx[1] != 0)
 			{
 				mixed_color = mix_colors(color, prev_color);
-				thread->pixels[idx[0] * img_width + idx[1] - 1] = mixed_color;
+				t->pixels[idx[0] * img_width + idx[1] - 1] = mixed_color;
 			}
 			prev_color = color;
 			if (idx[1] + 2 == img_width)
-				thread->pixels[idx[0] * img_width + idx[1] + 1] = color;
+				t->pixels[idx[0] * img_width + idx[1] + 1] = color;
 			idx[1] += 2;
 		}
-		memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
-				&thread->pixels[idx[0] * img_width],
+		memcpy(&t->mlx_img->pixels[idx[0] * img_width * 4],
+				&t->pixels[idx[0] * img_width],
 				sizeof(uint32_t) * img_width);
 		idx[0] += THREAD_COUNT;
 		i++;
@@ -92,26 +89,25 @@ void	*render_thread(void *param)
 
 void	*render_sharp(void *param)
 {
-	t_thread *thread = (t_thread *)param;
-	const uint16_t	img_height = thread->height;
-	const uint16_t	img_width = thread->width;
+	t_thread *t = (t_thread *)param;
+	const uint16_t	img_height = t->height;
+	const uint16_t	img_width = t->width;
 	t_vec3f			final_pixel_color;
 	int				idx[2];
 
-	idx[0] = thread->id;
+	idx[0] = t->id;
 	int i = 0;
 	while (i < THREAD_COUNT && idx[0] < img_height)
 	{
 		idx[1] = 0;
 		while (idx[1] < img_width)
 		{
-			final_pixel_color = get_pixel_color(thread->htbl,
-					thread->cam, idx, thread->light);
-			thread->pixels[idx[0] * img_width + idx[1]] = get_color(final_pixel_color);
+			final_pixel_color = get_pixel_color(t, idx);
+			t->pixels[idx[0] * img_width + idx[1]] = get_color(final_pixel_color);
 			idx[1] += 1;
 		}
-		memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
-				&thread->pixels[idx[0] * img_width],
+		memcpy(&t->mlx_img->pixels[idx[0] * img_width * 4],
+				&t->pixels[idx[0] * img_width],
 				sizeof(uint32_t) * img_width);
 		idx[0] += THREAD_COUNT;
 		i++;
@@ -119,10 +115,3 @@ void	*render_sharp(void *param)
 	return (NULL);
 }
 
-t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
-{
-	t_vec3f	tmp;
-
-	tmp = vt_mul(n, 2 * dot(&v, &n));
-	return (vv_sub(v, tmp));
-}

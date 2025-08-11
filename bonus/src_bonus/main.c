@@ -27,36 +27,6 @@ inline static bool is_camera_moved(t_camera *cam)
 	return (true);
 }
 
-void	*render_sharp(void *param)
-{
-	t_thread *thread = (t_thread *)param;
-	const uint16_t	img_height = thread->height;
-	const uint16_t	img_width = thread->width;
-	t_vec3f			final_pixel_color;
-	uint32_t		color;
-	int				idx[2];
-
-	idx[0] = thread->id;
-	int i = 0;
-	while (i < THREAD_COUNT && idx[0] < img_height)
-	{
-		idx[1] = 0;
-		while (idx[1] < img_width)
-		{
-			final_pixel_color = get_pixel_color(thread->htbl,
-					thread->cam, idx, thread->light);
-			color = get_color(final_pixel_color);
-			thread->pixels[idx[0] * img_width + idx[1]] = color;
-			idx[1] += 1;
-		}
-		memcpy(&thread->mlx_img->pixels[idx[0] * img_width * 4],
-				&thread->pixels[idx[0] * img_width],
-				sizeof(uint32_t) * img_width);
-		idx[0] += THREAD_COUNT;
-		i++;
-	}
-	return (NULL);
-}
 
 void	check_changes(void *param)
 {
