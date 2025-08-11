@@ -27,39 +27,6 @@ inline static bool is_camera_moved(t_camera *cam)
 	return (true);
 }
 
-void	*render_sharp(void *param);
-
-void	sharpen_image(t_master *m, t_renderer *r)
-{
-	static int frame = 0;
-
-	int starting_row = THREAD_COUNT * THREAD_COUNT * frame;
-	for (int i = 0; i < THREAD_COUNT; i++)
-	{
-		r->args[i] = (t_thread){
-			.id = i + starting_row,
-			.width = m->img->image_width,
-			.height = m->img->image_height,
-			.pixels = r->image_buffer,
-			.cam = m->cam,
-			.htbl = m->htbl,
-			.light = m->light,
-			.mlx_img = m->mlx_img,
-		};
-		pthread_create(&r->threads[i], NULL, render_sharp, &r->args[i]);
-		//handle errors
-	}
-	int count = 0;
-	while (count < THREAD_COUNT)
-	{
-		if (pthread_join(r->threads[count++], NULL))
-			exit(1);
-	}
-	if (frame * THREAD_COUNT * THREAD_COUNT > m->mlx->height)
-		frame = 0;
-	r->rendering = false;
-}
-
 void	*render_sharp(void *param)
 {
 	t_thread *thread = (t_thread *)param;
@@ -98,7 +65,7 @@ void	check_changes(void *param)
 
 	m = (t_master *)param;
 	window_size_changed = false;
-	m->renderer->rendering = false;
+	//m->renderer->rendering = false;
 	if (is_window_size_changed(m->mlx))
 	{
 		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
@@ -108,7 +75,6 @@ void	check_changes(void *param)
 	}
 	if (window_size_changed || is_camera_moved(m->cam)) //m->move)
 	{
-		//last_change = mlx_get_time();
 		m->cam = setup_camera(m->cam, m->img);
 		m->renderer->rendering_done = false;
 	}
@@ -117,55 +83,25 @@ void	check_changes(void *param)
 
 static void	minirt(void *param)
 {
-	t_master	*m = (t_master *)param;
-	t_renderer	*r = m->renderer;
-	uint16_t	starting_row;
+	t_master	*m;
+	t_renderer	*r;
 	static int	frame = 0;
-	//static double	last_change;
 
+	m = (t_master *)param;
+	r = m->renderer;
 	if (!r->rendering && !r->rendering_done)
-	{
-		r->rendering = true;
-		starting_row = THREAD_COUNT * THREAD_COUNT * frame;
-		for (int i = 0; i < THREAD_COUNT; i++)
-		{
-			r->args[i] = (t_thread){
-				.id = i + starting_row,
-				.width = m->img->image_width,
-				.height = m->img->image_height,
-				.pixels = r->image_buffer,
-				.cam = m->cam,
-				.htbl = m->htbl,
-				.light = m->light,
-				.mlx_img = m->mlx_img,
-			};
-			pthread_create(&r->threads[i], NULL, render_thread, &r->args[i]);
-			//handle errors
-		}
-	}
-	if (r->rendering)
-	{
-		int count = 0;
-		while (count < THREAD_COUNT)
-		{
-			if (pthread_join(r->threads[count++], NULL))
-				exit(1);
-		}
-		r->rendering = false;
-	}
+		create_threads(m, r, frame, false);
 	if (!r->rendering && r->rendering_done)
-		sharpen_image(m, r);
+		create_threads(m, r, frame, true);
+	if (r->rendering)
+		join_threads(r);
 	frame++;
 	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
 	{
 		frame = 0;
-		//if (mlx_get_time() - last_change > m->mlx->delta_time * 10) {
 		r->rendering_done = true;
-		//	printf("I'm done with moving\n");
-		//}
 	}
-
-//	printf("delta time %lf\n", m->mlx->delta_time);
+	//	printf("delta time %lf\n", m->mlx->delta_time);
 }
 
 /*
