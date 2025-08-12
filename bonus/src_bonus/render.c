@@ -34,8 +34,8 @@ uint32_t	mix_colors(uint32_t color, uint32_t prev_color)
 	final_color[0] = (rgb_color[0] + rgb_prev_color[0]) >> 1;
 	final_color[1] = (rgb_color[1] + rgb_prev_color[1]) >> 1;
 	final_color[2] = (rgb_color[2] + rgb_prev_color[2]) >> 1;
-	return (final_color[0] << 24 | final_color[1] << 16 | final_color[2] << 8 | 255);
-
+	return (final_color[0] << 24 | final_color[1] << 16 | final_color[2] << 8
+		| 255);
 }
 
 t_vec3f	get_pixel_color_simple(const t_thread *t, int *idx)
@@ -45,19 +45,21 @@ t_vec3f	get_pixel_color_simple(const t_thread *t, int *idx)
 	r = get_ray(t->cam, idx[1], idx[0]);
 	return (ray_color(&r, t, 2));
 }
-		
+	
 //idx[0] = y, idx[1] = x
+//colors[1] = mixed_color, colors[0] = returned_color, colors[2] = previous_color
 void	*render_thread(void *param)
 {
-	t_thread *t = (t_thread *)param;
-	const uint16_t	img_height = t->height;
-	const uint16_t	img_width = t->width;
-	t_vec3f			final_pixel_color;
-	uint32_t		mixed_color = 0;
-	uint32_t		color;
-	uint32_t		prev_color = 0;
-	int				idx[2];
+	t_thread	*t;
+	uint16_t	img_height;
+	uint16_t	img_width;
+	t_vec3f		final_pixel_color;
+	uint32_t	colors[3];
+	int			idx[2];
 
+	t = (t_thread *)param;
+	img_width = t->width;
+	img_height = t->height;
 	idx[0] = t->id;
 	int i = 0;
 	while (i < THREAD_COUNT && idx[0] < img_height)
@@ -66,16 +68,16 @@ void	*render_thread(void *param)
 		while (idx[1] < img_width)
 		{
 			final_pixel_color = get_pixel_color_simple(t, idx);
-			color = get_color(final_pixel_color);
-			t->pixels[idx[0] * img_width + idx[1]] = color;
+			colors[0] = get_color(final_pixel_color);
+			t->pixels[idx[0] * img_width + idx[1]] = colors[0];
 			if (idx[1] != 0)
 			{
-				mixed_color = mix_colors(color, prev_color);
-				t->pixels[idx[0] * img_width + idx[1] - 1] = mixed_color;
+				colors[1] = mix_colors(colors[0], colors[2]);
+				t->pixels[idx[0] * img_width + idx[1] - 1] = colors[1];
 			}
-			prev_color = color;
+			colors[2] = colors[0];
 			if (idx[1] + 2 == img_width)
-				t->pixels[idx[0] * img_width + idx[1] + 1] = color;
+				t->pixels[idx[0] * img_width + idx[1] + 1] = colors[0];
 			idx[1] += 2;
 		}
 		memcpy(&t->mlx_img->pixels[idx[0] * img_width * 4],
@@ -114,4 +116,3 @@ void	*render_sharp(void *param)
 	}
 	return (NULL);
 }
-

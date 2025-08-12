@@ -2,13 +2,31 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
+static inline t_vec3f	final_color(const t_ray *r, const t_thread *t,
+		t_hit_record *hr, uint8_t depth)
+{
+	t_vec3f				color;
+	t_vec3f				diffuse;
+	float				light_int;
+
+	light_int = count_light(hr->normal, hr->hitpoint, t->light, t->htbl);
+	if (depth == 0 || (hr->transparency == 0.0f && hr->reflect == 0.0f))
+		return (vt_mul(hr->albedo, light_int));
+	if (hr->transparency == 0.0f && hr->reflect > 0.0f)
+	{
+		return (vv_add(reflection(r, t, hr, depth),
+				vt_mul(hr->albedo, light_int)));
+	}
+	color = reflect_and_refract(r, t, hr, depth);
+	diffuse = vt_mul(hr->albedo, light_int * (1.0f - hr->transparency));
+	return (vv_add(color, diffuse));
+}
+
 t_vec3f	ray_color(const t_ray *r, const t_thread *t, uint8_t depth)
 {
 	const t_hittables	*htbl = t->htbl;
 	t_hit_record		hr;
-	t_vec3f				color;
 	float				closest_t;
-	float				light_int;
 
 	closest_t = INFINITY;
 	if (htbl->sphere_count)
@@ -23,14 +41,7 @@ t_vec3f	ray_color(const t_ray *r, const t_thread *t, uint8_t depth)
 	if (closest_t == INFINITY)
 		return (t->light->ambient_tint);
 	update_hr(htbl, &hr, r, closest_t);
-	light_int = count_light(hr.normal, hr.hitpoint, t->light, htbl);
-	if (depth == 0 || (hr.transparency == 0.0f && hr.reflect == 0.0f))
-		return (vt_mul(hr.albedo, light_int));
-	if (hr.transparency == 0.0f && hr.reflect > 0.0f)
-		return (vv_add(reflection(r, t, &hr, depth), vt_mul(hr.albedo, light_int)));
-	color = reflect_and_refract(r, t, &hr, depth);
-	t_vec3f diffuse = vt_mul(hr.albedo, light_int * (1.0f - hr.transparency));
-	return (vv_add(color, diffuse));
+	return (final_color(r, t, &hr, depth));
 }
 
 t_vec3f	get_pixel_color(const t_thread *t, int *idx)
