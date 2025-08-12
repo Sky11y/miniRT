@@ -1,11 +1,11 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 #include "shapes.h"
-	
-inline static bool is_window_size_changed(mlx_t *mlx)
+
+inline static bool	is_window_size_changed(mlx_t *mlx)
 {
-	static int32_t width = WIN_WIDTH;
-	static int32_t height = WIN_HEIGHT;
+	static int32_t	width = WIN_WIDTH;
+	static int32_t	height = WIN_HEIGHT;
 
 	if (mlx->width != width || mlx->height != height)
 	{
@@ -18,51 +18,64 @@ inline static bool is_window_size_changed(mlx_t *mlx)
 
 inline static void	minirt(void *param)
 {
-	t_master *master = (t_master *)param;
-	if (is_window_size_changed(master->mlx))
+	t_master	*m;
+
+	m = (t_master *)param;
+	if (is_window_size_changed(m->mlx))
 	{
-		master->img = setup_image(master->img, master->mlx->width, master->mlx->height);
-		master->cam = setup_camera(master->cam, master->img);
-		mlx_resize_image(master->mlx_img, master->mlx->width, master->mlx->height);
+		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
+		m->cam = setup_camera(m->cam, m->img);
+		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
 	}
-	render(master, master->mlx_img);
+	render(m, m->mlx_img);
 }
 
-int main(int argc, char **argv)
+static int	init_parsing(int argc, char *arg, t_parser *parser,
+						t_hittables *htbls)
 {
-	t_master	master;
-	t_hittables	hittables;
-	t_image		img;
-	t_parser	parser;
-
 	if (argc != 2)
 	{
 		ft_putstr_fd("error: usage: ./miniRT [maps/mapname]", 2);
 		return (1);
 	}
-	ft_memset(&parser, 0, sizeof(t_parser));
-	ft_memset(&hittables, 0, sizeof(t_hittables));
-	parser.hittables = &hittables;
-	if (parse_file(argv[1], &parser))
+	ft_memset(parser, 0, sizeof(t_parser));
+	ft_memset(htbls, 0, sizeof(t_hittables));
+	parser->hittables = htbls;
+	if (parse_file(arg, parser))
 		return (1);
-	if (init_shapes(argv[1], &parser))
+	if (init_shapes(arg, parser))
+	{
+		rt_cleanup(parser);
+		return (1);
+	}
+	return (0);
+}
+
+int	main(int argc, char **argv)
+{
+	t_master	m;
+	t_hittables	hittables;
+	t_image		img;
+	t_parser	parser;
+
+	if (init_parsing(argc, argv[1], &parser, &hittables))
+		return (1);
+	m.light = parser.lights;
+	m.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
+	m.cam = parser.camera;
+	m.cam = setup_camera(m.cam, &img);
+	m.htbl = parser.hittables;
+	m.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
+	m.mlx_img = mlx_new_image(m.mlx, img.image_width, img.image_height);
+	if (!m.mlx_img || (mlx_image_to_window(m.mlx, m.mlx_img, 0, 0) < 0))
 	{
 		rt_cleanup(&parser);
 		return (1);
 	}
-	master.light = parser.lights;
-	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
-	master.cam = parser.camera;
-	master.cam = setup_camera(master.cam, &img);
-	master.htbl = parser.hittables;
-	master.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
-	master.mlx_img = mlx_new_image(master.mlx, img.image_width, img.image_height);
-	if (!master.mlx_img || (mlx_image_to_window(master.mlx, master.mlx_img, 0, 0) < 0))
-		exit(1);
-	mlx_key_hook(master.mlx, &check_events, &master);
-	if (!mlx_loop_hook(master.mlx, &minirt, &master)) 	
-		mlx_terminate(master.mlx);
-	mlx_loop(master.mlx);
+	mlx_key_hook(m.mlx, &check_events, &m);
+	if (!mlx_loop_hook(m.mlx, &minirt, &m))
+		mlx_terminate(m.mlx);
+	mlx_loop(m.mlx);
 	rt_cleanup(&parser);
 	return (0);
 }

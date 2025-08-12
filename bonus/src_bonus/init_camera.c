@@ -25,7 +25,7 @@ static int	init_values(char **split, t_parser *parser)
 	parser->camera->orientation = unit_vector(parser->camera->orientation);
 	parser->camera->vup = (t_vec3f){0, 1.0f, 0};
 	parser->camera->yaw = atan2f(parser->camera->orientation.z,
-								parser->camera->orientation.x);
+			parser->camera->orientation.x);
 	parser->camera->pitch = asinf(parser->camera->orientation.y);
 	return (0);
 }
@@ -41,7 +41,7 @@ static void	init_default_camera(t_parser *parser)
 	parser->camera->fov = 70.0f;
 	parser->camera->vup = (t_vec3f){0, 1.0f, 0};
 	parser->camera->yaw = atan2f(parser->camera->orientation.z,
-								parser->camera->orientation.x);
+			parser->camera->orientation.x);
 	parser->camera->pitch = asinf(parser->camera->orientation.y);
 }
 
