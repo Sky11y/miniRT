@@ -1,4 +1,4 @@
-#include "mini_rt.h"
+/*#include "mini_rt.h"
 
 inline float	random_float(void)
 {
@@ -36,4 +36,4 @@ inline t_vec3f	random_unit_vector(void)
 		if (lensq > 1e-8f && lensq <= 1.0f)
 			return (vt_div(p, sqrtf(lensq)));
 	}
-}
+}*/

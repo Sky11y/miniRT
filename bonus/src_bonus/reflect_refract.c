@@ -1,95 +1,52 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-
-t_vec3f	reflect(const t_vec3f v, const t_vec3f n)
+t_vec3f	reflection(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth)
 {
-	t_vec3f	tmp;
+	t_ray	reflected_ray;
+	t_vec3f	reflected_color;
+	t_vec3f	return_color;
 
-	tmp = vt_mul(n, 2 * dot(&v, &n));
-	return (vv_sub(v, tmp));
+	reflected_ray.direction = unit_vector(reflect(r->direction, hr->normal));
+	reflected_ray.origin = vv_add(hr->hitpoint, vt_mul(hr->normal, EPSILON));
+	reflected_color = ray_color(&reflected_ray, t, depth - 1);
+	return_color = vt_mul(reflected_color, hr->reflect);
+	return (return_color);
 }
 
-//etas[0] = etai, etas[1] = etat, etas[2] = eta
-t_vec3f refractDir(const t_vec3f v, const t_vec3f n, const float ior,
-		const int front_face)
+t_vec3f	refraction(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth)
 {
-	float	cosi;
-	float	etas[3];
-	float	k;
-	float	temp;
-	t_vec3f	normal;
+	t_ray	refracted_ray;
+	t_vec3f	refracted_color;
 
-	normal = n;
-	cosi = clamp(dot(&n, &v), -1.0f, 1.0f);
-	etas[0] = 1.0f;
-	etas[1] = ior;
-	if (front_face == -1)
-	{
-		cosi = -cosi;
-		temp = etas[0];
-		etas[0] = etas[1];
-		etas[1] = temp;
-		normal = rotate_v(normal);
-	}
-	etas[2] = etas[0] / etas[1];
-	k = 1 - etas[2]* etas[2] * (1 - cosi * cosi);
-	if (k < 0.0)
-		return (t_vec3f){0, 0, 0};
-	return (vv_add(vt_mul(v, etas[2]), vt_mul(n, etas[2] * cosi - sqrt(k))));
+	refracted_ray.direction = refract_dir(r->direction, hr->normal, hr->ior,
+			hr->face);
+	if (v_length(&refracted_ray.direction) <= 0.0f)
+		return ((t_vec3f){0, 0, 0});
+	refracted_ray.direction = unit_vector(refracted_ray.direction);
+	refracted_ray.origin = vv_sub(hr->hitpoint, vt_mul(hr->normal, EPSILON));
+	refracted_color = ray_color(&refracted_ray, t, depth - 1);
+	return (refracted_color);
 }
 
-// values[0] = cosi, values[1] = etai, values[2] = etat
-inline float	schlick_prob(const t_vec3f v, const t_vec3f n, const float ior)
+t_vec3f	reflect_and_refract(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth)
 {
-	float	r0;
-	float	cosi;
-	float	etai;
-	float	etat;
-	float	temp;
+	t_vec3f	reflected_color;
+	t_vec3f	refracted_color;
+	t_vec3f	combined_color;
+	t_vec3f	transparent_color;
+	float	kr;
 
-	cosi = clamp(dot(&v, &n), -1.0f, 1.0f);
-	etai = 1.0f;
-	etat = ior;
-	if (cosi > 0.0f)
-	{
-		temp = etai;
-		etai = etat;
-		etat = temp;
-	}
-	r0 = (etai - etat) / (etai + etat);
-	r0 = r0 * r0;
-	return r0 + (1.0f - r0) * powf(1.0f - fabsf(cosi), 5.0f);
-}
-
-void reflect_ray(t_ray *new_ray, t_vec3f dir, t_hit_record *hr)
-{
-	new_ray->direction = unit_vector(reflect(dir, hr->normal));
-	new_ray->origin = vv_add(hr->hitpoint, vt_mul(hr->normal, EPSILON));
-}
-
-void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr)
-{
-	// for now this function is not used. Schlick is faster.
-	float	cosi = clamp(dot(&v, &n), -1.0, 1.0);
-	float	temp;
-	float	etai = 1.0f;
-	float	etat = ior;
-
-	if (cosi > 0) {
-		temp = etai;
-		etai = etat;
-		etat = temp;
-	}
-	float sint = etai / etat * sqrtf(fmaxf(0.0f, 1 - cosi * cosi));
-	if (sint >= 1)
-		*kr = 1;
-	else
-	{
-		float cost = sqrtf(fmaxf(0.0f, 1 - sint * sint));
-		cosi = fabsf(cosi);
-		float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
-		float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
-		*kr = (Rs * Rs + Rp * Rp) / 2;
-	}
+	refracted_color = (t_vec3f){0, 0, 0};
+	kr = schlick_prob(r->direction, hr->normal, hr->ior);
+	if (kr < 1.0f)
+		refracted_color = refraction(r, t, hr, depth);
+	reflected_color = reflection(r, t, hr, depth);
+	combined_color = vv_add(vt_mul(reflected_color, kr),
+			vt_mul(refracted_color, 1.0f - kr));
+	transparent_color = vt_mul(combined_color, hr->transparency);
+	return (transparent_color);
 }

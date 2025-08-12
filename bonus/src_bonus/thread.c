@@ -1,35 +1,49 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-void	create_threads(t_master *m, t_renderer *r, int frame, bool sharp)
+static inline t_thread	init_thread(t_master *m, t_renderer *r, size_t i,
+		uint16_t row)
+{
+	t_thread	t;
+
+	t.id = i + row;
+	t.width = m->img->image_width;
+	t.height = m->img->image_height;
+	t.pixels = r->image_buffer;
+	t.cam = m->cam;
+	t.htbl = m->htbl;
+	t.light = m->light;
+	t.mlx_img = m->mlx_img;
+	return (t);
+}
+
+int	create_threads(t_master *m, t_renderer *r, int frame, bool sharp)
 {
 	const uint16_t	starting_row = THREAD_COUNT * THREAD_COUNT * frame;
 	size_t			i;
 
-	r->rendering = true;
+	r->rendr = true;
 	i = 0;
 	while (i < THREAD_COUNT)
 	{
-		r->args[i] = (t_thread){
-			.id = i + starting_row,
-			.width = m->img->image_width,
-			.height = m->img->image_height,
-			.pixels = r->image_buffer,
-			.cam = m->cam,
-			.htbl = m->htbl,
-			.light = m->light,
-			.mlx_img = m->mlx_img,
-		};
+		r->args[i] = init_thread(m, r, i, starting_row);
 		if (sharp)
-			pthread_create(&r->threads[i], NULL, render_sharp, &r->args[i]);
+		{
+			if (pthread_create(&r->threads[i], NULL, render_sharp, &r->args[i]))
+				return (1);
+		}
 		else
-			pthread_create(&r->threads[i], NULL, render_thread, &r->args[i]);
+		{
+			if (pthread_create(&r->threads[i], NULL, render_thread,
+					&r->args[i]))
+				return (1);
+		}
 		i++;
-		//handle errors
-	}	
+	}
+	return (0);
 }
 
-void	join_threads(t_renderer *r)
+int	join_threads(t_renderer *r)
 {
 	size_t	i;
 
@@ -37,8 +51,9 @@ void	join_threads(t_renderer *r)
 	while (i < THREAD_COUNT)
 	{
 		if (pthread_join(r->threads[i], NULL))
-			exit(1);							// SOME CLEANING UP NEEDED
+			return (1);
 		i++;
 	}
-	r->rendering = false;
+	r->rendr = false;
+	return (0);
 }

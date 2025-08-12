@@ -35,7 +35,6 @@ void	check_changes(void *param)
 
 	m = (t_master *)param;
 	window_size_changed = false;
-	//m->renderer->rendering = false;
 	if (is_window_size_changed(m->mlx))
 	{
 		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
@@ -43,10 +42,10 @@ void	check_changes(void *param)
 		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
 		window_size_changed = true;
 	}
-	if (window_size_changed || is_camera_moved(m->cam)) //m->move)
+	if (window_size_changed || is_camera_moved(m->cam))
 	{
 		m->cam = setup_camera(m->cam, m->img);
-		m->renderer->rendering_done = false;
+		m->renderer->rendr_done = false;
 	}
 
 }
@@ -59,17 +58,17 @@ static void	minirt(void *param)
 
 	m = (t_master *)param;
 	r = m->renderer;
-	if (!r->rendering && !r->rendering_done)
-		create_threads(m, r, frame, false);
-	if (!r->rendering && r->rendering_done)
-		create_threads(m, r, frame, true);
-	if (r->rendering)
-		join_threads(r);
+	if (!r->rendr && !r->rendr_done && create_threads(m, r, frame, false))
+		mlx_terminate(m->mlx);
+	if (!r->rendr && r->rendr_done && create_threads(m, r, frame, true))
+		mlx_terminate(m->mlx);
+	if (r->rendr &&	join_threads(r))
+		mlx_terminate(m->mlx);
 	frame++;
 	if (frame * THREAD_COUNT * THREAD_COUNT >= m->mlx->height)
 	{
 		frame = 0;
-		r->rendering_done = true;
+		r->rendr_done = true;
 	}
 	//	printf("delta time %lf\n", m->mlx->delta_time);
 }

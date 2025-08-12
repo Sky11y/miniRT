@@ -13,7 +13,7 @@ void	input_keys(mlx_key_data_t kd, void *param)
 void	check_keys(void *param)
 {
 	t_master	*m;
-	static const float	cam_speed = 100.0f;
+	static const float	cam_speed = 200.0f;
 	float			delta_move;
 
 	m = (t_master *)param;

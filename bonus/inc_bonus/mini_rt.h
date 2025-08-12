@@ -8,9 +8,7 @@
 # include <string.h> 	//strerror
 # include <math.h> 		//all the math
 # include <stdint.h> 	//explicit int values
-# include <limits.h>	//INT_MAX -> math.h includes INFINITY so we migth not need this
 # include <stdbool.h>	//true and false
-# include <time.h>		
 # include <pthread.h>
 
 # include "MLX42/MLX42.h"
@@ -20,7 +18,7 @@
 # define WIN_HEIGHT 800
 # define WIN_WIDTH 1600
 # define MAX_RAYS 5
-# define THREAD_COUNT 30
+# define THREAD_COUNT 50
 # define EPSILON 1e-2f
 
 typedef enum e_shape

@@ -22,7 +22,7 @@ t_camera	*setup_camera(t_camera *cam, const t_image *img)
 	t_vec3f	temp;
 
 	cam->lookat = vv_add(cam->center, cam->orientation);
-	temp = vv_sub(cam->center, cam->lookat); 
+	temp = vv_sub(cam->center, cam->lookat);
 	cam->focal_length = v_length(&temp);
 	half_w = tanf(degrees_to_rad(cam->fov) / 2);
 	cam->viewport_width = 2.0f * half_w * cam->focal_length;
@@ -51,7 +51,8 @@ t_image	*setup_image(t_image *img, uint16_t width, uint16_t height)
 t_renderer	*setup_renderer(t_renderer *r, t_image *i)
 {
 	free(r->image_buffer);
-	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width * i->image_height);
+	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width
+			* i->image_height);
 	if (!r->image_buffer)
 		exit(1);
 	return (r);

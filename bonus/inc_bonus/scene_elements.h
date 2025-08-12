@@ -69,8 +69,8 @@ typedef struct s_renderer
 	uint32_t	*image_buffer;
 	pthread_t	threads[THREAD_COUNT];
 	t_thread	args[THREAD_COUNT];
-	bool		rendering;
-	bool		rendering_done;
+	bool		rendr;
+	bool		rendr_done;
 }	t_renderer;
 
 typedef struct s_master
@@ -136,8 +136,8 @@ t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
 t_renderer	*setup_renderer(t_renderer *r, t_image *i);
 
 /* THREADS */
-void	create_threads(t_master *m, t_renderer *r, int frame, bool sharp);
-void	join_threads(t_renderer *r);
+int		create_threads(t_master *m, t_renderer *r, int frame, bool sharp);
+int		join_threads(t_renderer *r);
 
 /* HIT OBJECTS */
 void	hit_all_cylinders(const t_ray *r, float *closest_t,
@@ -157,13 +157,17 @@ float	count_light(const t_vec3f normal, const t_vec3f hp,
 
 /* NEW RAYS */
 t_vec3f	reflect(const t_vec3f v, const t_vec3f n);
-void reflect_ray(t_ray *new_ray, t_vec3f dir, t_hit_record *hr);
 t_vec3f refract(const t_vec3f v, const t_vec3f n, const float eta,
 		const float cos_theta);
-t_vec3f refractDir(const t_vec3f v, const t_vec3f n, const float ior,
+t_vec3f refract_dir(const t_vec3f v, const t_vec3f n, const float ior,
 		const int front_face);
+t_vec3f	reflection(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth);
+t_vec3f	refraction(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth);
+t_vec3f	reflect_and_refract(const t_ray *r, const t_thread *t,
+		const t_hit_record *hr, uint8_t depth);
 float	schlick_prob(const t_vec3f v, const t_vec3f n, const float ior);
-void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr);
 
 /* PARSING */
 int		parse_file(char *filename, t_parser *parser);

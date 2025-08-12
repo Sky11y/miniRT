@@ -23,16 +23,16 @@ inline static bool	shadow_cylinder(const t_ray *r, const t_hittables *htbl,
 {
 	t_hit_record	hr;
 	float			closest_t;
-//	t_cylinder		*hit;
+	t_cylinder		*hit;
 
 	closest_t = max_t + 1.0f;
 	hit_all_cylinders(r, &closest_t, htbl, &hr);
 	hit_all_cylinder_caps(r, &closest_t, htbl, &hr);
 	if (closest_t > max_t)
 		return (false);
-//	hit = htbl->cylinders + hr.index;
-//	if (hit->mat.transparency > 0.0f)
-//		return (false);
+	hit = htbl->cylinders + hr.index;
+	if (hit->mat.transparency > 0.5f)
+		return (false);
 	return (true);
 }
 
@@ -41,15 +41,15 @@ inline static bool	shadow_plane(const t_ray *r, const t_hittables *htbl,
 {
 	t_hit_record	hr;
 	float			closest_t;
-//	t_plane			*hit;
+	t_plane			*hit;
 
 	closest_t = max_t + 1.0f;
 	hit_all_planes(r, &closest_t, htbl, &hr);
 	if (closest_t > max_t)
 		return (false);
-//	hit = htbl->planes + hr.index;
-//	if (hit->mat.transparency == 0)
-//		return (false);
+	hit = htbl->planes + hr.index;
+	if (hit->mat.transparency == 0.5f)
+		return (false);
 	return (true);
 }
 
