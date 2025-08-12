@@ -9,6 +9,7 @@ static inline void	sphere_hr(const t_hittables *htbl, t_hit_record *hr)
 	hr->albedo = final_s.color;
 	hr->reflect = final_s.mat.reflect;
 	hr->transparency = final_s.mat.transparency;
+	hr->ior = final_s.mat.ior;
 	if (hr->face == 1)
 		hr->normal = unit_vector(vv_sub(hr->hitpoint, final_s.center));
 	else
@@ -26,6 +27,7 @@ static inline void	cylinder_hr(const t_hittables *htbl, t_hit_record *hr)
 	hr->albedo = final_c->color;
 	hr->reflect = final_c->mat.reflect;
 	hr->transparency = final_c->mat.transparency;
+	hr->ior = final_c->mat.ior;
 	v = vv_sub(hr->hitpoint, final_c->base);
 	proj = dot(&v, &final_c->axis_v);
 	foot = vv_add(final_c->base, vt_mul(final_c->axis_v, proj));
@@ -44,6 +46,7 @@ static inline void	cylinder_cap_hr(const t_hittables *htbl, t_hit_record *hr,
 	hr->albedo = final_c->color;
 	hr->reflect = final_c->mat.reflect;
 	hr->transparency = final_c->mat.transparency;
+	hr->ior = final_c->mat.ior;
 	hr->normal = unit_vector(final_c->axis_v);
 	if (dot(&r->direction, &hr->normal) > 0.0f)
 		hr->normal = rotate_v(hr->normal);
@@ -58,6 +61,7 @@ static inline void	plane_hr(const t_hittables *htbl, t_hit_record *hr,
 	hr->albedo = final_p.color;
 	hr->reflect = final_p.mat.reflect;
 	hr->transparency = final_p.mat.transparency;
+	hr->ior = final_p.mat.ior;
 	hr->normal = unit_vector(final_p.orientation);
 	hr->face = dot(&r->direction, &hr->normal) < 0.0f;
 	if (!hr->face)

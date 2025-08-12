@@ -9,10 +9,10 @@ static inline bool	hit_plane(const t_plane *p, const t_ray *r, float *current_t)
 
 	oc = vv_sub(p->pos, r->origin);
 	ray_plane_dot = dot(&r->direction, &p->orientation);
-	if (fabsf(ray_plane_dot) < 1e-4f)
+	if (fabsf(ray_plane_dot) < EPSILON)
 		return (false);
 	*current_t = dot(&oc, &p->orientation) / ray_plane_dot;
-	return (*current_t > 1e-4f);
+	return (*current_t > EPSILON);
 }
 
 void	hit_all_planes(const t_ray *r, float *closest_t,

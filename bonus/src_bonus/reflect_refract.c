@@ -65,7 +65,7 @@ inline float	schlick_prob(const t_vec3f v, const t_vec3f n, const float ior)
 void reflect_ray(t_ray *new_ray, t_vec3f dir, t_hit_record *hr)
 {
 	new_ray->direction = unit_vector(reflect(dir, hr->normal));
-	new_ray->origin = vv_add(hr->hitpoint, vt_mul(hr->normal, 1e-4f));
+	new_ray->origin = vv_add(hr->hitpoint, vt_mul(hr->normal, EPSILON));
 }
 
 void	fresnel(const t_vec3f v, const t_vec3f n, const float ior, float *kr)

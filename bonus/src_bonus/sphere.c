@@ -15,17 +15,17 @@ static inline bool	hit_sphere(const t_sphere *s, const t_ray *r, int *face,
 	arr[1] = dot(&r->direction, &oc);
 	arr[2] = v_length_squared(&oc) - s->radius_squared;
 	arr[3] = arr[1] * arr[1] - arr[0] * arr[2];
-	if (arr[3] < 1e-4f)
+	if (arr[3] < EPSILON)
 		return (false);
 	sqrt_d = sqrtf(arr[3]);
 	*current_t = (arr[1] - sqrt_d) / arr[0];
-	if (*current_t > 1e-4f)
+	if (*current_t > EPSILON)
 	{
 		*face = 1;
 		return (true);
 	}
 	*current_t = (arr[1] + sqrt_d) / arr[0];
-	if (*current_t > 1e-4f)
+	if (*current_t > EPSILON)
 	{
 		*face = -1;
 		return (true);

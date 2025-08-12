@@ -134,10 +134,14 @@ static void	print_values(t_parser master)
 		float spr = master.hittables->spheres[i].color.x;
 		float spg = master.hittables->spheres[i].color.y;
 		float spb = master.hittables->spheres[i].color.z;
+		float spref = master.hittables->spheres[i].mat.reflect;
+		float sptr = master.hittables->spheres[i].mat.transparency;
+		float spior = master.hittables->spheres[i].mat.ior;
 		float sprad = master.hittables->spheres[i].radius;
 		printf("sp[%d] - pos: %f %f %f ",i,  spx, spy, spz);
 		printf("- radius: %f ", sprad);
 		printf("- color: %f %f %f\n", spr, spg, spb);
+		printf("- material: %f %f %f\n", spref, sptr, spior);
 		i++;
 	}
 

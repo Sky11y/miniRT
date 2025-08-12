@@ -9,13 +9,13 @@ static inline bool	cy_hitpoints(float *arr, int *face, float *current_t)
 
 	sqrt_d = sqrtf(arr[3]);
 	*current_t = (-arr[1] - sqrt_d) / (2 * arr[0]);
-	if (*current_t > 1e-4f)
+	if (*current_t > EPSILON)
 	{
 		*face = 1;
 		return (true);
 	}
 	*current_t = (-arr[1] + sqrt_d) / (2 * arr[0]);
-	if (*current_t > 1e-4f)
+	if (*current_t > EPSILON)
 	{
 		*face = -1;
 		return (true);
@@ -41,7 +41,7 @@ static inline bool	hit_cylinder(const t_cylinder *c, const t_ray *r, int *face,
 	arr[1] = 2 * dot(&vec[2], &vec[3]);
 	arr[2] = dot(&vec[3], &vec[3]) - c->radius_squared;
 	arr[3] = arr[1] * arr[1] - (4 * arr[0] * arr[2]);
-	if (arr[3] < 1e-4f)
+	if (arr[3] < EPSILON)
 		return (false);
 	if (!cy_hitpoints(arr, face, current_t))
 		return (false);

@@ -97,9 +97,9 @@ typedef struct s_hit_record
 	t_vec3f	hitpoint;
 	t_vec3f	albedo;
 	t_shape	type;
-	float	kr;
 	float	reflect;
 	float	transparency;
+	float	ior;
 	uint8_t	index;
 	int8_t	face;
 }	t_hit_record;

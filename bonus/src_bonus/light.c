@@ -6,15 +6,15 @@ inline static bool	shadow_sphere(const t_ray *r, const t_hittables *htbl,
 {
 	t_hit_record	hr;
 	float			closest_t;
-//	t_sphere		*hit;
+	t_sphere		*hit;
 
 	closest_t = max_t + 1.0f;
 	hit_all_spheres(r, &closest_t, htbl, &hr);
 	if (closest_t > max_t)
 		return (false);
-//	hit = htbl->spheres + hr.index;
-//	if (hit->mat.transparency > 0.0f)
-//		return (false);
+	hit = htbl->spheres + hr.index;
+	if (hit->mat.transparency > 0.5f)
+		return (false);
 	return (true);
 }
 
@@ -74,7 +74,7 @@ float	count_light(const t_vec3f normal, t_vec3f hp,
 	float	diffuse;
 	float	max_t;
 
-	hp = vv_add(hp, vt_mul(normal, 1e-4f));
+	hp = vv_add(hp, vt_mul(normal, EPSILON));
 	hp_to_light = vv_sub(light->point_center, hp);
 	intensity = light->ambient_brightness;
 	max_t = v_length(&hp_to_light);

@@ -53,8 +53,8 @@ clean:
 
 fclean:		clean
 			rm -rf $(NAME)
-			#rm -rf $(MLX_PATH)/build
-			#rm -rf $(LIBFT)
+			rm -rf $(MLX_PATH)/build
+			rm -rf $(LIBFT)
 
 re:			fclean all
 
