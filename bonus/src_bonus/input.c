@@ -3,7 +3,7 @@
 
 void	input_keys(mlx_key_data_t kd, void *param)
 {
-	t_master			*m;
+	t_master	*m;
 
 	m = (t_master *)param;
 	if (kd.key == MLX_KEY_ESCAPE && kd.action == MLX_PRESS)
@@ -12,22 +12,22 @@ void	input_keys(mlx_key_data_t kd, void *param)
 
 void	check_keys(void *param)
 {
-	t_master	*m;
+	t_master			*m;
 	static const float	cam_speed = 200.0f;
-	float			delta_move;
+	float				delta_move;
 
 	m = (t_master *)param;
 	delta_move = cam_speed * m->mlx->delta_time;
-	if (mlx_is_key_down(m->mlx, MLX_KEY_W)) 
-		m->cam->center = vv_add(m->cam->center,	vt_mul(m->cam->v, delta_move));
+	if (mlx_is_key_down(m->mlx, MLX_KEY_W))
+		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->v, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_S))
-		m->cam->center = vv_sub(m->cam->center,	vt_mul(m->cam->v, delta_move)); 
+		m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->v, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_A))
-		m->cam->center = vv_sub(m->cam->center,	vt_mul(m->cam->u, delta_move));
+		m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->u, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_D))
-		m->cam->center = vv_add(m->cam->center,	vt_mul(m->cam->u, delta_move));
+		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->u, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_E))
-		m->cam->center = vv_sub(m->cam->center,	vt_mul(m->cam->w, delta_move));
+		m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->w, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_C))
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 }
@@ -51,7 +51,6 @@ void	update_orientation(t_camera *cam, double *prev_pos, double xpos,
 	cam->orientation.y = sinf(cam->pitch);
 	cam->orientation.z = cosf(cam->pitch) * sin(cam->yaw);
 	cam->orientation = unit_vector(cam->orientation);
-	
 }
 
 //pos[0], prev_pos[0], delta_pos[0] are x positions
@@ -92,7 +91,8 @@ void	input_scroll(double xdelta, double ydelta, void *param)
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 	else if (ydelta > 0)
 		m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->w, delta_move));
-	else {
+	else
+	{
 		m->move = false;
 		return ;
 	}

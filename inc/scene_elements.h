@@ -90,34 +90,34 @@ typedef struct s_parser
 }	t_parser;
 
 /* PARSING */
-int		parse_file(char *filename, t_parser *parser);
-bool	line_first(char *line, char *value, int len);
-int		print_error(char *error_msg);
+int			parse_file(char *filename, t_parser *parser);
+bool		line_first(char *line, char *value, int len);
+int			print_error(char *error_msg);
 
 /* INIT SHAPES */
-int		init_shapes(char *filename, t_parser *parser);
-int		init_ambient(t_parser *parser, char **file);
-int		init_camera(t_parser *parser, char **file);
-int		init_light(t_parser *parser, char **file);
-int		init_plane(t_parser *parser, char **file);
-int		init_sphere(t_parser *parser, char **file);
-int		init_cylinder(t_parser *parser, char **file);
-int		init_color(char *str, t_vec3f *color);
-int		init_brightness(char *str, float *brightness);
-int		init_vector(char *str, t_vec3f *vector, bool limit);
-int		init_radius(char *str, float *radius);
+int			init_shapes(char *filename, t_parser *parser);
+int			init_ambient(t_parser *parser, char **file);
+int			init_camera(t_parser *parser, char **file);
+int			init_light(t_parser *parser, char **file);
+int			init_plane(t_parser *parser, char **file);
+int			init_sphere(t_parser *parser, char **file);
+int			init_cylinder(t_parser *parser, char **file);
+int			init_color(char *str, t_vec3f *color);
+int			init_brightness(char *str, float *brightness);
+int			init_vector(char *str, t_vec3f *vector, bool limit);
+int			init_radius(char *str, float *radius);
 
 /* UTILS */
-void	rt_cleanup(t_parser *master);
-char	*wrap_join(char *s1, char *s2);
-int		is_float(char *str);
-int		string_to_color(char *str);
-float	rt_atof(char *str);
-char	*get_line(char *type, char **file, int size);
-char	**file_to_array(char *filename);
-void	set_colors(char *str, int i, t_vec3f *colors);
-int		set_vector(t_vec3f *vec, char **values, bool limit);
-int		count_values(char **split);
+void		rt_cleanup(t_parser *master);
+char		*wrap_join(char *s1, char *s2);
+int			is_float(char *str);
+int			string_to_color(char *str);
+float		rt_atof(char *str);
+char		*get_line(char *type, char **file, int size);
+char		**file_to_array(char *filename);
+void		set_colors(char *str, int i, t_vec3f *colors);
+int			set_vector(t_vec3f *vec, char **values, bool limit);
+int			count_values(char **split);
 
 t_vec3f		at(t_ray r, float t);
 void		render(t_master *master, mlx_image_t *mlx_img);
