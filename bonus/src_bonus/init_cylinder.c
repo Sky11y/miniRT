@@ -10,12 +10,22 @@ static int	init_height(char *str, float *height)
 	return (0);
 }
 
-static int	init_values(char **split, t_cylinder *cylinders)
+static void	calc_axis_radius(t_cylinder *cylinders)
 {
-	float	height;
 	t_vec3f	axis_v;
+	float	height;
 	t_vec3f	center;
 
+	cylinders->axis_v = unit_vector(cylinders->axis_v);
+	height = cylinders->height;
+	axis_v = cylinders->axis_v;
+	center = cylinders->center;
+	cylinders->base = vv_sub(center, vt_mul(axis_v, height / 2.0f));
+	cylinders->radius_squared = cylinders->radius * cylinders->radius;
+}
+
+static int	init_values(char **split, t_cylinder *cylinders)
+{
 	if (count_values(split) < 6 || count_values(split) > 7)
 		return (print_error("error: invalid amount of values in cylinders\n"));
 	if (init_vector(split[1], &cylinders->center, false))
@@ -35,12 +45,7 @@ static int	init_values(char **split, t_cylinder *cylinders)
 	}
 	else
 		set_material(&cylinders->mat, 0.0f, 0.0f, 0.0f);
-	cylinders->axis_v = unit_vector(cylinders->axis_v);
-	height = cylinders->height;
-	axis_v = cylinders->axis_v;
-	center = cylinders->center;
-	cylinders->base = vv_sub(center, vt_mul(axis_v, height / 2.0f));
-	cylinders->radius_squared = cylinders->radius * cylinders->radius;
+	calc_axis_radius(cylinders);
 	return (0);
 }
 
