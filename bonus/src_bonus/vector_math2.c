@@ -10,7 +10,7 @@ inline t_vec3f	vt_div(const t_vec3f v, float t)
 {
 	float	inverse;
 
-	if (fabsf(t) < 1e-8f)
+	if (fabsf(t) < 1e-4f)
 		return ((t_vec3f){0, 0, 0});
 	inverse = 1.0f / t;
 	return ((t_vec3f){v.x * inverse, v.y * inverse, v.z * inverse});

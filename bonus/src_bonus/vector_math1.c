@@ -25,7 +25,7 @@ inline t_vec3f	unit_vector(const t_vec3f v)
 	const float	length = v_length(&v);
 	float		inverse;
 
-	if (length < 1e-8f)
+	if (length < 1e-2f)
 		return ((t_vec3f){0, 0, 0});
 	inverse = 1.0f / length;
 	return ((t_vec3f){v.x * inverse, v.y * inverse, v.z * inverse});

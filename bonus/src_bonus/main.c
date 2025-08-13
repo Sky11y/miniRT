@@ -17,13 +17,18 @@ inline static bool is_window_size_changed(mlx_t *mlx)
 inline static bool is_camera_moved(t_camera *cam)
 {
 	static t_vec3f	prev_pos; 
+	static t_vec3f	prev_orientation;
 
 	if (prev_pos.x == cam->center.x && prev_pos.y == cam->center.y
-		&& prev_pos.z != cam->center.z)
+		&& prev_pos.z == cam->center.z
+		&& fabsf(dot(&prev_orientation, &cam->orientation)) < EPSILON)
 		return (false);
 	prev_pos.x = cam->center.x;
 	prev_pos.y = cam->center.y;
 	prev_pos.z = cam->center.z;
+	prev_orientation.x = cam->orientation.x;
+	prev_orientation.y = cam->orientation.y;
+	prev_orientation.z = cam->orientation.z;
 	return (true);
 }
 
@@ -47,7 +52,6 @@ void	check_changes(void *param)
 		m->cam = setup_camera(m->cam, m->img);
 		m->renderer->rendr_done = false;
 	}
-
 }
 
 static void	minirt(void *param)
