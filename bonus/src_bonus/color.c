@@ -5,9 +5,9 @@
 static inline t_vec3f	final_color(const t_ray *r, const t_thread *t,
 		t_hit_record *hr, uint8_t depth)
 {
-	t_vec3f				color;
-	t_vec3f				diffuse;
-	float				light_int;
+	t_vec3f	color;
+	t_vec3f	diffuse;
+	float	light_int;
 
 	light_int = count_light(hr->normal, hr->hitpoint, t->light, t->htbl);
 	if (depth == 0 || (hr->transparency == 0.0f && hr->reflect == 0.0f))
@@ -25,15 +25,12 @@ static inline t_vec3f	final_color(const t_ray *r, const t_thread *t,
 //offset[0] = x, offset[1] = y, offset[2] = total offset
 t_ray	get_ray(const t_camera *cam, float x, float y)
 {
-	t_vec3f			offset[3];
-	t_vec3f			pixel_sample;
-	t_vec3f			direction;
-	float			dir_off[2];
+	t_vec3f	offset[3];
+	t_vec3f	pixel_sample;
+	t_vec3f	direction;
 
-	dir_off[0] = x;
-	dir_off[1] = y;
-	offset[0] = vt_mul(cam->pixel_delta_u, dir_off[0]);
-	offset[1] = vt_mul(cam->pixel_delta_v, dir_off[1]);
+	offset[0] = vt_mul(cam->pixel_delta_u, x);
+	offset[1] = vt_mul(cam->pixel_delta_v, y);
 	offset[2] = vv_add(offset[0], offset[1]);
 	pixel_sample = vv_add(cam->pixel00_center, offset[2]);
 	direction = unit_vector(vv_sub(pixel_sample, cam->center));
@@ -69,20 +66,20 @@ uint32_t	get_color(const t_vec3f pixel_color)
 	float	rgb[3];
 	uint8_t	rgb_byte[3];
 
-	if (pixel_color.x > 0.0)
+	if (pixel_color.x > 0.0f)
 		rgb[0] = sqrtf(pixel_color.x);
 	else
 		rgb[0] = 0;
-	if (pixel_color.y > 0.0)
+	if (pixel_color.y > 0.0f)
 		rgb[1] = sqrtf(pixel_color.y);
 	else
 		rgb[1] = 0;
-	if (pixel_color.z > 0.0)
+	if (pixel_color.z > 0.0f)
 		rgb[2] = sqrtf(pixel_color.z);
 	else
 		rgb[2] = 0;
-	rgb_byte[0] = (int)(256 * clamp(rgb[0], 0, 0.999));
-	rgb_byte[1] = (int)(256 * clamp(rgb[1], 0, 0.999));
-	rgb_byte[2] = (int)(256 * clamp(rgb[2], 0, 0.999));
+	rgb_byte[0] = (int)(255 * clamp(rgb[0], 0, 0.999));
+	rgb_byte[1] = (int)(255 * clamp(rgb[1], 0, 0.999));
+	rgb_byte[2] = (int)(255 * clamp(rgb[2], 0, 0.999));
 	return (rgb_byte[0] << 24 | rgb_byte[1] << 16 | rgb_byte[2] << 8 | 255);
 }
