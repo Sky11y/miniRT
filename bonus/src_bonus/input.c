@@ -10,11 +10,6 @@ void	input_keys(mlx_key_data_t kd, void *param)
 		mlx_close_window(m->mlx);
 }
 
-void	gdb_helper(t_master *m, float d_move)
-{
-	m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->w, d_move));
-}
-
 void	check_keys(void *param)
 {
 	t_master			*m;
@@ -32,7 +27,7 @@ void	check_keys(void *param)
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_D))
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->u, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_E))
-		gdb_helper(m, delta_move);
+		m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->w, delta_move));
 	else if (mlx_is_key_down(m->mlx, MLX_KEY_C))
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 }

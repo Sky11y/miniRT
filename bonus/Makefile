@@ -14,7 +14,7 @@ SRC			= main.c utils.c init.c setup.c render.c render_simple.c \
 			  color.c update_hit.c \
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
 			  vector_math1.c vector_math2.c vector_math3.c \
-			  random.c input.c thread.c reflect_refract.c \
+			  input.c thread.c reflect_refract.c check_move.c \
 			  parsing.c parsing_utils.c init_shapes.c \
 			  init_ambient.c init_camera.c init_light.c \
 			  init_plane.c init_sphere.c init_vectors.c init_cylinder.c \
