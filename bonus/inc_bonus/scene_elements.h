@@ -120,7 +120,6 @@ typedef struct s_parser
 t_renderer	*init_renderer(t_renderer *r, t_image *i);
 void		*render_thread(void *param);
 void		*render_sharp(void *param);
-t_vec3f		get_pixel_color(const t_thread *t, int *idx);
 t_ray		get_ray(const t_camera *cam, float x, float y);
 t_vec3f		ray_color(const t_ray *r, const t_thread *t, uint8_t depth);
 t_vec3f		at(const t_ray *r, float t);

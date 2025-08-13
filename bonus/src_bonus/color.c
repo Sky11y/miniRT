@@ -22,6 +22,24 @@ static inline t_vec3f	final_color(const t_ray *r, const t_thread *t,
 	return (vv_add(color, diffuse));
 }
 
+//offset[0] = x, offset[1] = y, offset[2] = total offset
+t_ray	get_ray(const t_camera *cam, float x, float y)
+{
+	t_vec3f			offset[3];
+	t_vec3f			pixel_sample;
+	t_vec3f			direction;
+	float			dir_off[2];
+
+	dir_off[0] = x;
+	dir_off[1] = y;
+	offset[0] = vt_mul(cam->pixel_delta_u, dir_off[0]);
+	offset[1] = vt_mul(cam->pixel_delta_v, dir_off[1]);
+	offset[2] = vv_add(offset[0], offset[1]);
+	pixel_sample = vv_add(cam->pixel00_center, offset[2]);
+	direction = unit_vector(vv_sub(pixel_sample, cam->center));
+	return ((t_ray){cam->center, direction});
+}
+
 t_vec3f	ray_color(const t_ray *r, const t_thread *t, uint8_t depth)
 {
 	const t_hittables	*htbl = t->htbl;
@@ -42,16 +60,6 @@ t_vec3f	ray_color(const t_ray *r, const t_thread *t, uint8_t depth)
 		return (t->light->ambient_tint);
 	update_hr(htbl, &hr, r, closest_t);
 	return (final_color(r, t, &hr, depth));
-}
-
-t_vec3f	get_pixel_color(const t_thread *t, int *idx)
-{
-	t_vec3f			pixel_color;
-	t_ray			r;
-
-	r = get_ray(t->cam, idx[1], idx[0]);
-	pixel_color = ray_color(&r, t, MAX_RAYS);
-	return (pixel_color);
 }
 
 //rgb[0] = r, rgb[1] = g, rgb[2] = b

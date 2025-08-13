@@ -10,7 +10,8 @@ MLX_PATH	= ../lib/MLX42/
 
 HEADERS		= -I./inc_bonus -I./$(MLX_PATH)/include -I../libft
 
-SRC			= main.c utils.c init.c setup.c render.c color.c update_hit.c\
+SRC			= main.c utils.c init.c setup.c render.c render_simple.c \
+			  color.c update_hit.c \
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
 			  vector_math1.c vector_math2.c vector_math3.c \
 			  random.c input.c thread.c reflect_refract.c \
