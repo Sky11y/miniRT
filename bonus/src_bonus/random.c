@@ -18,10 +18,10 @@ inline t_vec3f	random_v(void)
 inline t_vec3f	random_v_range(float min, float max)
 {
 	return ((t_vec3f){
-			random_range(min, max),
-			random_range(min, max),
-			random_range(min, max),
-			});
+		random_range(min, max),
+		random_range(min, max),
+		random_range(min, max),
+	});
 }
 
 inline t_vec3f	random_unit_vector(void)
