@@ -2,7 +2,8 @@
 #include "scene_elements.h"
 #include "shapes.h"
 
-static inline bool	hit_plane(const t_plane *p, const t_ray *r, float *current_t)
+static inline bool	hit_plane(const t_plane *p, const t_ray *r,
+						float *current_t)
 {
 	t_vec3f	oc;
 	float	ray_plane_dot;

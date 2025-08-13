@@ -124,6 +124,9 @@ t_ray		get_ray(const t_camera *cam, float x, float y);
 t_vec3f		ray_color(const t_ray *r, const t_thread *t, uint8_t depth);
 t_vec3f		at(const t_ray *r, float t);
 
+/* CHECK MOVES */
+void		check_changes(void *param);
+
 /* INPUT HANDLING */
 void		check_mouse(void *param);
 void		check_keys(void *param);
@@ -158,16 +161,16 @@ float		count_light(const t_vec3f normal, const t_vec3f hp,
 
 /* NEW RAYS */
 t_vec3f		reflect(const t_vec3f v, const t_vec3f n);
-t_vec3f 	refract(const t_vec3f v, const t_vec3f n, const float eta,
-			const float cos_theta);
-t_vec3f 	refract_dir(const t_vec3f v, const t_vec3f n, const float ior,
-			const int front_face);
+t_vec3f		refract(const t_vec3f v, const t_vec3f n, const float eta,
+				const float cos_theta);
+t_vec3f		refract_dir(const t_vec3f v, const t_vec3f n, const float ior,
+				const int front_face);
 t_vec3f		reflection(const t_ray *r, const t_thread *t,
-			const t_hit_record *hr, uint8_t depth);
+				const t_hit_record *hr, uint8_t depth);
 t_vec3f		refraction(const t_ray *r, const t_thread *t,
-			const t_hit_record *hr, uint8_t depth);
+				const t_hit_record *hr, uint8_t depth);
 t_vec3f		reflect_and_refract(const t_ray *r, const t_thread *t,
-			const t_hit_record *hr, uint8_t depth);
+				const t_hit_record *hr, uint8_t depth);
 float		schlick_prob(const t_vec3f v, const t_vec3f n, const float ior);
 
 /* PARSING */
