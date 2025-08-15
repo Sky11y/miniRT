@@ -10,6 +10,8 @@ int	init_material(char *str, t_material *mat)
 		set_material(mat, 0.05f, 0.95f, 1.5f);
 	else if (ft_strcmp(str, "metal") == 0)
 		set_material(mat, 0.9f, 0.0f, 0.0f);
+	else if (ft_strcmp(str, "brass") == 0)
+		set_material(mat, 0.4f, 0.0f, 0.0f);
 	else if (ft_strcmp(str, "mirror") == 0)
 		set_material(mat, 1.0f, 0.0f, 0.0f);
 	else if (ft_strcmp(str, "diffuse") == 0)

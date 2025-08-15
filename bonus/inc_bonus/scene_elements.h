@@ -68,7 +68,6 @@ typedef struct s_thread
 
 typedef struct s_renderer
 {
-	uint32_t	*image_buffer;
 	pthread_t	threads[THREAD_COUNT];
 	t_thread	args[THREAD_COUNT];
 	bool		rendr;
@@ -117,7 +116,7 @@ typedef struct s_parser
 }	t_parser;
 
 /* RENDERER */
-t_renderer	*init_renderer(t_renderer *r, t_image *i);
+t_renderer	*init_renderer(t_renderer *r);
 void		*render_thread(void *param);
 void		*render_sharp(void *param);
 t_ray		get_ray(const t_camera *cam, float x, float y);

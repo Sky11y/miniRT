@@ -79,7 +79,7 @@ int	main(int argc, char **argv)
 	master.img = setup_image(&img, WIN_WIDTH, WIN_HEIGHT);
 	master.cam = parser.camera;
 	master.cam = setup_camera(master.cam, &img);
-	master.renderer = init_renderer(&r, &img);
+	master.renderer = init_renderer(&r);
 	master.htbl = parser.hittables;
 	if (run_mlx(&master, &img))
 	{

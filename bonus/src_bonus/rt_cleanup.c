@@ -18,5 +18,4 @@ void	final_cleanup(t_master *m)
 	free(m->htbl->planes);
 	free(m->htbl->spheres);
 	free(m->htbl->cylinders);
-	free(m->renderer->image_buffer);
 }

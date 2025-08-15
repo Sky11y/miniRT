@@ -47,13 +47,3 @@ t_image	*setup_image(t_image *img, uint16_t width, uint16_t height)
 		img->aspect_ratio = 1.0f;
 	return (img);
 }
-
-t_renderer	*setup_renderer(t_renderer *r, t_image *i)
-{
-	free(r->image_buffer);
-	r->image_buffer = malloc(sizeof(uint32_t) * i->image_width
-			* i->image_height);
-	if (!r->image_buffer)
-		exit(1);
-	return (r);
-}

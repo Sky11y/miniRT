@@ -42,7 +42,6 @@ void	check_changes(void *param)
 	if (is_window_size_changed(m->mlx))
 	{
 		m->img = setup_image(m->img, m->mlx->width, m->mlx->height);
-		m->renderer = setup_renderer(m->renderer, m->img);
 		mlx_resize_image(m->mlx_img, m->mlx->width, m->mlx->height);
 		window_size_changed = true;
 	}

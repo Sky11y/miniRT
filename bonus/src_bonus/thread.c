@@ -1,15 +1,13 @@
 #include "mini_rt.h"
 #include "scene_elements.h"
 
-static inline t_thread	init_thread(t_master *m, t_renderer *r, size_t i,
-		uint16_t row)
+static inline t_thread	init_thread(t_master *m, size_t i, uint16_t row)
 {
 	t_thread	t;
 
 	t.id = i + row;
 	t.width = m->img->image_width;
 	t.height = m->img->image_height;
-	t.pixels = r->image_buffer;
 	t.cam = m->cam;
 	t.htbl = m->htbl;
 	t.light = m->light;
@@ -26,7 +24,7 @@ int	create_threads(t_master *m, t_renderer *r, int frame, bool sharp)
 	i = 0;
 	while (i < THREAD_COUNT)
 	{
-		r->args[i] = init_thread(m, r, i, starting_row);
+		r->args[i] = init_thread(m, i, starting_row);
 		if (sharp)
 		{
 			if (pthread_create(&r->threads[i], NULL, render_sharp, &r->args[i]))
