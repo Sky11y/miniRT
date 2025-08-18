@@ -91,10 +91,4 @@ void	input_scroll(double xdelta, double ydelta, void *param)
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 	else if (ydelta > 0)
 		m->cam->center = vv_sub(m->cam->center, vt_mul(m->cam->w, delta_move));
-	else
-	{
-		m->move = false;
-		return ;
-	}
-	m->move = true;
 }

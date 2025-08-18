@@ -10,12 +10,3 @@ void	rt_cleanup(t_parser *master)
 	free(master->hittables->spheres);
 	free(master->hittables->cylinders);
 }
-
-void	final_cleanup(t_master *m)
-{
-	free(m->light);
-	free(m->cam);
-	free(m->htbl->planes);
-	free(m->htbl->spheres);
-	free(m->htbl->cylinders);
-}

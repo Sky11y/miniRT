@@ -57,7 +57,6 @@ typedef struct s_lights
 typedef struct s_thread
 {
 	mlx_image_t	*mlx_img;
-	uint32_t	*pixels;
 	t_camera	*cam;
 	t_lights	*light;
 	t_hittables	*htbl;
@@ -83,7 +82,6 @@ typedef struct s_master
 	t_image		*img;
 	t_hittables	*htbl;
 	t_lights	*light;
-	bool		move;
 }	t_master;
 
 typedef struct s_ray
@@ -127,7 +125,6 @@ t_vec3f		at(const t_ray *r, float t);
 void		check_changes(void *param);
 
 /* INPUT HANDLING */
-void		check_mouse(void *param);
 void		check_keys(void *param);
 void		input_keys(mlx_key_data_t kd, void *param);
 void		input_mouse(double xpos, double ypos, void *param);
@@ -136,7 +133,6 @@ void		input_scroll(double xdelta, double ydelta, void *param);
 /* SETUP */
 t_camera	*setup_camera(t_camera *cam, const t_image *img);
 t_image		*setup_image(t_image *img, uint16_t width, uint16_t height);
-t_renderer	*setup_renderer(t_renderer *r, t_image *i);
 
 /* THREADS */
 int			create_threads(t_master *m, t_renderer *r, int frame, bool sharp);
@@ -160,8 +156,6 @@ float		count_light(const t_vec3f normal, const t_vec3f hp,
 
 /* NEW RAYS */
 t_vec3f		reflect(const t_vec3f v, const t_vec3f n);
-t_vec3f		refract(const t_vec3f v, const t_vec3f n, const float eta,
-				const float cos_theta);
 t_vec3f		refract_dir(const t_vec3f v, const t_vec3f n, const float ior,
 				const int front_face);
 t_vec3f		reflection(const t_ray *r, const t_thread *t,
