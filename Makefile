@@ -8,7 +8,7 @@ SRC_PATH	= src/
 OBJ_PATH	= obj/
 MLX_PATH	= lib/MLX42/
 
-HEADERS		= -I./inc -I./$(MLX_PATH)/include -I./libft
+HEADERS		= -I./inc -I./$(MLX_PATH)/include -I./lib/libft
 
 SRC			= main.c utils.c init.c render.c update_hit.c\
 			  sphere.c plane.c cylinder.c cylinder_cap.c light.c \
@@ -20,7 +20,7 @@ SRC			= main.c utils.c init.c render.c update_hit.c\
 			  events.c
 OBJ			= $(SRC:%.c=$(OBJ_PATH)%.o)
 
-LIBFT_DIR	= ./libft
+LIBFT_DIR	= ./lib/libft
 LIBFT		= $(LIBFT_DIR)/libft.a
 
 SRC_HEADER	= ./inc/mini_rt.h ./inc/shapes.h ./inc/scene_elements.h
@@ -52,12 +52,12 @@ $(OBJ_PATH):
 
 clean:
 			rm -rf $(OBJ) $(OBJ_PATH)
-			make fclean --no-print-directory -C $(LIBFT_DIR)
+			make clean --no-print-directory -C $(LIBFT_DIR)
 
 fclean:		clean
 			rm -rf $(NAME)
 			rm -rf $(MLX_PATH)/build
-			#rm -rf $(LIBFT)
+			make fclean --no-print-directory -C $(LIBFT_DIR)
 
 re:			fclean all
 
