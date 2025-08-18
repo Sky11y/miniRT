@@ -74,7 +74,7 @@ int	parse_file(char *filename, t_parser *parser)
 			break ;
 	}
 	close(file_fd);
-	if (parser->amb_count == 0 || parser->lig_count == 0)
+	if (error == 0 && (parser->amb_count == 0 || parser->lig_count == 0))
 		return (print_error("error: must have 1 ambient and light\n"));
 	return (error);
 }

@@ -28,6 +28,8 @@ bool	line_first(char *line, char *value, int len)
 	i = 0;
 	while (ft_iswhitespace(line[i]) && line[i] != '\n')
 		i++;
+	if (line[i] == '\n' && value[0] == '\n')
+		return (true);
 	if (!ft_strncmp(&line[i], value, len) && ft_iswhitespace(line[i + len]))
 		return (true);
 	return (false);

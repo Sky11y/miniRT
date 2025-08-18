@@ -7,8 +7,9 @@ MLX42		= $(LIBMLX) -Iinclude -ldl -lglfw -pthread -lm
 SRC_PATH	= src_bonus/
 OBJ_PATH	= obj_bonus/
 MLX_PATH	= ../lib/MLX42/
+LIBFT_DIR	= ../lib/libft
 
-HEADERS		= -I./inc_bonus -I./$(MLX_PATH)/include -I../libft
+HEADERS		= -I./inc_bonus -I./$(MLX_PATH)/include -I./$(LIBFT_DIR)
 
 SRC			= main.c utils.c init.c setup.c render.c render_simple.c \
 			  color.c update_hit.c \
@@ -23,7 +24,6 @@ SRC			= main.c utils.c init.c setup.c render.c render_simple.c \
 
 OBJ			= $(SRC:%.c=$(OBJ_PATH)%.o)
 
-LIBFT_DIR	= ../libft
 LIBFT		= $(LIBFT_DIR)/libft.a
 
 SRC_HEADER	= ./inc_bonus/mini_rt.h \
@@ -50,12 +50,12 @@ $(OBJ_PATH):
 
 clean:
 			rm -rf $(OBJ) $(OBJ_PATH)
-			make fclean --no-print-directory -C $(LIBFT_DIR)
+			make clean --no-print-directory -C $(LIBFT_DIR)
 
 fclean:		clean
 			rm -rf $(NAME)
 			rm -rf $(MLX_PATH)/build
-			rm -rf $(LIBFT)
+			make fclean --no-print-directory -C $(LIBFT_DIR)
 
 re:			fclean all
 
