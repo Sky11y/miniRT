@@ -27,10 +27,7 @@ int	init_shapes(char *filename, t_parser *parser)
 	error = 0;
 	file = file_to_array(filename);
 	if (!file)
-	{
-		free_arr(file);
 		return (1);
-	}
 	error = init_line(parser, file);
 	free_arr(file);
 	return (error);

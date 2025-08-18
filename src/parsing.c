@@ -53,27 +53,26 @@ static int	parse_line(char *line, t_parser *parser)
 
 int	parse_file(char *filename, t_parser *parser)
 {
-	int		file_fd;
+	char	**file;
 	int		error;
-	char	*line;
+	int		i;
 
 	error = 0;
+	i = 0;
 	if (validate_filename(filename))
 		return (print_error("error: filename\n"));
-	file_fd = open(filename, O_RDONLY);
-	if (file_fd == -1)
-		return (print_error("error: open()\n"));
-	while (true)
+	file = file_to_array(filename);
+	if (!file)
+		return (1);
+	while (file[i])
 	{
-		line = get_next_line(file_fd);
-		if (line == NULL)
+		error = parse_line(file[i], parser);
+		if (error > 0)
 			break ;
-		error = parse_line(line, parser);
-		free(line);
-		if (error >= 1)
-			break ;
+		i++;
 	}
-	close(file_fd);
+	free_arr(file);
+	return (error);
 	if (error == 0 && (parser->amb_count == 0 || parser->lig_count == 0))
 		return (print_error("error: must have 1 ambient and light\n"));
 	return (error);

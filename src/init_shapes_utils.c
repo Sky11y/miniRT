@@ -36,6 +36,11 @@ char	**file_to_array(char *filename)
 	char	**file_arr;
 
 	fd = open(filename, O_RDONLY);
+	if (fd == -1)
+	{
+		print_error("error: open()\n");
+		return (NULL);
+	}
 	filestr = file_to_str(fd);
 	if (!filestr)
 		return (NULL);
@@ -43,7 +48,10 @@ char	**file_to_array(char *filename)
 	file_arr = ft_split(filestr, '\n');
 	free(filestr);
 	if (!file_arr)
+	{
+		print_error("error: malloc fail\n");
 		return (NULL);
+	}
 	return (file_arr);
 }
 
