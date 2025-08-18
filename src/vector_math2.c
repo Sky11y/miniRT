@@ -22,8 +22,3 @@ t_vec3f	vv_sub(const t_vec3f u, const t_vec3f v)
 {
 	return ((t_vec3f){u.x - v.x, u.y - v.y, u.z - v.z});
 }
-
-t_vec3f	vv_mul(const t_vec3f v, const t_vec3f u)
-{
-	return ((t_vec3f){v.x * u.x, v.y * u.y, v.z * u.z});
-}

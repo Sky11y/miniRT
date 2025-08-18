@@ -29,7 +29,7 @@ static int	init_parsing(int argc, char *arg, t_parser *parser,
 {
 	if (argc != 2)
 	{
-		ft_putstr_fd("error: usage: ./miniRT [maps/mapname]", 2);
+		print_error("error: usage: ./miniRT [maps/mapname]");
 		return (1);
 	}
 	ft_memset(parser, 0, sizeof(t_parser));

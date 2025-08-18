@@ -13,20 +13,3 @@ float	degrees_to_rad(float degrees)
 {
 	return (degrees * (M_PI / 180.0));
 }
-
-float	inverse_square_root(float nbr)
-{
-	const float	threehalfs = 1.5f;
-	float		x2;
-	float		y;
-	long		i;
-
-	x2 = nbr * 0.5f;
-	y = nbr;
-	memcpy(&i, &y, sizeof(float));
-	i = 0x5f3759df - (i >> 1);
-	memcpy(&y, &i, sizeof(float));
-	y = y * (threehalfs - (x2 * y * y));
-	y = y * (threehalfs - (x2 * y * y));
-	return (y);
-}

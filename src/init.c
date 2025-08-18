@@ -46,14 +46,3 @@ t_image	*setup_image(t_image *img, uint16_t width, uint16_t height)
 		img->aspect_ratio = 1.0f;
 	return (img);
 }
-
-t_lights	*init_lights(t_lights *l)
-{
-	l->ambient_color = (t_vec3f){1.0f, 1.0f, 1.0f};
-	l->ambient_brightness = 0.2f;
-	l->ambient_tint = vt_mul(l->ambient_color, l->ambient_brightness);
-	l->point_center = (t_vec3f){-40.0f, 10.2f, 30.0f};
-	l->point_brightness = 0.7f;
-	l->point_color = (t_vec3f){1, 1, 1};
-	return (l);
-}
