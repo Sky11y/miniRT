@@ -4,7 +4,7 @@
 
 static float	rt_atof_decimals(char *str, int integer, float sign)
 {
-	int		fraction;
+	float	fraction;
 	int		i;
 	size_t	fraction_power;
 
@@ -17,12 +17,12 @@ static float	rt_atof_decimals(char *str, int integer, float sign)
 		fraction = fraction * 10 + str[i] - '0';
 		i++;
 	}
-	return (sign * (integer + (float)fraction / fraction_power));
+	return (sign * (integer + fraction / fraction_power));
 }
 
 float	rt_atof(char *str)
 {
-	int		integer;
+	float	integer;
 	int		i;
 	float	sign;
 
@@ -40,7 +40,7 @@ float	rt_atof(char *str)
 		i++;
 	}
 	if (str[i] != '.')
-		return (sign * (float)integer);
+		return (sign * integer);
 	i++;
 	return (rt_atof_decimals(&str[i], integer, sign));
 }
