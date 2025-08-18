@@ -4,7 +4,7 @@
 
 static float	rt_atof_decimals(char *str, int integer, float sign)
 {
-	int		fraction;
+	float	fraction;
 	int		i;
 	size_t	fraction_power;
 
@@ -22,7 +22,7 @@ static float	rt_atof_decimals(char *str, int integer, float sign)
 
 float	rt_atof(char *str)
 {
-	int		integer;
+	float	integer;
 	int		i;
 	float	sign;
 
