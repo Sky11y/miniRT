@@ -6,11 +6,21 @@ inline static bool	is_window_size_changed(mlx_t *mlx)
 {
 	static int32_t	width = WIN_WIDTH;
 	static int32_t	height = WIN_HEIGHT;
+	static int32_t	max_width;
+	static int32_t	max_height;
 
+	max_width = 0;
+	max_height = 0;
 	if (mlx->width == width && mlx->height == height)
 		return (false);
-	width = mlx->width;
+	mlx_get_monitor_size(0, &max_width, &max_height);
+	if (mlx->width > max_width)
+		mlx->width = max_width;
+	if (mlx->height > max_height)
+		mlx->height = max_height;
 	height = mlx->height;
+	width = mlx->width;
+	mlx_set_window_size(mlx, mlx->width, mlx->height);
 	return (true);
 }
 
