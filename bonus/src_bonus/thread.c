@@ -5,9 +5,7 @@ static inline t_thread	init_thread(t_master *m, size_t i, uint16_t row)
 {
 	t_thread	t;
 
-	t.id = i + row;
-	t.width = m->img->image_width;
-	t.height = m->img->image_height;
+	t.row = i + row;
 	t.cam = m->cam;
 	t.htbl = m->htbl;
 	t.light = m->light;

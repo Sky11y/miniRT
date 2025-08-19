@@ -20,14 +20,6 @@ static inline uint32_t	mix_colors(uint32_t color, uint32_t prev_color)
 		| 255);
 }
 
-static inline t_vec3f	get_pixel_color_simple(const t_thread *t, uint16_t *idx)
-{
-	t_ray	r;
-
-	r = get_ray(t->cam, idx[1], idx[0]);
-	return (ray_color(&r, t, 2));
-}
-
 //idx[0] = y, idx[1] = x, idx[2] = i
 //colors[1] = mixed_color, colors[0] = returned_color, colors[2] = prev_color
 static inline void	render_width(t_thread *t, uint16_t *idx, uint16_t img_width)
@@ -37,17 +29,17 @@ static inline void	render_width(t_thread *t, uint16_t *idx, uint16_t img_width)
 
 	while (idx[1] < img_width)
 	{
-		final_pixel_color = get_pixel_color_simple(t, idx);
+		final_pixel_color = get_pixel_color(t, idx);
 		colors[0] = get_color(final_pixel_color);
 		mlx_put_pixel(t->mlx_img, idx[1], idx[0], colors[0]);
 		if (idx[1] != 0)
 		{
 			colors[1] = mix_colors(colors[0], colors[2]);
-			mlx_put_pixel(t->mlx_img, idx[1], idx[0], colors[1]);
+			mlx_put_pixel(t->mlx_img, idx[1] - 1, idx[0], colors[1]);
 		}
 		colors[2] = colors[0];
 		if (idx[1] + 2 == img_width)
-			mlx_put_pixel(t->mlx_img, idx[1], idx[0], colors[0]);
+			mlx_put_pixel(t->mlx_img, idx[1] + 1, idx[0], colors[0]);
 		idx[1] += 2;
 	}
 }
@@ -62,9 +54,9 @@ void	*render_thread(void *param)
 	uint16_t	i;
 
 	t = (t_thread *)param;
-	img_height = t->height;
-	img_width = t->width;
-	idx[0] = t->id;
+	img_height = t->mlx_img->height;
+	img_width = t->mlx_img->width;
+	idx[0] = t->row;
 	i = 0;
 	while (i < THREAD_COUNT && idx[0] < img_height)
 	{

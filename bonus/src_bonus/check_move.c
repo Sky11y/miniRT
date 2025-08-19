@@ -21,7 +21,9 @@ inline static bool	is_camera_moved(t_camera *cam)
 
 	if (prev_pos.x == cam->center.x && prev_pos.y == cam->center.y
 		&& prev_pos.z == cam->center.z
-		&& fabsf(dot(&prev_orientation, &cam->orientation)) < EPSILON)
+		&& prev_orientation.x == cam->orientation.x
+		&& prev_orientation.y == cam->orientation.y
+		&& prev_orientation.z == cam->orientation.z)
 		return (false);
 	prev_pos.x = cam->center.x;
 	prev_pos.y = cam->center.y;

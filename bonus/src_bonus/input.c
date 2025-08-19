@@ -13,7 +13,7 @@ void	input_keys(mlx_key_data_t kd, void *param)
 void	check_keys(void *param)
 {
 	t_master			*m;
-	static const float	cam_speed = 200.0f;
+	static const float	cam_speed = 250.0f;
 	float				delta_move;
 
 	m = (t_master *)param;
@@ -32,7 +32,7 @@ void	check_keys(void *param)
 		m->cam->center = vv_add(m->cam->center, vt_mul(m->cam->w, delta_move));
 }
 
-void	update_orientation(t_camera *cam, double *prev_pos, double xpos,
+static void	update_orientation(t_camera *cam, double *prev_pos, double xpos,
 		double ypos)
 {
 	static const float	sensitivity = 0.0005f;

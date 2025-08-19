@@ -59,6 +59,16 @@ t_vec3f	ray_color(const t_ray *r, const t_thread *t, uint8_t depth)
 	return (final_color(r, t, &hr, depth));
 }
 
+t_vec3f	get_pixel_color(const t_thread *t, uint16_t *idx)
+{
+	t_vec3f			pixel_color;
+	t_ray			r;
+
+	r = get_ray(t->cam, idx[1], idx[0]);
+	pixel_color = ray_color(&r, t, MAX_RAYS);
+	return (pixel_color);
+}
+
 //rgb[0] = r, rgb[1] = g, rgb[2] = b
 //rgb_byte[0] = rbyte, rgb_byte[1] = gbyte, rgb_byte[2] = bbyte
 uint32_t	get_color(const t_vec3f pixel_color)

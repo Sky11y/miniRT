@@ -14,8 +14,8 @@
 
 # define WIN_HEIGHT 800
 # define WIN_WIDTH 1600
-# define MAX_RAYS 5
-# define THREAD_COUNT 30
+# define MAX_RAYS 3
+# define THREAD_COUNT 20
 # define EPSILON 1e-2f
 
 typedef enum e_shape
