@@ -51,6 +51,20 @@ static int	init_parsing(int argc, char *arg, t_parser *parser,
 	return (0);
 }
 
+static int	run_mlx(t_master *m, t_image *img)
+{
+	m->mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
+	m->mlx_img = mlx_new_image(m->mlx, img->image_width, img->image_height);
+	if (!m->mlx_img || (mlx_image_to_window(m->mlx, m->mlx_img, 0, 0) < 0))
+		return (print_error("error: mlx error\n"));
+	mlx_key_hook(m->mlx, &check_events, m);
+	if (!mlx_loop_hook(m->mlx, &minirt, m))
+		mlx_terminate(m->mlx);
+	mlx_loop(m->mlx);
+	mlx_terminate(m->mlx);
+	return (0);
+}
+
 int	main(int argc, char **argv)
 {
 	t_master	m;
@@ -65,17 +79,11 @@ int	main(int argc, char **argv)
 	m.cam = parser.camera;
 	m.cam = setup_camera(m.cam, &img);
 	m.htbl = parser.hittables;
-	m.mlx = mlx_init(WIN_WIDTH, WIN_HEIGHT, "MINI RAY TRACER", true);
-	m.mlx_img = mlx_new_image(m.mlx, img.image_width, img.image_height);
-	if (!m.mlx_img || (mlx_image_to_window(m.mlx, m.mlx_img, 0, 0) < 0))
+	if (run_mlx(&m, &img))
 	{
 		rt_cleanup(&parser);
 		return (1);
 	}
-	mlx_key_hook(m.mlx, &check_events, &m);
-	if (!mlx_loop_hook(m.mlx, &minirt, &m))
-		mlx_terminate(m.mlx);
-	mlx_loop(m.mlx);
 	rt_cleanup(&parser);
 	return (0);
 }
