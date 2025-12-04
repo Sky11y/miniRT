@@ -49,7 +49,7 @@ $(OBJ_PATH):
 			mkdir -p $(OBJ_PATH)
 
 clean:
-			rm -rf $(OBJ) $(OBJ_PATH)
+			rm -rf $(OBJ_PATH)
 			make clean --no-print-directory -C $(LIBFT_DIR)
 
 fclean:		clean
